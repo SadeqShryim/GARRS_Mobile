@@ -28,6 +28,6 @@ export const dur = {
   gauge: 1400, toast: 2200, metalIdle: 7000, metalPressed: 2333, blob: 5000, ripple: 600,
 } as const;
 
-export const blur = { face: 40, scrim: 8 } as const;   // tuned in Task 22
+export const blur = { face: 55, scrim: 7 } as const;   // tuned in Task 22
 
 export const layout = { card: 318, railGap: 14, humpW: 61, humpH: 13.7, bezelBaked: 768, blobBaked: 210, blobBleed: 48 } as const;

@@ -3,7 +3,6 @@ import { VIN_SPOTS } from '../fixtures/vinHelp';
 import { useAppStore } from '../store/useAppStore';
 import { color } from '../theme/tokens';
 import { Icon } from '../ui/Icon';
-import { OutlinePill } from '../ui/OutlinePill';
 import { SlideUpScreen } from '../ui/SlideUpScreen';
 import { Mono, Sans } from '../ui/Txt';
 
@@ -21,7 +20,11 @@ export function VinHelpScreen() {
         <Icon name="keyboard-line" size={17} color={color.textOnDark} />
         <Sans size={15} weight={500} color={color.textOnDark}>Enter manually</Sans>
       </Pressable>
-      <OutlinePill label="Scan" icon="camera-line" height={52} onPress={scan} />
+      <Pressable accessibilityRole="button" accessibilityLabel="Scan" onPress={scan}
+        style={{ flex: 1, height: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 7, borderRadius: 999, borderWidth: 1, borderColor: color.hair14 }}>
+        <Icon name="camera-line" size={17} color={color.ink} />
+        <Sans size={15} weight={500} color={color.ink}>Scan</Sans>
+      </Pressable>
     </>
   );
 

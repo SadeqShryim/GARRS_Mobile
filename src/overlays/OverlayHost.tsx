@@ -1,5 +1,6 @@
 // src/overlays/OverlayHost.tsx — Four overlays mounted here in z-order: add sheet, recall sheet, VIN help, Toast, Splash.
-import { StyleSheet, View } from 'react-native';
+import { useEffect } from 'react';
+import { BackHandler, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../store/useAppStore';
 import { AddVehicleSheet } from '../screens/AddVehicleSheet';
@@ -13,7 +14,19 @@ export function OverlayHost() {
   const screen = useAppStore((s) => s.screen);
   const splash = useAppStore((s) => s.splash);
   const dismissSplash = useAppStore((s) => s.dismissSplash);
+  const closeSheet = useAppStore((s) => s.closeSheet);
+  const closeVinHelp = useAppStore((s) => s.closeVinHelp);
   const router = useRouter();
+
+  // Android back closes the topmost overlay (VIN help sits above the add sheet) instead of leaving the app.
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (screen === 'vinhelp') { closeVinHelp(); return true; }
+      if (sheet) { closeSheet(); return true; }
+      return false;
+    });
+    return () => sub.remove();
+  }, [sheet, screen, closeSheet, closeVinHelp]);
 
   return (
     <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
