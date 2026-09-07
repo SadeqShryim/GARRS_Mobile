@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css">
+<style>
+html,body{margin:0;padding:0}
+a{color:#0CB8E9;text-decoration:none}
+a:hover{color:#0A9BC4}
+@keyframes sp-bub{0%{opacity:0;transform:translateY(20px) scale(.84)}58%{opacity:1;transform:translateY(0) scale(1.05)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes sp-blob1{0%{transform:translate(0,0) scale(1)}50%{transform:translate(-26px,22px) scale(1.08)}100%{transform:translate(0,0) scale(1)}}
+@keyframes sp-blob2{0%{transform:translate(0,0) scale(1)}50%{transform:translate(24px,-20px) scale(1.06)}100%{transform:translate(0,0) scale(1)}}
+@keyframes sp-in{from{opacity:0;transform:translateY(10px);filter:blur(6px)}to{opacity:1;transform:none;filter:blur(0)}}
+#sp-em::placeholder,#sp-pw::placeholder,#sp-cf::placeholder{color:rgba(255,255,255,.45)}
+</style>
+</helmet>
+
+<div style="position:absolute;inset:0;width:100%;height:100%;overflow:hidden;background:#08080A;font-family:'Geist',system-ui,sans-serif;-webkit-font-smoothing:antialiased">
+
+  <div style="position:absolute;inset:0;overflow:hidden;opacity:{{ stageOp }};transition:opacity .3s ease">
+    <div ref="{{ wrapRef }}" style="position:absolute;top:50%;left:50%;width:240vmax;transform:translate(-50%,-50%) rotate(-25deg);display:flex;flex-direction:column;gap:14px;will-change:transform">
+
+      <div style="display:flex;overflow:hidden"><div ref="{{ r0 }}" style="display:flex;gap:14px;flex:none;will-change:transform">
+        <sc-for list="{{ row0 }}" as="t" hint-placeholder-count="12">
+          <div style="position:relative;flex:none;width:168px;height:112px;border-radius:12px;overflow:hidden;background:{{ t.base }};background-image:{{ t.bg }};background-size:cover;background-position:center;box-shadow:0 18px 40px rgba(0,0,0,.55)">
+            <i class="{{ t.icon }}" style="position:absolute;inset:0;display:{{ t.iconDisplay }};align-items:center;justify-content:center;font-size:40px;color:{{ t.tone }}"></i>
+          </div>
+        </sc-for>
+      </div></div>
+
+      <div style="display:flex;overflow:hidden"><div ref="{{ r1 }}" style="display:flex;gap:14px;flex:none;will-change:transform">
+        <sc-for list="{{ row1 }}" as="t" hint-placeholder-count="12">
+          <div style="position:relative;flex:none;width:168px;height:112px;border-radius:12px;overflow:hidden;background:{{ t.base }};background-image:{{ t.bg }};background-size:cover;background-position:center;box-shadow:0 18px 40px rgba(0,0,0,.55)">
+            <i class="{{ t.icon }}" style="position:absolute;inset:0;display:{{ t.iconDisplay }};align-items:center;justify-content:center;font-size:40px;color:{{ t.tone }}"></i>
+          </div>
+        </sc-for>
+      </div></div>
+
+      <div style="display:flex;overflow:hidden"><div ref="{{ r2 }}" style="display:flex;gap:14px;flex:none;will-change:transform">
+        <sc-for list="{{ row2 }}" as="t" hint-placeholder-count="12">
+          <div style="position:relative;flex:none;width:168px;height:112px;border-radius:12px;overflow:hidden;background:{{ t.base }};background-image:{{ t.bg }};background-size:cover;background-position:center;box-shadow:0 18px 40px rgba(0,0,0,.55)">
+            <i class="{{ t.icon }}" style="position:absolute;inset:0;display:{{ t.iconDisplay }};align-items:center;justify-content:center;font-size:40px;color:{{ t.tone }}"></i>
+          </div>
+        </sc-for>
+      </div></div>
+
+      <div style="display:flex;overflow:hidden"><div ref="{{ r3 }}" style="display:flex;gap:14px;flex:none;will-change:transform">
+        <sc-for list="{{ row3 }}" as="t" hint-placeholder-count="12">
+          <div style="position:relative;flex:none;width:168px;height:112px;border-radius:12px;overflow:hidden;background:{{ t.base }};background-image:{{ t.bg }};background-size:cover;background-position:center;box-shadow:0 18px 40px rgba(0,0,0,.55)">
+            <i class="{{ t.icon }}" style="position:absolute;inset:0;display:{{ t.iconDisplay }};align-items:center;justify-content:center;font-size:40px;color:{{ t.tone }}"></i>
+          </div>
+        </sc-for>
+      </div></div>
+
+      <div style="display:flex;overflow:hidden"><div ref="{{ r4 }}" style="display:flex;gap:14px;flex:none;will-change:transform">
+        <sc-for list="{{ row4 }}" as="t" hint-placeholder-count="12">
+          <div style="position:relative;flex:none;width:168px;height:112px;border-radius:12px;overflow:hidden;background:{{ t.base }};background-image:{{ t.bg }};background-size:cover;background-position:center;box-shadow:0 18px 40px rgba(0,0,0,.55)">
+            <i class="{{ t.icon }}" style="position:absolute;inset:0;display:{{ t.iconDisplay }};align-items:center;justify-content:center;font-size:40px;color:{{ t.tone }}"></i>
+          </div>
+        </sc-for>
+      </div></div>
+
+      <div style="display:flex;overflow:hidden"><div ref="{{ r5 }}" style="display:flex;gap:14px;flex:none;will-change:transform">
+        <sc-for list="{{ row5 }}" as="t" hint-placeholder-count="12">
+          <div style="position:relative;flex:none;width:168px;height:112px;border-radius:12px;overflow:hidden;background:{{ t.base }};background-image:{{ t.bg }};background-size:cover;background-position:center;box-shadow:0 18px 40px rgba(0,0,0,.55)">
+            <i class="{{ t.icon }}" style="position:absolute;inset:0;display:{{ t.iconDisplay }};align-items:center;justify-content:center;font-size:40px;color:{{ t.tone }}"></i>
+          </div>
+        </sc-for>
+      </div></div>
+    </div>
+
+    <div style="pointer-events:none;position:absolute;inset:0;background:radial-gradient(118% 76% at 50% 50%, rgba(8,8,10,0) 22%, rgba(8,8,10,.68) 64%, #08080A 100%)"></div>
+
+    <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:{{ markOp }};transform:scale({{ markScale }});transition:opacity .45s ease, transform .8s cubic-bezier(.2,.8,.2,1)">
+      <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(150deg,#F4FBFF 0%,#A7DAFF 20%,#1B6E96 54%,#0E5378 76%,#8ACEFF 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 14px 34px rgba(0,0,0,.6)">
+        <i class="ri-shield-check-fill" style="font-size:27px;color:#08222E"></i>
+      </div>
+      <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:2.8px;color:rgba(255,255,255,.6)">RECALL HUB</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;inset:0;background-image:url(assets/crash-hero.jpg);background-size:cover;background-position:50% 40%;opacity:{{ photoOp }};filter:{{ photoFilter }};transform:scale({{ photoScale }});transition:opacity .32s ease, filter .65s ease, transform 1.6s cubic-bezier(.2,.8,.2,1)"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,8,10,.30) 0%,rgba(8,8,10,.06) 40%,rgba(8,8,10,.66) 100%);opacity:{{ veilOp }};transition:opacity .4s ease"></div>
+
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;opacity:{{ blobOp }};transition:opacity .9s ease">
+    <div style="position:absolute;width:420px;height:300px;left:-120px;bottom:120px;border-radius:50%;filter:blur(58px);background:radial-gradient(circle,rgba(201,138,58,.85),rgba(201,138,58,0) 70%);animation:sp-blob1 20s ease-in-out infinite"></div>
+    <div style="position:absolute;width:340px;height:300px;right:-100px;top:60px;border-radius:50%;filter:blur(54px);background:radial-gradient(circle,rgba(109,74,224,.8),rgba(109,74,224,0) 70%);animation:sp-blob2 25s ease-in-out infinite"></div>
+    <div style="position:absolute;width:300px;height:280px;right:-70px;bottom:60px;border-radius:50%;filter:blur(60px);background:radial-gradient(circle,rgba(142,27,42,.8),rgba(142,27,42,0) 70%);animation:sp-blob1 26s ease-in-out infinite"></div>
+    <div style="position:absolute;width:300px;height:240px;left:40px;top:-60px;border-radius:50%;filter:blur(56px);background:radial-gradient(circle,rgba(27,110,150,.75),rgba(27,110,150,0) 70%);animation:sp-blob2 22s ease-in-out infinite"></div>
+    <div style="position:absolute;inset:0;background:rgba(8,8,10,.42)"></div>
+  </div>
+
+  <div style="position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);display:{{ bubbleDisp }};flex-direction:column;align-items:center;padding:0 26px;opacity:{{ bubbleOp }};transition:opacity .55s ease">
+    <div style="position:relative;isolation:isolate;max-width:322px;padding:24px 28px;border-radius:28px;border-bottom-left-radius:9px;overflow:hidden;background:linear-gradient(-72deg,rgba(255,255,255,.10),rgba(255,255,255,.22) 45%,rgba(255,255,255,.08));backdrop-filter:blur(16px) saturate(1.6);box-shadow:inset 0 1.5px 1px rgba(255,255,255,.42), inset 0 -2px 2px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.20), 0 24px 60px rgba(0,0,0,.5);animation:sp-bub .62s cubic-bezier(.2,.9,.25,1) both">
+      <div style="position:absolute;left:6%;right:34%;top:2px;height:34%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.34),rgba(255,255,255,0));filter:blur(6px);pointer-events:none"></div>
+      <span style="position:relative;display:block;font-size:29px;line-height:34px;font-weight:600;letter-spacing:-.7px;color:#FFFFFF;text-shadow:0 2px 10px rgba(0,0,0,.35);text-wrap:pretty">Did you f*cking check?</span>
+    </div>
+  </div>
+
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;opacity:{{ authOp }};pointer-events:{{ authPE }};transition:opacity .8s ease">
+    <div style="flex:none;display:flex;align-items:center;justify-content:center;gap:8px;padding:22px 0 0">
+      <div style="width:26px;height:26px;border-radius:8px;background:#0CB8E9;display:flex;align-items:center;justify-content:center"><i class="ri-shield-check-fill" style="font-size:15px;color:#04222C"></i></div>
+      <span style="font-size:15px;font-weight:600;letter-spacing:-.2px;color:#FFFFFF">Recall Hub</span>
+    </div>
+
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:0 24px 40px">
+
+      <sc-if value="{{ isEmail }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;animation:sp-in .5s ease both">
+          <span style="font-family:'Instrument Serif',Georgia,serif;font-size:52px;line-height:52px;font-weight:400;letter-spacing:-1px;color:#FFFFFF;text-align:center;text-wrap:balance">Get started with Recall Hub</span>
+          <span style="font-size:13px;font-weight:500;color:rgba(255,255,255,.62)">Continue with</span>
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px">
+            <div onClick="{{ oauth }}" style="display:flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;cursor:pointer;background:linear-gradient(-72deg,rgba(255,255,255,.06),rgba(255,255,255,.16) 45%,rgba(255,255,255,.05));backdrop-filter:blur(8px);box-shadow:inset 0 1px 1px rgba(255,255,255,.30), inset 0 -1.5px 1.5px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.14), 0 8px 18px rgba(0,0,0,.4)" style-hover="transform:scale(.98)">
+              <svg viewBox="0 0 64 64" style="width:19px;height:19px"><g transform="translate(3,2)"><path fill="#4285F4" d="M57.81 30.15c0-2.43-.2-4.2-.62-6.03H29.5v10.95h16.25c-.33 2.72-2.1 6.81-6.03 9.56l-.06.37 8.76 6.78.6.06c5.58-5.15 8.79-12.72 8.79-21.69"></path><path fill="#34A853" d="M29.5 58.99c7.96 0 14.65-2.62 19.53-7.14l-9.31-7.21c-2.49 1.74-5.83 2.95-10.22 2.95-7.8 0-14.42-5.15-16.78-12.26l-.35.03-9.1 7.05-.12.33c4.85 9.63 14.81 16.25 26.35 16.25"></path><path fill="#FBBC05" d="M12.72 35.33a17.9 17.9 0 0 1-.99-5.83c0-2.03.36-4 .95-5.84l-.02-.39-9.22-7.16-.3.14A29.4 29.4 0 0 0 0 29.5c0 4.75 1.15 9.24 3.15 13.24l9.57-7.41"></path><path fill="#EB4335" d="M29.5 11.41c5.53 0 9.27 2.39 11.4 4.39l8.32-8.13C44.11 2.92 37.46 0 29.5 0 17.96 0 8 6.62 3.15 16.26l9.54 7.4C15.08 16.55 21.7 11.41 29.5 11.41"></path></g></svg>
+              <span style="font-size:14px;font-weight:600;color:#FFFFFF">Google</span>
+            </div>
+            <div onClick="{{ oauth }}" style="display:flex;align-items:center;gap:8px;height:42px;padding:0 18px;border-radius:999px;cursor:pointer;background:linear-gradient(-72deg,rgba(255,255,255,.06),rgba(255,255,255,.16) 45%,rgba(255,255,255,.05));backdrop-filter:blur(8px);box-shadow:inset 0 1px 1px rgba(255,255,255,.30), inset 0 -1.5px 1.5px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.14), 0 8px 18px rgba(0,0,0,.4)" style-hover="transform:scale(.98)">
+              <i class="ri-apple-fill" style="font-size:19px;color:#FFFFFF"></i>
+              <span style="font-size:14px;font-weight:600;color:#FFFFFF">Apple</span>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;width:100%;padding:2px 0">
+            <div style="flex:1;height:1px;background:rgba(255,255,255,.14)"></div>
+            <span style="font-size:11px;font-weight:600;letter-spacing:.4px;color:rgba(255,255,255,.5)">OR</span>
+            <div style="flex:1;height:1px;background:rgba(255,255,255,.14)"></div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isPw }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;animation:sp-in .5s ease both">
+          <span style="font-family:'Instrument Serif',Georgia,serif;font-size:46px;line-height:48px;color:#FFFFFF;text-align:center">Create your password</span>
+          <span style="font-size:13px;font-weight:500;color:rgba(255,255,255,.6);text-align:center">At least 6 characters. {{ email }}</span>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isConfirm }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;animation:sp-in .5s ease both">
+          <span style="font-family:'Instrument Serif',Georgia,serif;font-size:46px;line-height:48px;color:#FFFFFF;text-align:center">One last step</span>
+          <span style="font-size:13px;font-weight:500;color:rgba(255,255,255,.6);text-align:center">Confirm your password to continue</span>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;flex-direction:column;gap:14px;width:100%;max-width:320px">
+        <sc-if value="{{ showEmailField }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;align-items:center;gap:8px;height:52px;padding:0 6px 0 16px;border-radius:999px;background:linear-gradient(-72deg,rgba(255,255,255,.05),rgba(255,255,255,.14) 45%,rgba(255,255,255,.04));backdrop-filter:blur(8px);box-shadow:inset 0 1.5px 1px rgba(255,255,255,.26), inset 0 -1.5px 1.5px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.13), 0 10px 24px rgba(0,0,0,.4)">
+            <i class="ri-mail-line" style="font-size:18px;color:rgba(255,255,255,.72)"></i>
+            <input id="sp-em" type="email" placeholder="Email" value="{{ email }}" onChange="{{ onEmail }}" onKeyDown="{{ onKey }}" style="flex:1;min-width:0;height:100%;border:none;background:transparent;outline:none;font-family:'Geist',sans-serif;font-size:15px;color:#FFFFFF" />
+            <div onClick="{{ next }}" aria-label="Continue" style="width:40px;height:40px;flex:none;display:{{ emailArrow }};align-items:center;justify-content:center;border-radius:999px;cursor:pointer;background:linear-gradient(-72deg,rgba(255,255,255,.10),rgba(255,255,255,.24) 45%,rgba(255,255,255,.08));box-shadow:inset 0 1px 1px rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.18)"><i class="ri-arrow-right-line" style="font-size:18px;color:#FFFFFF"></i></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isPw }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;height:52px;padding:0 6px 0 12px;border-radius:999px;background:linear-gradient(-72deg,rgba(255,255,255,.05),rgba(255,255,255,.14) 45%,rgba(255,255,255,.04));backdrop-filter:blur(8px);box-shadow:inset 0 1.5px 1px rgba(255,255,255,.26), inset 0 -1.5px 1.5px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.13), 0 10px 24px rgba(0,0,0,.4)">
+            <div onClick="{{ toggleEye }}" aria-label="Show password" style="width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="{{ eyeIcon }}" style="font-size:18px;color:rgba(255,255,255,.72)"></i></div>
+            <input id="sp-pw" type="{{ pwType }}" placeholder="Password" value="{{ pw }}" onChange="{{ onPw }}" onKeyDown="{{ onKey }}" style="flex:1;min-width:0;height:100%;border:none;background:transparent;outline:none;font-family:'Geist',sans-serif;font-size:15px;color:#FFFFFF" />
+            <div onClick="{{ next }}" aria-label="Continue" style="width:40px;height:40px;flex:none;display:{{ pwArrow }};align-items:center;justify-content:center;border-radius:999px;cursor:pointer;background:linear-gradient(-72deg,rgba(255,255,255,.10),rgba(255,255,255,.24) 45%,rgba(255,255,255,.08));box-shadow:inset 0 1px 1px rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.18)"><i class="ri-arrow-right-line" style="font-size:18px;color:#FFFFFF"></i></div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isConfirm }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:8px;height:52px;padding:0 6px 0 12px;border-radius:999px;background:linear-gradient(-72deg,rgba(255,255,255,.05),rgba(255,255,255,.14) 45%,rgba(255,255,255,.04));backdrop-filter:blur(8px);box-shadow:inset 0 1.5px 1px rgba(255,255,255,.26), inset 0 -1.5px 1.5px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.13), 0 10px 24px rgba(0,0,0,.4)">
+            <div onClick="{{ toggleEye }}" aria-label="Show password" style="width:34px;height:34px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="{{ eyeIcon }}" style="font-size:18px;color:rgba(255,255,255,.72)"></i></div>
+            <input id="sp-cf" type="{{ pwType }}" placeholder="Confirm password" value="{{ cf }}" onChange="{{ onCf }}" onKeyDown="{{ onKey }}" style="flex:1;min-width:0;height:100%;border:none;background:transparent;outline:none;font-family:'Geist',sans-serif;font-size:15px;color:#FFFFFF" />
+            <div onClick="{{ next }}" aria-label="Finish" style="width:40px;height:40px;flex:none;display:{{ cfArrow }};align-items:center;justify-content:center;border-radius:999px;cursor:pointer;background:linear-gradient(-72deg,rgba(255,255,255,.10),rgba(255,255,255,.24) 45%,rgba(255,255,255,.08));box-shadow:inset 0 1px 1px rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.18)"><i class="ri-arrow-right-line" style="font-size:18px;color:#FFFFFF"></i></div>
+          </div>
+        </sc-if>
+
+        <span style="display:{{ errDisp }};font-size:12.5px;color:#FF8A94;text-align:center">Passwords do not match.</span>
+
+        <div onClick="{{ back }}" style="display:{{ backDisp }};align-items:center;justify-content:center;gap:7px;cursor:pointer">
+          <i class="ri-arrow-left-line" style="font-size:14px;color:rgba(255,255,255,.6)"></i>
+          <span style="font-size:13px;color:rgba(255,255,255,.6)">Go back</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:none;display:flex;justify-content:center;padding:0 24px 30px">
+      <span style="font-size:13px;color:rgba(255,255,255,.55)">Already have an account? <a href="#" onClick="{{ done }}" style="color:#FFFFFF;font-weight:500">Sign in</a></span>
+    </div>
+  </div>
+
+  <div onClick="{{ replay }}" style="position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:6px;height:28px;padding:0 11px;border-radius:999px;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(6px);cursor:pointer;z-index:6">
+    <i class="ri-restart-line" style="font-size:12px;color:rgba(255,255,255,.8)"></i>
+    <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;color:rgba(255,255,255,.8)">REPLAY</span>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:932},&quot;onDone&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+const TILES = ['assets/tile-1.jpg','assets/tile-2.jpg','assets/tile-3.jpg','assets/tile-4.jpg','assets/tile-5.jpg'];
+const GLYPHS = [
+  ['ri-alarm-warning-fill','#D0021B'], ['ri-oil-fill','#D0021B'],
+  ['ri-temp-hot-fill','#E8A317'], ['ri-battery-2-charge-fill','#D0021B'],
+  ['ri-steering-2-fill','#E8A317'], ['ri-shield-flash-fill','#D0021B'],
+  ['ri-error-warning-fill','#E8A317'], ['ri-drop-fill','#E8A317'],
+  ['ri-car-fill','#D0021B'], ['ri-disc-line','#E8A317'],
+  ['ri-fire-fill','#D0021B'], ['ri-lightbulb-flash-fill','#E8A317'],
+];
+const TILE_W = 182;
+const ACCEL = 3.0;   // seconds of accelerating marquee
+const T_PHOTO = 3000, T_BUBBLE = 3500, T_AUTH = 7100;  // bubble holds ~3s before the auth fade
+
+function tile(k) {
+  if (k % 3 === 1) {
+    const g = GLYPHS[k % GLYPHS.length];
+    return { base: k % 2 ? '#111116' : '#0C0C10', bg: 'none', icon: g[0], iconDisplay: 'flex', tone: g[1] };
+  }
+  return { base: '#0E0E12', bg: 'url(' + TILES[k % TILES.length] + ')', icon: '', iconDisplay: 'none', tone: 'transparent' };
+}
+
+class Component extends DCLogic {
+  state = { phase: 'run', step: 'email', email: '', pw: '', cf: '', eye: false, err: false };
+
+  constructor(p) {
+    super(p);
+    this.rowRefs = [0,1,2,3,4,5].map(() => React.createRef());
+    this.wrapRef = React.createRef();
+    this.timers = [];
+    this.rows = [0,1,2,3,4,5].map((r) => {
+      const base = [];
+      for (let i = 0; i < 7; i++) base.push(tile(r * 4 + i));
+      return base.concat(base);
+    });
+  }
+
+  componentDidMount() { this.run(); }
+  componentWillUnmount() { this.stop(); }
+
+  stop() { cancelAnimationFrame(this.raf); this.timers.forEach(clearTimeout); this.timers = []; }
+  at(ms, fn) { this.timers.push(setTimeout(fn, ms)); }
+
+  run() {
+    this.stop();
+    this.setState({ phase: 'run', step: 'email', email: '', pw: '', cf: '', eye: false, err: false });
+
+    const start = performance.now();
+    const half = 7 * TILE_W;
+    let last = start, dist = 0;
+
+    const tick = (now) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const t = (now - start) / 1000;
+      const p = Math.min(1, t / ACCEL);
+      dist += (55 + 3200 * Math.pow(p, 2.8)) * dt;
+
+      for (let i = 0; i < 6; i++) {
+        const el = this.rowRefs[i].current;
+        if (!el) continue;
+        const off = (dist * (0.8 + 0.1 * i)) % half;
+        el.style.transform = 'translate3d(' + (i % 2 ? off - half : -off) + 'px,0,0)';
+      }
+      const wrap = this.wrapRef.current;
+      if (wrap) {
+        const b = 16 * Math.pow(Math.max(0, (t - 1.5) / (ACCEL - 1.5)), 3);
+        wrap.style.filter = b > 0.25 ? 'blur(' + b.toFixed(2) + 'px)' : 'none';
+        wrap.style.transform = 'translate(-50%,-50%) rotate(-25deg) scale(' + (1 + 0.16 * p * p) + ')';
+      }
+      if (t < ACCEL + 0.15) this.raf = requestAnimationFrame(tick);
+    };
+    this.raf = requestAnimationFrame(tick);
+
+    this.at(T_PHOTO, () => this.setState({ phase: 'photo' }));
+    this.at(T_BUBBLE, () => this.setState({ phase: 'bubble' }));
+    this.at(T_AUTH - 550, () => this.setState({ phase: 'fade' }));
+    this.at(T_AUTH, () => this.setState({ phase: 'auth' }));
+  }
+
+  next() {
+    const { step, email, pw, cf } = this.state;
+    if (step === 'email') {
+      if (/\S+@\S+\.\S+/.test(email)) this.setState({ step: 'pw' });
+    } else if (step === 'pw') {
+      if (pw.length >= 6) this.setState({ step: 'confirm', err: false });
+    } else if (cf.length >= 6) {
+      if (cf === pw) { if (this.props.onDone) this.props.onDone(); }
+      else this.setState({ err: true });
+    }
+  }
+
+  back() {
+    const { step } = this.state;
+    if (step === 'confirm') this.setState({ step: 'pw', cf: '', err: false });
+    else if (step === 'pw') this.setState({ step: 'email' });
+  }
+
+  renderVals() {
+    const { phase, step, email, pw, cf, eye, err } = this.state;
+    const marquee = phase === 'run';
+    const photoUp = phase !== 'run';
+    const blurred = phase === 'bubble' || phase === 'fade' || phase === 'auth';
+    const authUp = phase === 'auth';
+    const emailOk = /\S+@\S+\.\S+/.test(email);
+
+    return {
+      wrapRef: this.wrapRef,
+      r0: this.rowRefs[0], r1: this.rowRefs[1], r2: this.rowRefs[2],
+      r3: this.rowRefs[3], r4: this.rowRefs[4], r5: this.rowRefs[5],
+      row0: this.rows[0], row1: this.rows[1], row2: this.rows[2],
+      row3: this.rows[3], row4: this.rows[4], row5: this.rows[5],
+
+      stageOp: marquee ? 1 : 0,
+      markOp: phase === 'run' ? 1 : 0,
+      markScale: 1,
+      photoOp: photoUp ? 1 : 0,
+      photoFilter: blurred ? 'blur(11px) brightness(.6) saturate(.9)' : 'none',
+      photoScale: photoUp ? (blurred ? 1.16 : 1) : 1.1,
+      veilOp: photoUp ? 1 : 0,
+      blobOp: authUp || phase === 'fade' ? 1 : 0,
+      bubbleDisp: phase === 'bubble' || phase === 'fade' ? 'flex' : 'none',
+      bubbleOp: phase === 'bubble' ? 1 : 0,
+      authOp: authUp ? 1 : 0,
+      authPE: authUp ? 'auto' : 'none',
+
+      isEmail: step === 'email',
+      isPw: step === 'pw',
+      isConfirm: step === 'confirm',
+      showEmailField: step === 'email' || step === 'pw',
+      email, pw, cf,
+      emailArrow: step === 'email' && emailOk ? 'flex' : 'none',
+      pwArrow: pw.length >= 6 ? 'flex' : 'none',
+      cfArrow: cf.length >= 6 ? 'flex' : 'none',
+      pwType: eye ? 'text' : 'password',
+      eyeIcon: eye ? 'ri-eye-off-line' : 'ri-eye-line',
+      errDisp: err ? 'block' : 'none',
+      backDisp: step === 'email' ? 'none' : 'flex',
+
+      onEmail: (e) => this.setState({ email: e.target.value }),
+      onPw: (e) => this.setState({ pw: e.target.value }),
+      onCf: (e) => this.setState({ cf: e.target.value, err: false }),
+      onKey: (e) => { if (e.key === 'Enter') { e.preventDefault(); this.next(); } },
+      toggleEye: () => this.setState({ eye: !eye }),
+      next: () => this.next(),
+      back: () => this.back(),
+      oauth: () => { if (this.props.onDone) this.props.onDone(); },
+      replay: () => this.run(),
+      done: (e) => { if (e && e.preventDefault) e.preventDefault(); if (this.props.onDone) this.props.onDone(); },
+    };
+  }
+}
+
+</script>
+</body>
+</html>

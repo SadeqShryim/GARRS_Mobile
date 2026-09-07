@@ -1,0 +1,2379 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css">
+<style>
+@keyframes lm-spin3 { to { transform: translate(-50%,-50%) rotate(360deg); } }
+@keyframes lm-rip3 { 0% { transform: translate(-50%,-50%) scale(0); opacity:.5 } 100% { transform: translate(-50%,-50%) scale(4); opacity:0 } }
+@keyframes blob3 { 0%{transform:translate(-100%,-100%)} 25%{transform:translate(0%,-100%)} 50%{transform:translate(0%,0%)} 75%{transform:translate(-100%,0%)} 100%{transform:translate(-100%,-100%)} }
+@keyframes sheet-up { from { transform: translateY(100%) } to { transform: translateY(0) } }
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes shine-spin { to { transform: rotate(360deg) } }
+@keyframes screen-up { from { transform: translateY(100%) } to { transform: translateY(0) } }
+@keyframes art-in { from { transform: translateX(100%) } to { transform: translateX(0) } }
+@keyframes art-out { from { transform: translateX(0); opacity: 1 } to { transform: translateX(-22%); opacity: 0 } }
+@keyframes art-back-in { from { transform: translateX(-100%) } to { transform: translateX(0) } }
+@keyframes art-back-out { from { transform: translateX(0); opacity: 1 } to { transform: translateX(22%); opacity: 0 } }
+@keyframes bub-in-l { from { opacity: 0; transform: translate3d(-20px,12px,0) scale(.96) } to { opacity: 1; transform: none } }
+@keyframes bub-in-r { from { opacity: 0; transform: translate3d(20px,12px,0) scale(.96) } to { opacity: 1; transform: none } }
+@keyframes dot-bob { 0%,100% { opacity: .4; transform: translateY(0) } 50% { opacity: 1; transform: translateY(-4px) } }
+#gp-chat-scroll::-webkit-scrollbar { width: 4px }
+#gp-chat-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 2px }
+#gp-rail::-webkit-scrollbar { display: none }
+#gp-rail { scrollbar-width: none }
+</style>
+</helmet>
+<div style="width:430px;height:932px;background:#FFFFFF;position:relative;overflow:hidden;border-radius:30px;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.09);font-family:'Geist',system-ui,sans-serif">
+
+  {{ dots }}
+
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%">
+
+    <sc-if value="{{ isGarage }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:26px;padding:0 0 24px">
+        <div style="min-height:56px;display:flex;align-items:center;padding:0 20px;flex:none">
+          <div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;margin-left:-8px"><i class="ri-menu-2-line" style="font-size:20px;color:#6b6a72"></i></div>
+          <div style="flex:1;text-align:center;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:2.6px;color:#6b6a72">RECALL HUB</div>
+          <div style="width:36px;height:36px;display:flex;align-items:center;justify-content:center;position:relative;margin-right:-8px"><i class="ri-notification-3-line" style="font-size:19px;color:#6b6a72"></i><span style="position:absolute;right:6px;top:7px;width:6px;height:6px;border-radius:3px;background:#D0021B"></span></div>
+        </div>
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:0 20px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:38px;line-height:42px;font-weight:600;letter-spacing:-1.2px;color:#17161A">Garage</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1.4px;color:#63626a">{{ fleetLine }}</div>
+          </div>
+          <div style="flex:none">{{ metalButton }}</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 20px">
+            <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">YOUR VEHICLES</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">{{ counter }}</div>
+          </div>
+
+          <div id="gp-rail" style="display:flex;gap:14px;padding:0 56px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%)">
+            <sc-for list="{{ railCards }}" as="v" hint-placeholder-count="2">
+              <div onClick="{{ v.onSelect }}" style="width:318px;flex:none;scroll-snap-align:center;position:relative;border-radius:18px;overflow:hidden;background:#F2F1EE;cursor:pointer;transition:opacity .25s ease;opacity:{{ v.opacity }}">
+                <sc-if value="{{ v.hasRecall }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:50%;left:50%;width:190px;height:190px;border-radius:50%;filter:blur(14px);z-index:0;background:linear-gradient(90deg,#ec4899,#ef4444,#eab308);animation:blob3 5s linear infinite"></div>
+                </sc-if>
+                <div style="position:relative;z-index:2;margin:2px;border-radius:16px;background:rgba(255,255,255,0.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);outline:1px solid rgba(0,0,0,0.09);outline-offset:-1px;padding:18px 18px 0;display:flex;flex-direction:column">
+                  <div style="display:flex;align-items:center;justify-content:space-between">
+                    <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.4px;color:#6b6a72">{{ v.sync }}</div>
+                    <i class="ri-more-fill" style="font-size:18px;color:#63626a"></i>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:4px;margin-top:26px">
+                    <div style="font-size:26px;line-height:30px;font-weight:600;letter-spacing:-0.6px;color:#17161A">{{ v.name }}</div>
+                    <div style="font-size:14px;font-weight:400;color:#6b6a72">{{ v.meta }}</div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;margin-top:22px">
+                    <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.2px;color:#63626a">HEALTH</div>
+                    <div style="flex:1;height:3px;border-radius:2px;background:rgba(0,0,0,0.09);overflow:hidden"><div style="height:100%;border-radius:2px;transition:width .5s ease;width:{{ v.healthPct }};background:{{ v.healthFill }}"></div></div>
+                    <div style="font-family:'Geist Mono',monospace;font-size:11px;color:#17161A">{{ v.healthPct }}</div>
+                  </div>
+                  <div style="display:flex;margin-top:20px">
+                    <span style="display:inline-flex;align-items:center;gap:10px;border-radius:999px;border:1px solid rgba(0,0,0,0.14);background:rgba(0,0,0,0.02);padding:6px 10px">
+                      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;color:#17161A"><i class="{{ v.badgeIcon }}" style="font-size:15px;color:{{ v.badgeColor }}"></i>{{ v.badgeLeft }}</span>
+                      <span style="width:1px;height:14px;background:rgba(0,0,0,0.13)"></span>
+                      <span style="display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#6b6a72"><i class="ri-shield-check-line" style="font-size:15px"></i>{{ v.badgeRight }}</span>
+                    </span>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;margin:22px -18px 0;padding:14px 18px;background:#EDECE8;border-top:1px solid rgba(0,0,0,0.07)">
+                    <div style="display:flex;align-items:center;gap:18px">
+                      <div style="display:flex;flex-direction:column;gap:3px"><span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">RANGE</span><span style="font-size:13px;color:#3a3941">{{ v.range }}</span></div>
+                      <div style="display:flex;flex-direction:column;gap:3px"><span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">VIN</span><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#3a3941">{{ v.vin }}</span></div>
+                    </div>
+                    <div onClick="{{ v.onAction }}" style="display:flex;align-items:center;gap:6px;border-radius:999px;font-size:12px;font-weight:500;padding:8px 14px;cursor:pointer;background:{{ v.actionBg }};color:{{ v.actionFg }}">{{ v.actionLabel }}<i class="ri-arrow-right-up-line" style="font-size:14px"></i></div>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="padding:0 20px">{{ pager }}</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px;padding:0 20px">
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">NEEDS ATTENTION</div>
+          <sc-for list="{{ alerts }}" as="a" hint-placeholder-count="1">
+            <div onClick="{{ a.onOpen }}" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:14px;background:#F2F1EE;cursor:pointer">
+              <i class="ri-error-warning-line" style="font-size:18px;color:#D0021B"></i>
+              <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+                <span style="font-size:14px;font-weight:500;color:#17161A">{{ a.title }}</span>
+                <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1px;color:#57565e">{{ a.meta }}</span>
+              </div>
+              <i class="ri-arrow-right-s-line" style="font-size:20px;color:#63626a"></i>
+            </div>
+          </sc-for>
+          <sc-if value="{{ allClear }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:14px;background:#F2F1EE">
+              <i class="ri-checkbox-circle-fill" style="font-size:18px;color:#01a08c"></i>
+              <span style="font-size:14px;color:#3a3941">Nothing outstanding across your fleet.</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDetail }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:20px;padding:18px 20px 24px">
+
+          <div style="display:flex;align-items:center;gap:10px">
+            <div onClick="{{ d.onBack }}" style="width:36px;height:36px;margin-left:-8px;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ri-arrow-left-line" style="font-size:20px;color:#17161A"></i></div>
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.6px;color:#57565e">{{ d.code }}</span>
+            <span style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;padding:5px 10px;background:{{ d.chipBg }};color:{{ d.chipFg }}"><i class="{{ d.chipIcon }}" style="font-size:12px"></i>{{ d.status }}</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:28px;line-height:33px;font-weight:600;letter-spacing:-0.9px;color:#17161A;text-wrap:pretty">{{ d.title }}</div>
+            <div style="font-size:14px;color:#6b6a72">{{ d.vehicle }}</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <sc-for list="{{ d.facts }}" as="f" hint-placeholder-count="4">
+              <div style="border-radius:14px;background:#F2F1EE;padding:13px 14px;display:flex;flex-direction:column;gap:5px">
+                <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#57565e">{{ f.k }}</span>
+                <span style="font-size:15px;font-weight:500;color:#17161A">{{ f.v }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">WHY THIS MATTERS</div>
+            <div style="font-size:15px;line-height:23px;color:#3a3941;text-wrap:pretty">{{ d.why }}</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:11px">
+            <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">THE REMEDY</div>
+            <sc-for list="{{ d.steps }}" as="st" hint-placeholder-count="3">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:24px;height:24px;flex:none;border-radius:12px;background:#17161A;color:#F4F3F5;display:flex;align-items:center;justify-content:center;font-family:'Geist Mono',monospace;font-size:11px">{{ st.n }}</div>
+                <div style="flex:1;display:flex;flex-direction:column;gap:2px;padding-top:2px">
+                  <span style="font-size:14px;font-weight:500;color:#17161A">{{ st.title }}</span>
+                  <span style="font-size:13px;line-height:19px;color:#6b6a72;text-wrap:pretty">{{ st.body }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;border-radius:14px;background:#F2F1EE;padding:14px 15px">
+            <i class="ri-information-line" style="font-size:17px;color:#0F638F"></i>
+            <span style="font-size:13px;line-height:19px;color:#3a3941;text-wrap:pretty">{{ d.note }}</span>
+          </div>
+        </div>
+
+        <div style="flex:none;padding:12px 20px 16px;background:rgba(255,255,255,0.94);border-top:1px solid rgba(0,0,0,0.07);display:flex;gap:10px;align-items:stretch">
+          {{ d.cta }}
+          <div onClick="{{ d.onCall }}" style="width:54px;height:54px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid rgba(0,0,0,0.14);cursor:pointer;box-sizing:border-box"><i class="ri-phone-line" style="font-size:19px;color:#17161A"></i></div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isRecalls }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:20px;padding:24px 20px 28px">
+
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:38px;line-height:42px;font-weight:600;letter-spacing:-1.2px;color:#17161A">Recalls</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1.4px;color:#63626a">{{ r.headline }}</div>
+          </div>
+          <div style="flex:none">{{ metalButton }}</div>
+        </div>
+
+        <div style="position:relative;flex:none;border-radius:18px;overflow:hidden;background:{{ r.heroShell }}">
+          <sc-if value="{{ r.heroGlow }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:50%;left:50%;width:220px;height:220px;border-radius:50%;filter:blur(18px);z-index:0;background:linear-gradient(90deg,#ec4899,#ef4444,#eab308);animation:blob3 5s linear infinite"></div>
+          </sc-if>
+          <div style="position:relative;z-index:2;margin:2px;border-radius:16px;padding:18px;background:{{ r.heroFace }};backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);outline:1px solid rgba(0,0,0,0.08);outline-offset:-1px;display:flex;flex-direction:column;gap:14px">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px">
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <div style="font-size:30px;line-height:34px;font-weight:600;letter-spacing:-1px;color:#17161A">{{ r.heroTitle }}</div>
+                <div style="font-size:13px;color:#6b6a72;text-wrap:pretty">{{ r.heroSub }}</div>
+              </div>
+              <div style="width:40px;height:40px;flex:none;border-radius:20px;display:flex;align-items:center;justify-content:center;background:{{ r.heroIconBg }}"><i class="{{ r.heroIcon }}" style="font-size:19px;color:#ffffff"></i></div>
+            </div>
+            <div style="display:flex;gap:3px;height:6px">
+              <sc-for list="{{ r.strip }}" as="s" hint-placeholder-count="3">
+                <div style="border-radius:3px;transition:flex-grow .5s ease;flex:{{ s.grow }};background:{{ s.color }}"></div>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:14px">
+              <sc-for list="{{ r.legend }}" as="l" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <div style="width:7px;height:7px;border-radius:4px;background:{{ l.color }}"></div>
+                  <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.1px;color:#57565e">{{ l.text }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px">
+          <sc-for list="{{ r.filters }}" as="f" hint-placeholder-count="3">
+            <div onClick="{{ f.onTap }}" style="flex:1;display:flex;flex-direction:column;gap:3px;padding:11px 12px;border-radius:14px;cursor:pointer;transition:background .2s ease;background:{{ f.bg }};border:1px solid {{ f.border }}">
+              <span style="font-size:22px;font-weight:600;letter-spacing:-0.6px;color:{{ f.fg }}">{{ f.count }}</span>
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:{{ f.meta }}">{{ f.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ r.items }}" as="n" hint-placeholder-count="2">
+            <div onClick="{{ n.onToggle }}" style="position:relative;flex:none;border-radius:18px;overflow:hidden;cursor:pointer;background:{{ n.shell }}">
+              <sc-if value="{{ n.glow }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;top:50%;left:50%;width:200px;height:200px;border-radius:50%;filter:blur(16px);z-index:0;background:linear-gradient(90deg,#ec4899,#ef4444,#eab308);animation:blob3 5s linear infinite"></div>
+              </sc-if>
+              <div style="position:relative;z-index:2;margin:2px;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px;background:{{ n.face }};backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);outline:1px solid rgba(0,0,0,0.08);outline-offset:-1px">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;padding:5px 10px;background:{{ n.chipBg }};color:{{ n.chipFg }}"><i class="{{ n.chipIcon }}" style="font-size:12px"></i>{{ n.status }}</span>
+                  <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.2px;color:#57565e">{{ n.code }}</span>
+                  <i class="{{ n.caret }}" style="margin-left:auto;font-size:20px;color:#63626a"></i>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <div style="font-size:18px;line-height:23px;font-weight:600;letter-spacing:-0.3px;color:#17161A;text-wrap:pretty">{{ n.title }}</div>
+                  <div style="font-size:13px;color:#6b6a72">{{ n.vehicle }}</div>
+                </div>
+                <sc-if value="{{ n.expanded }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column">
+                    <sc-for list="{{ n.rows }}" as="row" hint-placeholder-count="4">
+                      <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid rgba(0,0,0,0.07)">
+                        <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ row.k }}</span>
+                        <span style="font-size:13px;color:#17161A;text-align:right">{{ row.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ n.actionable }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:10px;align-items:stretch">
+                    {{ n.cta }}
+                    <div onClick="{{ n.onBulletin }}" style="flex:1;height:48px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;border:1px solid rgba(0,0,0,0.14);color:#17161A;font-size:14px;font-weight:500;cursor:pointer;box-sizing:border-box">See details<i class="ri-arrow-right-line" style="font-size:15px"></i></div>
+                  </div>
+                </sc-if>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ r.empty }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:11px;border-radius:16px;background:#F2F1EE;padding:16px">
+              <i class="ri-shield-check-fill" style="font-size:19px;color:#01a08c"></i>
+              <span style="font-size:14px;color:#3a3941">{{ r.emptyText }}</span>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStats }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:22px;padding:18px 20px 28px">
+
+        <div style="display:flex;align-items:center;gap:12px">
+          <div onClick="{{ goBack }}" style="width:36px;height:36px;margin-left:-8px;display:flex;align-items:center;justify-content:center;border-radius:18px;cursor:pointer"><i class="ri-arrow-left-line" style="font-size:20px;color:#17161A"></i></div>
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="font-size:24px;line-height:28px;font-weight:600;letter-spacing:-0.7px;color:#17161A">{{ s.name }}</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.4px;color:#57565e">{{ s.metaUpper }}</div>
+          </div>
+        </div>
+
+        <sc-if value="{{ s.hasRecall }}" hint-placeholder-val="{{ false }}">
+          <div style="position:relative;flex:none;border-radius:20px;overflow:hidden;background:#232228">
+            <div style="position:absolute;top:50%;left:50%;width:210px;height:210px;border-radius:50%;filter:blur(16px);z-index:0;background:linear-gradient(90deg,#ec4899,#ef4444,#eab308);animation:blob3 5s linear infinite"></div>
+            <div style="position:relative;z-index:2;margin:2px;border-radius:18px;background:rgba(255,255,255,0.84);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);outline:1px solid rgba(0,0,0,0.09);outline-offset:-1px;padding:18px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#D0021B;color:#fff;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;padding:5px 10px"><i class="ri-alarm-warning-fill" style="font-size:12px"></i>ACTIVE SAFETY RECALL</span>
+                <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.2px;color:#57565e">{{ s.recallCode }}</span>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:4px">
+                <div style="font-size:21px;line-height:25px;font-weight:600;letter-spacing:-0.5px;color:#17161A;text-wrap:pretty">{{ s.recallTitle }}</div>
+                <div style="font-size:13px;color:#6b6a72">Free remedy available · 45 min at Tesla Service, 6.2 mi away</div>
+              </div>
+              <div style="display:flex;gap:10px;align-items:stretch">
+                {{ s.recallCta }}
+                <div onClick="{{ s.onRecallDetails }}" style="flex:1;height:50px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;border:1px solid rgba(0,0,0,0.14);color:#17161A;font-size:14px;font-weight:500;cursor:pointer;box-sizing:border-box">Details<i class="ri-arrow-right-up-line" style="font-size:15px"></i></div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ s.noRecall }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:11px;border-radius:16px;background:#F2F1EE;padding:15px 16px">
+            <i class="ri-shield-check-fill" style="font-size:19px;color:#01a08c"></i>
+            <div style="flex:1;display:flex;flex-direction:column;gap:2px">
+              <span style="font-size:14px;font-weight:500;color:#17161A">{{ s.clearTitle }}</span>
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">CHECKED AGAINST NHTSA · {{ s.clearMeta }}</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="position:relative;border-radius:20px;background:#F2F1EE;padding:22px 22px 26px;display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:17px;font-weight:500;color:#6b6a72">Vehicle health</div>
+            <div style="width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center;background:{{ s.gaugeColor }}"><i class="ri-pulse-line" style="font-size:19px;color:#ffffff"></i></div>
+          </div>
+          <div style="height:196px;display:flex;align-items:center;justify-content:center;position:relative;margin:6px 0">
+            <svg width="164" height="164" viewBox="0 0 164 164" style="transform:rotate(-90deg);display:block">
+              <circle cx="82" cy="82" r="66" stroke-width="10" fill="transparent" stroke="#dcdbd8" stroke-dasharray="7 10" stroke-linecap="round"></circle>
+              <circle cx="82" cy="82" r="66" stroke-width="10" fill="transparent" stroke-linecap="round" stroke="{{ s.gaugeColor }}" stroke-dasharray="{{ s.circ }}" stroke-dashoffset="{{ s.dash }}" style="transition:stroke-dashoffset 1.4s cubic-bezier(.43,.13,.23,.96)"></circle>
+            </svg>
+            <div style="position:absolute;display:flex;flex-direction:column;align-items:center">
+              <div style="font-size:48px;line-height:50px;font-weight:600;letter-spacing:-2px;color:#17161A">{{ s.count }}</div>
+              <div style="font-size:16px;font-weight:500;color:#6b6a72">{{ s.word }}</div>
+            </div>
+          </div>
+          <div style="text-align:center;font-size:13px;color:#6b6a72;text-wrap:pretty">{{ s.summary }}</div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <sc-for list="{{ s.tiles }}" as="t" hint-placeholder-count="4">
+            <div style="border-radius:14px;background:#F2F1EE;padding:14px 15px;display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:center;gap:7px">
+                <i class="{{ t.icon }}" style="font-size:15px;color:{{ t.tone }}"></i>
+                <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#57565e">{{ t.label }}</span>
+              </div>
+              <div style="font-size:20px;font-weight:600;letter-spacing:-0.5px;color:#17161A">{{ t.value }}</div>
+              <div style="font-size:12px;color:#6b6a72">{{ t.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">MAINTENANCE</div>
+          <sc-for list="{{ s.service }}" as="m" hint-placeholder-count="3">
+            <div style="border-radius:14px;background:#F2F1EE;padding:14px 15px;display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px">
+                <span style="font-size:14px;font-weight:500;color:#17161A">{{ m.label }}</span>
+                <span style="font-family:'Geist Mono',monospace;font-size:11px;color:{{ m.tone }}">{{ m.due }}</span>
+              </div>
+              <div style="height:3px;border-radius:2px;background:rgba(0,0,0,0.09);overflow:hidden"><div style="height:100%;border-radius:2px;transition:width .8s ease;width:{{ m.pct }};background:{{ m.tone }}"></div></div>
+              <div style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ m.meta }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isService }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:24px;padding:18px 20px 28px">
+
+        <sc-if value="{{ sv.showForm }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:24px">
+
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:30px;line-height:34px;font-weight:600;letter-spacing:-1px;color:#17161A">Schedule Service</div>
+              <div style="font-size:13px;color:#6b6a72;text-wrap:pretty">Select a time and location for your appointment.</div>
+            </div>
+
+            <div onClick="{{ sv.onOpenReason }}" style="position:relative;flex:none;border-radius:16px;padding:2px;overflow:hidden;cursor:pointer;background:{{ sv.reasonShell }}">
+              <sc-if value="{{ sv.reasonCaution }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;inset:0;border-radius:16px;overflow:hidden">
+                  <div style="position:absolute;inset:-100%;filter:blur(3px);animation:shine-spin 4s linear infinite;background:conic-gradient(from 0deg,#D0021B,#ffb741,#D0021B,#ffb741,#D0021B)"></div>
+                </div>
+              </sc-if>
+              <div style="position:relative;display:flex;gap:14px;align-items:center;border-radius:14px;background:#F2F1EE;padding:15px 16px">
+                <div style="display:flex;flex-direction:column;gap:6px;flex:1">
+                  <div style="display:flex;align-items:center;gap:7px">
+                    <i class="{{ sv.reasonIcon }}" style="font-size:13px;color:{{ sv.reasonTone }}"></i>
+                    <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;color:{{ sv.reasonTone }}">{{ sv.ref }}</span>
+                  </div>
+                  <div style="font-size:18px;line-height:23px;font-weight:600;letter-spacing:-0.3px;color:#17161A;text-wrap:pretty">{{ sv.reason }}</div>
+                  <div style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ sv.reasonHint }}</div>
+                </div>
+                <i class="ri-arrow-right-s-line" style="font-size:20px;flex:none;color:#63626a"></i>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+                <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">SELECTED CENTER</span>
+                <span onClick="{{ sv.onChange }}" style="font-size:12px;font-weight:500;color:#0F638F;cursor:pointer">Change</span>
+              </div>
+              <div style="perspective:1000px">
+                <div onMouseMove="{{ sv.onTiltMove }}" onMouseLeave="{{ sv.onTiltLeave }}" style="position:relative;overflow:hidden;height:250px;border-radius:16px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.1);transform-style:preserve-3d;transition:transform .12s linear;transform:{{ sv.tilt }}">
+                  <div style="position:absolute;inset:0;transition:opacity .35s ease;opacity:{{ sv.mapOn }}">
+                    <div style="position:absolute;inset:0;background:#F2F1EE"></div>
+                    <svg width="100%" height="100%" preserveAspectRatio="none" style="position:absolute;inset:0">
+                      <line x1="0%" y1="35%" x2="100%" y2="35%" stroke="rgba(23,22,26,0.25)" stroke-width="4"></line>
+                      <line x1="0%" y1="65%" x2="100%" y2="65%" stroke="rgba(23,22,26,0.25)" stroke-width="4"></line>
+                      <line x1="30%" y1="0%" x2="30%" y2="100%" stroke="rgba(23,22,26,0.20)" stroke-width="3"></line>
+                      <line x1="70%" y1="0%" x2="70%" y2="100%" stroke="rgba(23,22,26,0.20)" stroke-width="3"></line>
+                      <line x1="0%" y1="20%" x2="100%" y2="20%" stroke="rgba(23,22,26,0.10)" stroke-width="1.5"></line>
+                      <line x1="0%" y1="50%" x2="100%" y2="50%" stroke="rgba(23,22,26,0.10)" stroke-width="1.5"></line>
+                      <line x1="0%" y1="80%" x2="100%" y2="80%" stroke="rgba(23,22,26,0.10)" stroke-width="1.5"></line>
+                      <line x1="15%" y1="0%" x2="15%" y2="100%" stroke="rgba(23,22,26,0.10)" stroke-width="1.5"></line>
+                      <line x1="45%" y1="0%" x2="45%" y2="100%" stroke="rgba(23,22,26,0.10)" stroke-width="1.5"></line>
+                      <line x1="55%" y1="0%" x2="55%" y2="100%" stroke="rgba(23,22,26,0.10)" stroke-width="1.5"></line>
+                      <line x1="85%" y1="0%" x2="85%" y2="100%" stroke="rgba(23,22,26,0.10)" stroke-width="1.5"></line>
+                    </svg>
+                    <div style="position:absolute;top:40%;left:10%;width:15%;height:20%;border-radius:3px;background:rgba(107,106,114,0.30);border:1px solid rgba(107,106,114,0.20)"></div>
+                    <div style="position:absolute;top:15%;left:35%;width:12%;height:15%;border-radius:3px;background:rgba(107,106,114,0.25);border:1px solid rgba(107,106,114,0.15)"></div>
+                    <div style="position:absolute;top:70%;left:75%;width:18%;height:18%;border-radius:3px;background:rgba(107,106,114,0.28);border:1px solid rgba(107,106,114,0.18)"></div>
+                    <div style="position:absolute;top:20%;right:10%;width:10%;height:25%;border-radius:3px;background:rgba(107,106,114,0.22);border:1px solid rgba(107,106,114,0.15)"></div>
+                    <div style="position:absolute;top:55%;left:5%;width:8%;height:12%;border-radius:3px;background:rgba(107,106,114,0.20);border:1px solid rgba(107,106,114,0.12)"></div>
+                    <div style="position:absolute;top:8%;left:75%;width:14%;height:10%;border-radius:3px;background:rgba(107,106,114,0.22);border:1px solid rgba(107,106,114,0.15)"></div>
+                    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);filter:drop-shadow(0 0 10px rgba(15,99,143,0.45))">
+                      <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#0F638F"></path><circle cx="12" cy="9" r="2.5" fill="#FFFFFF"></circle></svg>
+                    </div>
+                    <div style="position:absolute;inset:0;background:linear-gradient(0deg,#FFFFFF 0%,transparent 55%);opacity:.72"></div>
+                  </div>
+
+                  <div style="position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:15px 16px;box-sizing:border-box">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+                      <div style="width:44px;height:44px;flex:none;border-radius:22px;display:flex;align-items:center;justify-content:center;transition:background .3s ease;background:{{ sv.pinBg }}"><i class="ri-map-pin-line" style="font-size:20px;color:#17161A"></i></div>
+                      <div style="display:flex;align-items:center;gap:6px;border-radius:999px;background:rgba(23,22,26,0.05);backdrop-filter:blur(4px);padding:5px 9px">
+                        <div style="width:6px;height:6px;border-radius:4px;background:#01a08c"></div>
+                        <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ sv.tiltState }}</span>
+                      </div>
+                    </div>
+                    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px">
+                      <div style="display:flex;flex-direction:column;gap:3px">
+                        <div style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">{{ sv.center }}</div>
+                        <div style="font-size:13px;color:#6b6a72">{{ sv.address }}</div>
+                        <div style="overflow:hidden;transition:max-height .35s ease,opacity .3s ease;max-height:{{ sv.coordH }};opacity:{{ sv.mapOn }}">
+                          <span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.6px;color:#57565e">{{ sv.coords }}</span>
+                        </div>
+                        <div style="height:1px;margin-top:3px;background:linear-gradient(90deg,rgba(15,99,143,0.5),rgba(15,99,143,0.25),transparent);transform-origin:left;transition:transform .4s ease;transform:{{ sv.ruleScale }}"></div>
+                      </div>
+                      <span style="font-family:'Geist Mono',monospace;font-size:11px;color:#0F638F">{{ sv.distance }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">SERVICE METHOD</span>
+              <div style="display:flex;gap:4px;padding:4px;border-radius:14px;background:#F2F1EE">
+                <sc-for list="{{ sv.methods }}" as="m" hint-placeholder-count="2">
+                  <div onClick="{{ m.onTap }}" style="flex:1;height:42px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;cursor:pointer;transition:background .2s ease,box-shadow .2s ease;background:{{ m.bg }};box-shadow:{{ m.shadow }}">
+                    <i class="{{ m.icon }}" style="font-size:16px;color:{{ m.fg }}"></i>
+                    <span style="font-size:13px;font-weight:500;color:{{ m.fg }}">{{ m.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">SELECT DATE</span>
+              <div style="display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px">
+                <sc-for list="{{ sv.dates }}" as="d" hint-placeholder-count="5">
+                  <div onClick="{{ d.onTap }}" style="width:66px;height:82px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-radius:16px;cursor:pointer;box-sizing:border-box;transition:background .2s ease,border-color .2s ease;background:{{ d.bg }};border:1px solid {{ d.border }}">
+                    <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:{{ d.meta }}">{{ d.day }}</span>
+                    <span style="font-size:22px;font-weight:600;letter-spacing:-0.6px;color:{{ d.fg }}">{{ d.date }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:11px">
+              <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">AVAILABLE TIMES</span>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+                <sc-for list="{{ sv.times }}" as="t" hint-placeholder-count="6">
+                  <div onClick="{{ t.onTap }}" style="min-height:46px;display:flex;align-items:center;justify-content:center;border-radius:12px;box-sizing:border-box;transition:background .2s ease,border-color .2s ease;background:{{ t.bg }};border:1px solid {{ t.border }};opacity:{{ t.opacity }};cursor:{{ t.cursor }}">
+                    <span style="font-family:'Geist Mono',monospace;font-size:12px;color:{{ t.fg }}">{{ t.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex;padding-top:2px">{{ sv.confirmCta }}</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ sv.showDone }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:26px">
+
+            <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:22px 0 4px">
+              <div style="width:146px;height:146px;border-radius:73px;display:flex;align-items:center;justify-content:center;background:#F2F1EE;border:1px solid rgba(15,99,143,0.28);box-shadow:0 0 34px rgba(15,99,143,0.14)">
+                <div style="width:58px;height:58px;border-radius:29px;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#2E93C4 0%,#0F638F 55%,#0B4E73 100%)"><i class="ri-check-line" style="font-size:32px;color:#EAF7FF"></i></div>
+              </div>
+              <div style="margin-top:6px;font-size:28px;line-height:32px;font-weight:600;letter-spacing:-0.9px;color:#17161A">Confirmed</div>
+              <div style="font-size:13px;color:#6b6a72">Your service request is scheduled.</div>
+            </div>
+
+            <div style="border-radius:16px;background:#F2F1EE;padding:0 18px">
+              <sc-for list="{{ sv.details }}" as="x" hint-placeholder-count="2">
+                <div style="min-height:88px;display:flex;align-items:center;gap:14px;padding:18px 0;border-top:1px solid {{ x.line }}">
+                  <div style="width:42px;height:42px;flex:none;border-radius:21px;display:flex;align-items:center;justify-content:center;background:#FFFFFF"><i class="{{ x.icon }}" style="font-size:20px;color:#3a3941"></i></div>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+                    <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#57565e">{{ x.label }}</span>
+                    <span style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">{{ x.value }}</span>
+                    <span style="font-size:12px;color:#6b6a72">{{ x.secondary }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">STATUS TRACKER</span>
+              <div style="display:flex;flex-direction:column">
+                <sc-for list="{{ sv.steps }}" as="st" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:flex-start;gap:12px;min-height:52px">
+                    <div style="position:relative;width:20px;flex:none;display:flex;justify-content:center">
+                      <div style="position:absolute;top:20px;bottom:-32px;width:1px;background:{{ st.rail }}"></div>
+                      <div style="position:relative;width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;background:{{ st.nodeBg }};border:{{ st.nodeBorder }}">
+                        <div style="width:8px;height:8px;border-radius:4px;background:{{ st.dot }}"></div>
+                      </div>
+                    </div>
+                    <span style="font-size:{{ st.size }};font-weight:{{ st.weight }};letter-spacing:{{ st.track }};color:{{ st.fg }}">{{ st.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <div style="display:flex">{{ sv.returnCta }}</div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:16px;padding:18px 20px 28px">
+
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 0 22px">
+          <div style="width:118px;height:118px;border-radius:59px;display:flex;align-items:center;justify-content:center;background:#FFFFFF;border:2px solid rgba(0,0,0,0.12)">
+            <span style="font-size:42px;line-height:49px;font-weight:700;letter-spacing:-1.5px;color:#9a99a2">{{ pf.initials }}</span>
+          </div>
+          <div style="margin-top:4px;font-size:28px;line-height:32px;font-weight:600;letter-spacing:-0.9px;color:#17161A">{{ pf.name }}</div>
+          <div style="font-size:13px;color:#6b6a72">{{ pf.member }}</div>
+          <div style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:#F2F1EE;padding:5px 12px">
+            <i class="ri-shield-check-fill" style="font-size:12px;color:#0F638F"></i>
+            <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;color:#0F638F">{{ pf.plan }}</span>
+          </div>
+        </div>
+
+        <div onClick="{{ pf.onOpenMembership }}" style="border-radius:16px;background:#F2F1EE;padding:18px;display:flex;align-items:center;gap:12px;cursor:pointer">
+          <i class="ri-vip-crown-2-line" style="font-size:20px;color:#0F638F"></i>
+          <div style="flex:1;display:flex;flex-direction:column;gap:3px">
+            <span style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">Membership</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#57565e">{{ pf.planLine }}</span>
+          </div>
+          <i class="ri-arrow-right-s-line" style="font-size:22px;color:#63626a"></i>
+        </div>
+
+        <div style="border-radius:16px;background:#F2F1EE;padding:18px;display:flex;flex-direction:column;gap:16px">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">Account Details</div>
+          <sc-for list="{{ pf.info }}" as="i" hint-placeholder-count="2">
+            <div style="display:flex;flex-direction:column;gap:3px">
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#57565e">{{ i.label }}</span>
+              <span style="font-size:13px;color:#3a3941">{{ i.value }}</span>
+            </div>
+          </sc-for>
+          <div onClick="{{ pf.onEdit }}" style="min-height:48px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;border:1px solid rgba(0,0,0,0.14);cursor:pointer;box-sizing:border-box">
+            <i class="ri-pencil-line" style="font-size:15px;color:#3a3941"></i>
+            <span style="font-size:13px;font-weight:500;color:#3a3941">Edit Profile</span>
+          </div>
+        </div>
+
+        <div style="border-radius:16px;background:#F2F1EE;padding:18px;display:flex;flex-direction:column;gap:6px">
+          <div style="margin-bottom:8px;font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">Preferences</div>
+          <sc-for list="{{ pf.toggles }}" as="t" hint-placeholder-count="3">
+            <div onClick="{{ t.onTap }}" style="min-height:42px;display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer">
+              <span style="font-size:14px;color:#3a3941">{{ t.label }}</span>
+              <div style="width:44px;height:26px;flex:none;border-radius:13px;padding:3px;box-sizing:border-box;transition:background .22s ease;background:{{ t.track }}">
+                <div style="width:20px;height:20px;border-radius:10px;background:#FFFFFF;box-shadow:0 1px 2px rgba(0,0,0,0.22);transition:transform .22s cubic-bezier(.4,0,.2,1);transform:{{ t.knob }}"></div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="border-radius:16px;background:#F2F1EE;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+            <div style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">My Garage</div>
+            <span onClick="{{ pf.onAddVehicle }}" style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;color:#0F638F;cursor:pointer">+ ADD VEHICLE</span>
+          </div>
+          <sc-for list="{{ pf.garage }}" as="g" hint-placeholder-count="3">
+            <div onClick="{{ g.onOpen }}" style="display:flex;align-items:flex-start;gap:12px;border-radius:12px;background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);padding:15px 16px;cursor:pointer">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                <span style="font-size:15px;font-weight:600;letter-spacing:-0.2px;color:#17161A">{{ g.name }}</span>
+                <span style="font-size:12px;color:#6b6a72">{{ g.make }}</span>
+                <span style="align-self:flex-start;margin-top:2px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.1px;color:#57565e;background:#F2F1EE;border-radius:4px;padding:4px 6px">{{ g.vin }}</span>
+                <span style="margin-top:6px;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:{{ g.statusColor }}"><span style="width:7px;height:7px;border-radius:4px;background:{{ g.statusColor }}"></span>{{ g.status }}</span>
+              </div>
+              <i class="ri-car-fill" style="font-size:18px;color:{{ g.iconColor }}"></i>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="border-radius:16px;background:#F2F1EE;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="width:48px;height:48px;border-radius:24px;display:flex;align-items:center;justify-content:center;background:#E7F1F7"><i class="ri-customer-service-2-line" style="font-size:23px;color:#0F638F"></i></div>
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">Concierge Support</div>
+          <div style="font-size:13px;line-height:20px;color:#6b6a72;text-wrap:pretty">Need assistance? Our Aegis specialists are available 24/7 for Pro members.</div>
+          <div style="display:flex;padding-top:2px">{{ pf.chatCta }}</div>
+        </div>
+
+        <div style="border-radius:16px;background:#F2F1EE;padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">Recent Activity</div>
+          <sc-for list="{{ pf.activity }}" as="a" hint-placeholder-count="3">
+            <div style="display:flex;align-items:flex-start;gap:12px">
+              <div style="width:8px;height:8px;flex:none;margin-top:6px;border-radius:4px;background:{{ a.color }}"></div>
+              <div style="display:flex;flex-direction:column;gap:3px">
+                <span style="font-size:13px;color:#3a3941;text-wrap:pretty">{{ a.title }}</span>
+                <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ a.detail }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="border-radius:16px;background:#FBE9EB;border:1px solid #F0B9C0;padding:18px;display:flex;flex-direction:column;gap:12px">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#D0021B">Danger Zone</div>
+          <div style="font-size:13px;line-height:20px;color:#7a5257;text-wrap:pretty">Permanently delete your account and remove all vehicle data.</div>
+          <div onClick="{{ pf.onDelete }}" style="align-self:flex-start;min-height:46px;display:flex;align-items:center;padding:0 16px;border-radius:12px;border:1px solid #D0021B;cursor:pointer;box-sizing:border-box">
+            <span style="font-size:13px;font-weight:500;color:#D0021B">Delete Account</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isHub }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:24px;padding:24px 0 28px">
+
+        <div style="display:flex;flex-direction:column;gap:6px;padding:0 20px">
+          <div style="font-size:38px;line-height:42px;font-weight:600;letter-spacing:-1.2px;color:#17161A">Hub</div>
+          <div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1.4px;color:#63626a">{{ hb.headline }}</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;padding:0 20px">
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">FEATURED READING</span>
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">{{ hb.counter }}</span>
+          </div>
+
+          <div id="gp-hub-rail" style="display:flex;gap:14px;padding:0 56px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 9%,#000 91%,transparent 100%)">
+            <sc-for list="{{ hb.rail }}" as="a" hint-placeholder-count="3">
+              <div onClick="{{ a.onOpen }}" style="width:318px;flex:none;scroll-snap-align:center;border-radius:18px;overflow:hidden;background:#F2F1EE;cursor:pointer">
+                <div style="height:132px;display:flex;flex-direction:column;justify-content:space-between;padding:16px;background:{{ a.wash }}">
+                  <span style="display:inline-flex;align-self:flex-start;align-items:center;gap:6px;border-radius:999px;background:rgba(255,255,255,0.9);font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;padding:5px 10px;color:#17161A"><i class="{{ a.icon }}" style="font-size:12px"></i>{{ a.kicker }}</span>
+                  <i class="{{ a.icon }}" style="align-self:flex-end;font-size:44px;color:rgba(255,255,255,0.85)"></i>
+                </div>
+                <div style="padding:15px 16px 17px;display:flex;flex-direction:column;gap:6px">
+                  <div style="font-size:18px;line-height:23px;font-weight:600;letter-spacing:-0.4px;color:#17161A;text-wrap:pretty">{{ a.title }}</div>
+                  <div style="font-size:13px;line-height:19px;color:#6b6a72;text-wrap:pretty">{{ a.dek }}</div>
+                  <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+                    <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ a.read }}</span>
+                    <i class="ri-arrow-right-up-line" style="font-size:14px;color:#63626a"></i>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:6px;padding:0 20px">
+            <sc-for list="{{ hb.dots }}" as="d" hint-placeholder-count="4">
+              <div onClick="{{ d.onTap }}" style="height:2px;border-radius:1px;cursor:pointer;transition:width .3s ease,background .3s ease;width:{{ d.w }};background:{{ d.bg }}"></div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px;padding:0 20px">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">DASHBOARD LIGHTS</span>
+            <span style="font-size:13px;line-height:19px;color:#6b6a72;text-wrap:pretty">Tap any warning light to read what it means and what to do next.</span>
+          </div>
+
+          <div style="display:flex;gap:7px;flex-wrap:wrap">
+            <sc-for list="{{ hb.groups }}" as="g" hint-placeholder-count="3">
+              <div onClick="{{ g.onTap }}" style="display:flex;align-items:center;gap:6px;border-radius:999px;padding:7px 12px;cursor:pointer;box-sizing:border-box;background:{{ g.bg }};border:1px solid {{ g.edge }}">
+                <div style="width:7px;height:7px;border-radius:4px;background:{{ g.dot }}"></div>
+                <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:{{ g.fg }}">{{ g.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+            <sc-for list="{{ hb.lights }}" as="l" hint-placeholder-count="12">
+              <div onClick="{{ l.onTap }}" style="aspect-ratio:1;border-radius:14px;background:#F2F1EE;border:1px solid {{ l.edge }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:6px;cursor:pointer;box-sizing:border-box">
+                <div style="height:26px;display:flex;align-items:center;justify-content:center">
+                  <i class="{{ l.icon }}" style="font-size:23px;line-height:1;color:{{ l.tone }}"></i>
+                  <sc-if value="{{ l.glyph }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-family:'Geist Mono',monospace;font-size:13px;font-weight:500;letter-spacing:0.4px;color:{{ l.tone }}">{{ l.glyph }}</span>
+                  </sc-if>
+                </div>
+                <span style="font-size:9.5px;line-height:12px;text-align:center;color:#57565e;text-wrap:pretty">{{ l.short }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:10px;border-radius:14px;background:#F2F1EE;padding:13px 15px">
+            <i class="ri-information-line" style="font-size:16px;color:#0F638F"></i>
+            <span style="font-size:12px;line-height:18px;color:#3a3941;text-wrap:pretty">Symbols vary by manufacturer. Your owner's manual is the final word for your vehicle.</span>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isStub }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:0 40px 56px">
+        <i class="{{ stubIcon }}" style="font-size:26px;color:#9a99a2"></i>
+        <div style="font-size:22px;font-weight:600;letter-spacing:-0.4px;color:#17161A">{{ stubTitle }}</div>
+        <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.6px;color:#63626a;text-align:center">NOT IN THIS PROTOTYPE YET</div>
+      </div>
+    </sc-if>
+
+    <div style="flex:none;position:relative;background:#FFFFFF">
+      <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+        <clipPath id="menu-clip-path" clipPathUnits="objectBoundingBox" transform="scale(0.0049285362247413 0.021978021978022)">
+          <path d="M6.7,45.5c5.7,0.1,14.1-0.4,23.3-4c5.7-2.3,9.9-5,18.1-10.5c10.7-7.1,11.8-9.2,20.6-14.3c5-2.9,9.2-5.2,15.2-7 c7.1-2.1,13.3-2.3,17.6-2.1c4.2-0.2,10.5,0.1,17.6,2.1c6.1,1.8,10.2,4.1,15.2,7c8.8,5,9.9,7.1,20.6,14.3c8.3,5.5,12.4,8.2,18.1,10.5 c9.2,3.6,17.6,4.2,23.3,4H6.7z"></path>
+        </clipPath>
+      </svg>
+      <div style="position:relative;padding-bottom:6px;background:#17181A;border-radius:11px 11px 28px 28px">
+        <div id="gp-menu" style="position:relative;display:flex;padding:0 8px;background:#17181A;border-radius:11px 11px 0 0">
+          <div id="gp-hump" style="position:absolute;left:0;bottom:calc(100% - 1px);width:61px;height:13.7px;clip-path:url(#menu-clip-path);background:#17181A;transition:transform .55s cubic-bezier(.2,.9,.2,1);transform:{{ humpX }}"></div>
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+            <div data-tab-item="1" onClick="{{ t.onTap }}" aria-label="{{ t.label }}" style="flex:1;z-index:1;height:28px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;transition:transform .55s cubic-bezier(.2,.9,.2,1);transform:{{ t.lift }}">
+              <div style="position:absolute;top:50%;left:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#FFFFFF;transition:transform .55s cubic-bezier(.2,.9,.2,1);transform:{{ t.pop }}"></div>
+              <i class="{{ t.icon }}" style="position:absolute;top:50%;left:50%;width:18px;height:18px;margin:-9px 0 0 -9px;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;transition:color .3s ease,opacity .3s ease;color:{{ t.color }};opacity:{{ t.dim }}"></i>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{ overlay }}
+  {{ toast }}
+
+  <sc-if value="{{ splashOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:60;overflow:hidden;border-radius:30px">
+      <dc-import name="Splash" on-done="{{ splashDone }}" style="position:absolute;inset:0" hint-size="100%,100%"></dc-import>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isMembership }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:25;background:#FFFFFF;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;animation:screen-up .34s cubic-bezier(.2,.85,.2,1)">
+      <div style="flex:none;display:flex;align-items:center;gap:12px;padding:18px 20px 8px">
+        <div onClick="{{ pf.onCloseMembership }}" aria-label="Close" style="width:38px;height:38px;margin-left:-9px;display:flex;align-items:center;justify-content:center;border-radius:19px;cursor:pointer"><i class="ri-close-line" style="font-size:23px;color:#17161A"></i></div>
+        <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#57565e">MEMBERSHIP</span>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:16px;padding:8px 20px 32px">
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:32px;line-height:36px;font-weight:600;letter-spacing:-1.1px;color:#17161A;text-wrap:pretty">Select your protection level</div>
+          <div style="font-size:14px;line-height:21px;color:#6b6a72;text-wrap:pretty">Choose the level of monitoring across your fleet. Change or cancel any time.</div>
+        </div>
+        <sc-for list="{{ pf.plans }}" as="pl" hint-placeholder-count="3">
+          <div style="position:relative;flex:none;border-radius:16px;padding:{{ pl.pad }};background:{{ pl.shell }}">
+            <sc-if value="{{ pl.shine }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;border-radius:16px;overflow:hidden">
+                <div style="position:absolute;inset:-100%;filter:blur(4px);animation:shine-spin 4s linear infinite;background:conic-gradient(from 0deg,#3b82f6,#ef4444,#2dd4bf,#3b82f6)"></div>
+              </div>
+            </sc-if>
+            <div style="position:relative;border-radius:14px;background:#FFFFFF;border:1px solid {{ pl.edge }};padding:18px;display:flex;flex-direction:column;gap:14px;box-sizing:border-box">
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <span style="font-size:18px;font-weight:600;letter-spacing:-0.3px;color:#17161A">{{ pl.name }}</span>
+                  <div style="display:flex;align-items:baseline;gap:4px">
+                    <span style="font-size:32px;font-weight:600;letter-spacing:-1.3px;color:#17161A">{{ pl.price }}</span>
+                    <span style="font-size:13px;color:#6b6a72">/month</span>
+                  </div>
+                </div>
+                <sc-if value="{{ pl.badge }}" hint-placeholder-val="{{ false }}">
+                  <span style="display:inline-flex;align-items:center;gap:5px;flex:none;border-radius:999px;background:#17161A;color:#F4F3F5;font-size:11px;font-weight:500;padding:5px 10px"><i class="ri-fire-fill" style="font-size:13px"></i>Recommend</span>
+                </sc-if>
+              </div>
+              <div style="height:1px;background:rgba(0,0,0,0.08)"></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ pl.features }}" as="ft" hint-placeholder-count="3">
+                  <div style="display:flex;align-items:center;gap:9px">
+                    <i class="{{ ft.icon }}" style="font-size:15px;flex:none;color:{{ ft.color }}"></i>
+                    <span style="font-size:13px;color:{{ ft.text }}">{{ ft.label }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              {{ pl.cta }}
+            </div>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:9px;padding:2px 2px 0">
+          <i class="ri-lock-line" style="font-size:14px;color:#63626a"></i>
+          <span style="font-size:12px;line-height:18px;color:#6b6a72;text-wrap:pretty">Billed monthly. Cancel any time from this screen.</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:26;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(180deg,#18181B 0%,#09090B 100%);animation:screen-up .34s cubic-bezier(.2,.85,.2,1)">
+
+      <div style="flex:none;display:flex;align-items:center;gap:10px;padding:16px 16px 13px;border-bottom:1px solid rgba(255,255,255,0.06)">
+        <div onClick="{{ ch.onClose }}" aria-label="Close" style="width:34px;height:34px;margin-left:-7px;flex:none;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="ri-close-line" style="font-size:22px;color:#FFFFFF"></i></div>
+        <div style="width:34px;height:34px;flex:none;border-radius:17px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2E93C4 0%,#0B4E73 100%)"><i class="ri-customer-service-2-fill" style="font-size:17px;color:#FFFFFF"></i></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:14px;font-weight:500;color:#FFFFFF">Aegis Concierge</span>
+          <span style="font-size:11px;color:rgba(255,255,255,0.42)">{{ ch.status }}</span>
+        </div>
+        <div onClick="{{ ch.onReplay }}" style="display:flex;align-items:center;gap:6px;flex:none;border-radius:10px;background:rgba(255,255,255,0.06);padding:7px 11px;cursor:pointer">
+          <i class="ri-restart-line" style="font-size:14px;color:rgba(255,255,255,0.6)"></i>
+          <span style="font-size:12px;color:rgba(255,255,255,0.6)">Replay</span>
+        </div>
+      </div>
+
+      <div id="gp-chat-scroll" style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:12px;padding:18px 16px">
+        <sc-for list="{{ ch.messages }}" as="m" hint-placeholder-count="3">
+          <div style="display:flex;width:100%;gap:8px;align-items:flex-end;flex-direction:{{ m.dir }};animation:{{ m.anim }} .35s cubic-bezier(.22,1,.36,1) both">
+            <sc-if value="{{ m.avatar }}" hint-placeholder-val="{{ false }}">
+              <div style="width:30px;height:30px;flex:none;border-radius:15px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2E93C4 0%,#0B4E73 100%)"><i class="ri-customer-service-2-fill" style="font-size:15px;color:#FFFFFF"></i></div>
+            </sc-if>
+            <div style="max-width:75%;border-radius:16px;padding:11px 14px;font-size:13.5px;line-height:20px;text-wrap:pretty;background:{{ m.bg }};color:{{ m.fg }};border:1px solid {{ m.edge }};border-top-left-radius:{{ m.tl }};border-top-right-radius:{{ m.tr }};box-shadow:{{ m.shadow }}">{{ m.content }}</div>
+          </div>
+        </sc-for>
+
+        <sc-if value="{{ ch.typing }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:flex-end;gap:8px">
+            <div style="width:30px;height:30px;flex:none;border-radius:15px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2E93C4 0%,#0B4E73 100%)"><i class="ri-customer-service-2-fill" style="font-size:15px;color:#FFFFFF"></i></div>
+            <div style="display:inline-flex;align-items:center;gap:5px;border-radius:16px;border-top-left-radius:6px;border:1px solid rgba(255,255,255,0.10);background:rgba(39,39,42,0.9);padding:13px 15px">
+              <span style="width:7px;height:7px;border-radius:4px;background:rgba(255,255,255,0.6);animation:dot-bob .8s ease-in-out infinite"></span>
+              <span style="width:7px;height:7px;border-radius:4px;background:rgba(255,255,255,0.6);animation:dot-bob .8s ease-in-out .15s infinite"></span>
+              <span style="width:7px;height:7px;border-radius:4px;background:rgba(255,255,255,0.6);animation:dot-bob .8s ease-in-out .3s infinite"></span>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="flex:none;padding:12px 14px 20px;border-top:1px solid rgba(255,255,255,0.06)">
+        <div style="display:flex;align-items:center;gap:10px;border-radius:14px;border:1px solid rgba(255,255,255,0.10);background:rgba(39,39,42,0.5);padding:8px 8px 8px 15px">
+          <input value="{{ ch.draft }}" onChange="{{ ch.onDraft }}" onKeyDown="{{ ch.onKey }}" placeholder="Ask the concierge…" aria-label="Message the concierge" style="flex:1;min-width:0;background:transparent;border:none;outline:none;font-family:'Geist',system-ui,sans-serif;font-size:13.5px;color:#FFFFFF" />
+          <div onClick="{{ ch.onSend }}" aria-label="Send" style="width:34px;height:34px;flex:none;border-radius:11px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s ease;background:{{ ch.sendBg }}"><i class="ri-send-plane-fill" style="font-size:16px;color:{{ ch.sendFg }}"></i></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isVinHelp }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:27;background:#FFFFFF;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;animation:screen-up .34s cubic-bezier(.2,.85,.2,1)">
+      <div style="flex:none;display:flex;align-items:center;gap:12px;padding:18px 20px 8px">
+        <div onClick="{{ vh.onClose }}" aria-label="Close" style="width:38px;height:38px;margin-left:-9px;display:flex;align-items:center;justify-content:center;border-radius:19px;cursor:pointer"><i class="ri-close-line" style="font-size:23px;color:#17161A"></i></div>
+        <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#57565e">FINDING YOUR VIN</span>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:20px;padding:8px 20px 32px">
+
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <div style="font-size:30px;line-height:35px;font-weight:600;letter-spacing:-1.1px;color:#17161A;text-wrap:pretty">Where to find your VIN</div>
+          <div style="font-size:14px;line-height:21px;color:#6b6a72;text-wrap:pretty">Every road vehicle carries a unique 17-character Vehicle Identification Number. Any of these four places will have it.</div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ vh.spots }}" as="sp" hint-placeholder-count="4">
+            <div style="border-radius:16px;background:#F2F1EE;padding:16px;display:flex;gap:13px;align-items:flex-start">
+              <div style="width:38px;height:38px;flex:none;border-radius:19px;background:#FFFFFF;display:flex;align-items:center;justify-content:center"><i class="{{ sp.icon }}" style="font-size:19px;color:#0F638F"></i></div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+                <div style="display:flex;align-items:baseline;gap:8px">
+                  <span style="font-size:15px;font-weight:600;letter-spacing:-0.2px;color:#17161A">{{ sp.title }}</span>
+                  <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ sp.tag }}</span>
+                </div>
+                <span style="font-size:13px;line-height:19px;color:#6b6a72;text-wrap:pretty">{{ sp.body }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#63626a">WHAT IT LOOKS LIKE</div>
+          <div style="border-radius:16px;background:#17161A;padding:18px 16px;display:flex;flex-direction:column;gap:9px">
+            <div style="font-family:'Geist Mono',monospace;font-size:17px;letter-spacing:2.4px;color:#F4F3F5;overflow-wrap:anywhere">1FTVW1EL5NWG00001</div>
+            <div style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:rgba(255,255,255,0.45)">17 CHARACTERS · NO I, O OR Q</div>
+          </div>
+          <div style="font-size:13px;line-height:19px;color:#6b6a72;text-wrap:pretty">If a character looks like a letter I, O or Q, it is a 1 or a 0 — those three letters are never used in a VIN.</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;border-radius:14px;background:#F2F1EE;padding:14px 15px">
+          <i class="ri-information-line" style="font-size:17px;color:#0F638F"></i>
+          <span style="font-size:13px;line-height:19px;color:#3a3941;text-wrap:pretty">Your VIN is only used to match your vehicle against NHTSA recall records. It is never shared.</span>
+        </div>
+      </div>
+      <div style="flex:none;padding:12px 20px 18px;border-top:1px solid rgba(0,0,0,0.07);display:flex;gap:10px">
+        <div onClick="{{ vh.onManual }}" style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:999px;background:#17161A;color:#F4F3F5;font-size:15px;font-weight:500;cursor:pointer;box-sizing:border-box"><i class="ri-keyboard-line" style="font-size:17px"></i>Enter manually</div>
+        <div onClick="{{ vh.onScan }}" style="flex:1;height:52px;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:999px;border:1px solid rgba(0,0,0,0.14);color:#17161A;font-size:15px;font-weight:500;cursor:pointer;box-sizing:border-box"><i class="ri-camera-line" style="font-size:17px"></i>Scan</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hb.lightOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:24;display:flex;flex-direction:column;justify-content:flex-end;border-radius:30px;overflow:hidden">
+      <div onClick="{{ hb.onCloseLight }}" style="position:absolute;inset:0;background:rgba(23,22,26,0.28);backdrop-filter:blur(2px);animation:fade-in .2s ease"></div>
+      <div style="position:relative;background:#FFFFFF;border-radius:22px 22px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.18);padding:10px 20px 26px;animation:sheet-up .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:14px">
+        <div style="width:36px;height:4px;border-radius:2px;background:#dcdbd8;margin:0 auto 6px"></div>
+        <div style="display:flex;align-items:center;gap:13px">
+          <div style="width:52px;height:52px;flex:none;border-radius:14px;background:#17161A;display:flex;align-items:center;justify-content:center">
+            <i class="{{ hb.light.icon }}" style="font-size:27px;line-height:1;color:{{ hb.light.tone }}"></i>
+            <sc-if value="{{ hb.light.glyph }}" hint-placeholder-val="{{ false }}">
+              <span style="font-family:'Geist Mono',monospace;font-size:15px;font-weight:500;color:{{ hb.light.tone }}">{{ hb.light.glyph }}</span>
+            </sc-if>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:4px">
+            <span style="font-size:19px;font-weight:600;letter-spacing:-0.4px;color:#17161A;text-wrap:pretty">{{ hb.light.name }}</span>
+            <span style="display:inline-flex;align-self:flex-start;align-items:center;gap:6px;border-radius:999px;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;padding:4px 9px;background:{{ hb.light.badgeBg }};color:{{ hb.light.badgeFg }}">{{ hb.light.badge }}</span>
+          </div>
+        </div>
+        <div style="font-size:14px;line-height:21px;color:#3a3941;text-wrap:pretty">{{ hb.light.means }}</div>
+        <div style="display:flex;flex-direction:column;gap:9px;border-radius:14px;background:#F2F1EE;padding:14px 15px">
+          <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#57565e">WHAT TO DO</span>
+          <span style="font-size:13.5px;line-height:20px;color:#17161A;text-wrap:pretty">{{ hb.light.action }}</span>
+        </div>
+        <div onClick="{{ hb.onCloseLight }}" style="height:50px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#17161A;color:#F4F3F5;font-size:14px;font-weight:500;cursor:pointer">Got it</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isArticle }}" hint-placeholder-val="{{ false }}">
+    {{ ar.leaver }}
+    {{ ar.peek }}
+    <div id="gp-art" key="{{ ar.key }}" onPointerDown="{{ ar.onDown }}" onPointerMove="{{ ar.onMove }}" onPointerUp="{{ ar.onUp }}" onPointerCancel="{{ ar.onUp }}" style="position:absolute;inset:0;z-index:28;background:#FFFFFF;border-radius:30px;overflow:hidden;display:flex;flex-direction:column;touch-action:pan-y;transform:{{ ar.drag }};box-shadow:{{ ar.dragShadow }};transition:{{ ar.dragEase }};animation:{{ ar.animCss }}">
+      <div style="flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px 8px">
+        <div style="display:flex;align-items:center;gap:12px;min-width:0">
+          <div onClick="{{ ar.onClose }}" aria-label="Close" style="width:38px;height:38px;margin-left:-9px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:19px;cursor:pointer"><i class="ri-close-line" style="font-size:23px;color:#17161A"></i></div>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.8px;color:#57565e">{{ ar.kicker }}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex:none">
+          <div onClick="{{ ar.onPrev }}" aria-label="Previous article" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;border:1px solid rgba(0,0,0,0.12);cursor:pointer;box-sizing:border-box"><i class="ri-arrow-left-s-line" style="font-size:19px;color:#3a3941"></i></div>
+          <div onClick="{{ ar.onNext }}" aria-label="Next article" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border-radius:22px;border:1px solid rgba(0,0,0,0.12);cursor:pointer;box-sizing:border-box"><i class="ri-arrow-right-s-line" style="font-size:19px;color:#3a3941"></i></div>
+        </div>
+      </div>
+      <div style="flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:18px;padding:8px 20px 32px">
+        <div style="height:150px;flex:none;border-radius:18px;display:flex;align-items:flex-end;justify-content:flex-end;padding:16px;background:{{ ar.wash }}">
+          <i class="{{ ar.icon }}" style="font-size:56px;color:rgba(255,255,255,0.85)"></i>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:30px;line-height:35px;font-weight:600;letter-spacing:-1.1px;color:#17161A;text-wrap:pretty">{{ ar.title }}</div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ ar.read }}</span>
+            <span style="width:3px;height:3px;border-radius:2px;background:#a3a2aa"></span>
+            <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ ar.date }}</span>
+          </div>
+        </div>
+        <sc-for list="{{ ar.body }}" as="b" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <sc-if value="{{ b.heading }}" hint-placeholder-val="{{ false }}">
+              <span style="font-size:17px;font-weight:600;letter-spacing:-0.3px;color:#17161A;text-wrap:pretty">{{ b.heading }}</span>
+            </sc-if>
+            <span style="font-size:15px;line-height:24px;color:#3a3941;text-wrap:pretty">{{ b.text }}</span>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:2px 0">
+          <i class="ri-drag-move-2-line" style="font-size:15px;color:#9a99a2"></i>
+          <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#9a99a2">SWIPE FOR THE NEXT ARTICLE</span>
+        </div>
+        <div onClick="{{ ar.onNext }}" style="display:flex;align-items:center;gap:12px;border-radius:16px;background:#F2F1EE;padding:15px 16px;cursor:pointer">
+          <div style="flex:1;display:flex;flex-direction:column;gap:3px;min-width:0">
+            <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.3px;color:#57565e">NEXT ARTICLE</span>
+            <span style="font-size:14px;font-weight:500;color:#17161A;text-wrap:pretty">{{ ar.nextTitle }}</span>
+          </div>
+          <i class="ri-arrow-right-line" style="font-size:19px;flex:none;color:#63626a"></i>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ sv.reasonOpen }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;inset:0;z-index:24;display:flex;flex-direction:column;justify-content:flex-end;border-radius:30px;overflow:hidden">
+      <div onClick="{{ sv.onCloseReason }}" style="position:absolute;inset:0;background:rgba(23,22,26,0.28);backdrop-filter:blur(2px);animation:fade-in .2s ease"></div>
+      <div style="position:relative;background:#FFFFFF;border-radius:22px 22px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.18);padding:10px 20px 26px;animation:sheet-up .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;gap:14px">
+        <div style="width:36px;height:4px;border-radius:2px;background:#dcdbd8;margin:0 auto 6px"></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;background:#D0021B;color:#fff;font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.4px;padding:5px 10px"><i class="ri-alarm-warning-fill" style="font-size:12px"></i>ACTIVE SAFETY RECALL</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1.2px;color:#57565e">{{ sv.reasonSheet.code }}</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="font-size:21px;line-height:26px;font-weight:600;letter-spacing:-0.5px;color:#17161A;text-wrap:pretty">{{ sv.reasonSheet.title }}</div>
+          <div style="font-size:13px;color:#6b6a72">{{ sv.reasonSheet.vehicle }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ sv.reasonSheet.rows }}" as="row" hint-placeholder-count="4">
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid rgba(0,0,0,0.07)">
+              <span style="font-family:'Geist Mono',monospace;font-size:9px;letter-spacing:1.2px;color:#57565e">{{ row.k }}</span>
+              <span style="font-size:13px;color:#17161A;text-align:right">{{ row.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:13.5px;line-height:20px;color:#3a3941;text-wrap:pretty">{{ sv.reasonSheet.why }}</div>
+        <div style="display:flex;gap:10px;align-items:stretch">
+          <div onClick="{{ sv.onCloseReason }}" style="flex:1.4;height:50px;display:flex;align-items:center;justify-content:center;border-radius:999px;background:#17161A;color:#F4F3F5;font-size:14px;font-weight:500;cursor:pointer">Continue booking</div>
+          <div onClick="{{ sv.reasonSheet.onFull }}" style="flex:1;height:50px;display:flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;border:1px solid rgba(0,0,0,0.14);color:#17161A;font-size:14px;font-weight:500;cursor:pointer;box-sizing:border-box">Full recall<i class="ri-arrow-right-up-line" style="font-size:15px"></i></div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:430,&quot;height&quot;:932}}">
+const TINT = ['#6F8EA3','#D6EAF6','#243642','#A8C6D8','#101B24','#E8F6FF','#3E5B6B','#8FB2C6'];
+// A: full blue chrome, built from the Figma stops #006491 / #8ACEFF
+const TINT_BLUE = ['#1B6E96','#8ACEFF','#E8F6FF','#B8E2FF','#0E5378','#F4FBFF','#4E9DC4','#A7DAFF'];
+// B: neutral chrome with blue highlights only
+const TINT_MIX = ['#8A8A8A','#EDEDED','#2B2B2B','#8ACEFF','#141414','#E8F6FF','#3E5B6B','#A6A6A6'];
+const DECODE = {
+  '5YJ3E1EA7KF317726': { name: 'Model 3 Long Range', meta: '2019 Tesla · 61,240 mi', health: 78, range: '310 mi' },
+  '1FTVW1EL5NWG00001': { name: 'F-150 Lightning', meta: '2023 Ford · 8,410 mi', health: 94, range: '320 mi' },
+};
+const DEMO_VIN = '1FTVW1EL5NWG00001';
+
+const ARTICLES = [
+  {
+    id: 'a1', kicker: 'RECALL BASICS', icon: 'ri-alarm-warning-line', read: '4 MIN READ', date: 'FEB 2026',
+    wash: 'linear-gradient(135deg,#2E93C4 0%,#0B4E73 100%)',
+    title: 'What actually happens after a recall is issued',
+    dek: 'From the manufacturer filing a 573 report to the letter landing in your mailbox.',
+    body: [
+      { text: 'A recall starts when a manufacturer, or NHTSA, determines a vehicle or piece of equipment has a defect that creates an unreasonable safety risk, or fails to meet a federal safety standard.' },
+      { heading: 'The filing', text: 'Within five working days the manufacturer files a defect and noncompliance report — the Part 573 report — naming the affected build range, the defect, and the remedy. This is the document that gives your recall its NHTSA campaign number.' },
+      { heading: 'The notice', text: 'Owners of record are notified by first-class mail within 60 days. If you bought the car used, or moved, that letter may never reach you. This is the single most common reason open recalls go unrepaired.' },
+      { heading: 'The remedy', text: 'The manufacturer must repair, replace, refund, or in rare cases repurchase, at no cost to you. There is no expiry on a safety recall remedy for the original defect.' },
+      { heading: 'Why it stays open', text: 'A recall clears against your VIN only when a franchised dealer performs the work and files it. An independent shop doing the same repair does not close the campaign.' },
+    ],
+  },
+  {
+    id: 'a2', kicker: 'MAINTENANCE', icon: 'ri-oil-line', read: '3 MIN READ', date: 'JAN 2026',
+    wash: 'linear-gradient(135deg,#C98A1F 0%,#8A5A0C 100%)',
+    title: 'Oil intervals: why the sticker and the manual disagree',
+    dek: 'Quick-lube shops still write 3,000 miles. Your manufacturer usually does not.',
+    body: [
+      { text: 'Full synthetic oil and closed-loop engine management moved most modern service intervals to somewhere between 7,500 and 10,000 miles. The windshield sticker rarely reflects that.' },
+      { heading: 'Read the manual, not the sticker', text: 'Your maintenance schedule is defined by the manufacturer and tied to warranty coverage. A shorter interval costs you money; a longer one can cost you a claim.' },
+      { heading: 'Severe service is not unusual', text: 'Short trips under ten minutes, towing, extended idling, dusty roads and sustained cold all put a vehicle on the severe schedule — which is typically half the normal interval.' },
+      { heading: 'Oil life monitors', text: 'Systems that estimate remaining oil life from load, temperature and revolutions are generally more accurate than a fixed mileage figure. Reset the monitor at every change or it drifts.' },
+    ],
+  },
+  {
+    id: 'a3', kicker: 'TYRES', icon: 'ri-loader-2-line', read: '3 MIN READ', date: 'DEC 2025',
+    wash: 'linear-gradient(135deg,#3F3F46 0%,#18181B 100%)',
+    title: 'Reading a tyre sidewall in thirty seconds',
+    dek: 'Size, load, speed rating and the four digits that tell you its age.',
+    body: [
+      { text: 'Every legal tyre carries its full specification moulded into the sidewall. Four things matter for day-to-day ownership.' },
+      { heading: 'The size code', text: 'In 225/45R18 95Y, 225 is the section width in millimetres, 45 is the sidewall height as a percentage of that width, R is radial construction, and 18 is the wheel diameter in inches.' },
+      { heading: 'Load and speed', text: '95 is the load index, roughly 690 kg per tyre. Y is the speed rating. Fitting a lower rating than the placard on your door jamb specifies is a failure point at inspection.' },
+      { heading: 'The DOT date', text: 'Find the DOT code and read the last four digits: week, then year. 2224 means the 22nd week of 2024. Most manufacturers consider a tyre finished at six years regardless of tread depth.' },
+      { heading: 'Pressure', text: 'The correct cold pressure is on the door jamb placard, never the tyre sidewall — the sidewall figure is a maximum, not a recommendation.' },
+    ],
+  },
+  {
+    id: 'a4', kicker: 'ELECTRIC', icon: 'ri-battery-charge-line', read: '4 MIN READ', date: 'NOV 2025',
+    wash: 'linear-gradient(135deg,#01a08c 0%,#046056 100%)',
+    title: 'Battery health, degradation and what warranty covers',
+    dek: 'Why the first year loses the most, and where the 70% floor comes from.',
+    body: [
+      { text: 'Lithium-ion packs lose capacity fastest early on, then settle into a slow linear decline. A pack that drops 3% in its first year may lose only 1 to 2% a year afterwards.' },
+      { heading: 'What accelerates it', text: 'Sustained high state of charge, deep discharges, heat, and frequent DC fast charging. Keeping the pack between 20% and 80% for daily use is the single most effective habit.' },
+      { heading: 'The warranty floor', text: 'Federal rules require eight years or 100,000 miles of coverage on EV traction batteries, and most manufacturers define failure as capacity falling below 70% of original.' },
+      { heading: 'Reading your own number', text: 'Range estimates move with temperature and driving style. Compare usable kWh from a full charge against the original spec instead — that is the figure a warranty claim rests on.' },
+    ],
+  },
+];
+
+const LIGHTS = [
+  { id: 'l1', group: 'critical', name: 'Engine oil pressure', short: 'Oil pressure', icon: 'ri-oil-fill', tone: '#D0021B',
+    means: 'Oil pressure has dropped below the safe minimum. This is not a low oil level reminder — it means the oil is not circulating under enough pressure to protect the bearings.',
+    action: 'Pull over as soon as it is safe and switch the engine off. Continuing to drive can destroy the engine within minutes. Check the level, then have it recovered rather than driven.' },
+  { id: 'l2', group: 'critical', name: 'Coolant temperature', short: 'Overheating', icon: 'ri-temp-hot-fill', tone: '#D0021B',
+    means: 'The coolant has exceeded its normal operating temperature. Causes range from a low coolant level or failed thermostat to a dead cooling fan or water pump.',
+    action: 'Stop, switch off, and let it cool for at least thirty minutes before opening anything. Never open a hot pressurised cap. Driving on risks a warped head or blown gasket.' },
+  { id: 'l3', group: 'critical', name: 'Brake system', short: 'Brakes', icon: 'ri-error-warning-fill', tone: '#D0021B', glyph: '',
+    means: 'Either the parking brake is engaged, the brake fluid is low, or the hydraulic system has detected a fault. On many vehicles this light doubles for all three.',
+    action: 'Confirm the parking brake is fully released. If it stays lit, test the pedal gently at low speed and have the system inspected before further driving.' },
+  { id: 'l4', group: 'critical', name: 'Charging system', short: 'Battery', icon: 'ri-battery-2-fill', tone: '#D0021B',
+    means: 'The battery is no longer being charged — usually a failed alternator, a broken belt, or a bad connection. The car is running on stored charge only.',
+    action: 'Switch off every load you can spare and drive straight to a shop, or stop somewhere safe. Expect the engine to cut out without warning once the battery is flat.' },
+  { id: 'l5', group: 'critical', name: 'Airbag / SRS', short: 'Airbag', icon: 'ri-alert-fill', tone: '#D0021B', glyph: '',
+    means: 'The supplemental restraint system has logged a fault. The airbags or seat belt pretensioners may not deploy in a crash — or could deploy when they should not.',
+    action: 'The car remains driveable but its occupant protection is compromised. Book a diagnostic scan; SRS faults are also a common recall subject worth checking.' },
+  { id: 'l6', group: 'warning', name: 'Check engine', short: 'Check engine', icon: 'ri-settings-2-fill', tone: '#C98A1F',
+    means: 'The engine control unit has stored a fault code from anywhere in the powertrain or emissions system, from a loose fuel cap to a failing catalytic converter.',
+    action: 'Steady light: get the code read within a week or so. Flashing: a misfire is dumping raw fuel into the exhaust — reduce speed and stop driving as soon as you can.' },
+  { id: 'l7', group: 'warning', name: 'Tyre pressure (TPMS)', short: 'Tyre pressure', icon: 'ri-alert-line', tone: '#C98A1F', glyph: '',
+    means: 'At least one tyre is around 25% below its placard pressure. Cold snaps set this off routinely, but so does a slow puncture.',
+    action: 'Check all four cold with a gauge and set them to the door jamb figure, not the sidewall maximum. If it returns within days, look for a leak.' },
+  { id: 'l8', group: 'warning', name: 'ABS', short: 'ABS', icon: '', tone: '#C98A1F', glyph: 'ABS',
+    means: 'The anti-lock braking system has faulted and switched itself off. Normal braking still works, but the wheels can lock under hard braking.',
+    action: 'Leave extra following distance, especially in the wet, and avoid stamping on the pedal. Have the wheel speed sensors and module checked.' },
+  { id: 'l9', group: 'warning', name: 'Traction / stability', short: 'Traction', icon: 'ri-drizzle-line', tone: '#C98A1F',
+    means: 'Flashing means the system is actively working to keep the car in line. Steady means stability control has been switched off or has failed.',
+    action: 'Flashing on a slippery surface is normal — ease off. If it stays lit permanently, check whether it was turned off manually before booking a diagnosis.' },
+  { id: 'l10', group: 'warning', name: 'Low fuel', short: 'Low fuel', icon: 'ri-gas-station-fill', tone: '#C98A1F',
+    means: 'The tank has fallen to its reserve, typically enough for 30 to 50 miles depending on the vehicle.',
+    action: 'Refuel. Running a tank near dry pulls sediment through the pump and, in petrol cars, removes the fuel that cools it.' },
+  { id: 'l11', group: 'warning', name: 'Diesel particulate filter', short: 'DPF', icon: 'ri-cloudy-2-fill', tone: '#C98A1F',
+    means: 'The particulate filter is loaded with soot and needs a regeneration cycle, which only completes at sustained speed and temperature.',
+    action: 'Drive above 40 mph for twenty minutes if it is safe to do so. Repeated short trips will block the filter completely and turn a drive into a replacement.' },
+  { id: 'l12', group: 'warning', name: 'Glow plug / wait to start', short: 'Glow plug', icon: 'ri-loader-4-line', tone: '#C98A1F',
+    means: 'On a diesel, the pre-heaters are warming the cylinders before start. If it comes on while driving, the glow plug system has a fault.',
+    action: 'At start-up, wait for it to go out before cranking. If it appears while driving, expect hard cold starts and have the plugs tested.' },
+  { id: 'l13', group: 'warning', name: 'Service due', short: 'Service', icon: 'ri-tools-fill', tone: '#C98A1F',
+    means: 'A time or distance interval in the maintenance schedule has been reached. It is a reminder, not a fault.',
+    action: 'Book the service. Keeping to the schedule protects both the drivetrain and any warranty claim that depends on documented maintenance.' },
+  { id: 'l14', group: 'warning', name: 'Door or boot ajar', short: 'Door ajar', icon: 'ri-car-fill', tone: '#C98A1F',
+    means: 'A door, bonnet or boot is not fully latched. Some vehicles also show which one on the cluster display.',
+    action: 'Stop and close it properly. A latch that will not register may need adjusting or its switch replaced.' },
+  { id: 'l15', group: 'info', name: 'Main beam', short: 'High beam', icon: 'ri-sun-fill', tone: '#0F638F',
+    means: 'The main beam headlights are on. A green or blue indicator means active; amber usually means the automatic high beam system is armed.',
+    action: 'Dip them for oncoming traffic and when following another vehicle closely.' },
+  { id: 'l16', group: 'info', name: 'Fog lights', short: 'Fog lights', icon: 'ri-mist-fill', tone: '#01a08c',
+    means: 'Front or rear fog lights are switched on. Rear fogs are usually shown in amber, fronts in green.',
+    action: 'Use only in genuinely poor visibility. Rear fogs dazzle drivers behind you in clear conditions and are an offence in many places.' },
+  { id: 'l17', group: 'info', name: 'Cruise control', short: 'Cruise', icon: 'ri-speed-up-line', tone: '#01a08c',
+    means: 'Cruise or adaptive cruise control is set and holding a speed. A greyed symbol means the system is available but not engaged.',
+    action: 'Nothing required. Avoid using it on standing water, ice or a road busy enough to need constant speed changes.' },
+  { id: 'l18', group: 'info', name: 'Seat belt reminder', short: 'Seat belt', icon: 'ri-user-fill', tone: '#D0021B',
+    means: 'A seated occupant has not buckled up, or a heavy object on a seat has triggered the occupancy sensor.',
+    action: 'Belt up. If a bag on the passenger seat sets it off, move the bag to the footwell or boot.' },
+  { id: 'l19', group: 'info', name: 'Washer fluid low', short: 'Washer fluid', icon: 'ri-drop-line', tone: '#C98A1F',
+    means: 'The screen wash reservoir has dropped to its reserve level.',
+    action: 'Top up with a proper screen wash mix rather than plain water, which freezes and grows bacteria in the lines.' },
+  { id: 'l20', group: 'info', name: 'Lane departure', short: 'Lane assist', icon: 'ri-road-map-line', tone: '#0F638F',
+    means: 'The lane keeping system is active. It flashes or vibrates the wheel when the car drifts across a marking without indicating.',
+    action: 'Nothing required. The system needs clear markings and a clean camera — it disables itself quietly in snow or heavy rain.' },
+];
+
+const TABS = [
+  { id: 'garage', label: 'GARAGE', on: 'ri-inbox-fill', off: 'ri-inbox-line' },
+  { id: 'recalls', label: 'RECALLS', on: 'ri-error-warning-fill', off: 'ri-error-warning-line' },
+  { id: 'service', label: 'SERVICE', on: 'ri-tools-fill', off: 'ri-tools-line' },
+  { id: 'hub', label: 'HUB', on: 'ri-book-2-fill', off: 'ri-book-2-line' },
+  { id: 'profile', label: 'PROFILE', on: 'ri-user-fill', off: 'ri-user-line' },
+];
+
+const CHAT_SCRIPT = [
+  { from: 'them', content: "Good afternoon, Alexander. I'm your Aegis concierge. I can see the open recall on your Model S Plaid — would you like me to handle it?" },
+  { from: 'me', content: 'Yes please. What does the repair actually involve?' },
+  { from: 'them', content: 'Firmware 2026.4.2 restores the rear camera feed on start-up. About 45 minutes at Tesla Service on Bay Street, no cost to you.' },
+  { from: 'me', content: 'Can someone collect the car? I can’t take the morning off.' },
+  { from: 'them', content: 'Pro membership includes concierge pick-up. I can have a driver at your address Thursday at 10:30 and returned by early afternoon.' },
+  { from: 'me', content: 'That works. Book it.' },
+  { from: 'them', content: "Booked. You'll get a confirmation and driver details in this thread, and the recall will clear once the dealer files the work against your VIN." },
+];
+
+const USER = {
+  name: 'Alexander Vance', email: 'alexander.vance@example.com', phone: '+1 (555) 019-8234',
+  initials: 'AV', memberSince: 'Premium Member since 2022', plan: 'AEGIS PRO ACTIVE',
+};
+
+const ACTIVITY = [
+  { color: '#0F638F', title: 'System scan completed.', detail: 'TODAY, 08:30 AM' },
+  { color: '#D0021B', title: 'Recall alert issued for Model S.', detail: 'YESTERDAY, 14:15 PM' },
+  { color: '#9a99a2', title: 'Service record updated (Taycan).', detail: 'OCT 12, 2023' },
+];
+
+const SVC_DATES = [
+  { day: 'MON', date: '12' }, { day: 'TUE', date: '13' }, { day: 'WED', date: '14' },
+  { day: 'THU', date: '15' }, { day: 'FRI', date: '16' },
+];
+const SVC_TIMES = ['08:00 AM', '09:30 AM', '11:00 AM', '01:00 PM', '02:30 PM', '04:00 PM'];
+const SVC_CENTER = { name: 'Prime Center', address: '1200 Technical Blvd', distance: '4.2 mi', coords: '37.7749° N, 122.4194° W' };
+
+const HISTORY = [
+  { id: 'h1', vid: 1, code: 'NHTSA 23V-742', title: 'Front seat belt anchor torque', severity: 'Safety recall', remedy: 'Anchor re-torqued, free', dealer: 'Tesla Service — Fremont', est: '1 hour', done: 'Repaired 14 Mar 2025' },
+  { id: 'h2', vid: 2, code: 'NHTSA 22V-118', title: 'Charge port firmware fault', severity: 'Safety recall', remedy: 'OTA software update', dealer: 'Over the air', est: '20 minutes', done: 'Repaired 02 Nov 2024' },
+  { id: 'h3', vid: 3, code: 'NHTSA 21V-905', title: 'Fuel pump impeller inspection', severity: 'Safety recall', remedy: 'Pump replaced, free', dealer: 'Honda of Riverside', est: '3 hours', done: 'Repaired 27 Jun 2023' },
+];
+
+const REASONS = {
+  'NHTSA 24V-137': {
+    why: 'The instrument display can fail to show the rear camera image while the vehicle is in reverse. Without that view the driver loses sight of anything directly behind the car, which raises the risk of a low-speed collision — and it puts the vehicle out of compliance with FMVSS 111 rear visibility requirements.',
+    facts: [['SEVERITY', 'Safety recall'], ['UNITS AFFECTED', '125,227'], ['REPORTED', '12 Feb 2026'], ['COST TO YOU', 'None']],
+    steps: [
+      ['Software update', 'Firmware 2026.4.2 restores the camera feed on start-up. Installed over the air or at service.'],
+      ['Display self-test', 'Technician confirms the rear view appears within two seconds of selecting reverse.'],
+      ['Confirmation', 'Repair is filed with NHTSA against your VIN and the recall clears in this app.'],
+    ],
+    note: 'Until the update is applied, check behind the vehicle before reversing rather than relying on the screen.',
+  },
+  'NHTSA 23V-742': {
+    why: 'Front seat belt anchor bolts may have left the plant below specified torque. An under-torqued anchor can loosen over time and would not restrain an occupant as designed in a crash.',
+    facts: [['SEVERITY', 'Safety recall'], ['UNITS AFFECTED', '15,869'], ['REPORTED', '09 Jan 2025'], ['COST TO YOU', 'None']],
+    steps: [
+      ['Inspection', 'Both front anchors checked against the torque spec.'],
+      ['Re-torque', 'Anchors tightened, or replaced if the threads were compromised.'],
+      ['Confirmation', 'Work filed against your VIN on 14 Mar 2025.'],
+    ],
+    note: 'This repair is complete. Records are kept for resale and insurance purposes.',
+  },
+  'NHTSA 22V-118': {
+    why: 'Charge port controller firmware could misread the pilot signal and keep the contactor closed after a fault, allowing the port to stay energised longer than intended during DC fast charging.',
+    facts: [['SEVERITY', 'Safety recall'], ['UNITS AFFECTED', '43,000'], ['REPORTED', '18 Aug 2024'], ['COST TO YOU', 'None']],
+    steps: [
+      ['Over-the-air update', 'Controller firmware replaced with revision 1.4.7.'],
+      ['Handshake test', 'Vehicle re-validates the charge handshake on the next session.'],
+      ['Confirmation', 'Filed against your VIN on 02 Nov 2024.'],
+    ],
+    note: 'This repair is complete. No dealer visit was required.',
+  },
+  'NHTSA 21V-905': {
+    why: 'Low-pressure fuel pump impellers could deform and bind, stalling the pump. An engine stall in traffic, without warning, increases crash risk.',
+    facts: [['SEVERITY', 'Safety recall'], ['UNITS AFFECTED', '628,124'], ['REPORTED', '03 May 2023'], ['COST TO YOU', 'None']],
+    steps: [
+      ['Pump inspection', 'Impeller checked for swelling and drag.'],
+      ['Replacement', 'Low-pressure pump assembly replaced with a revised part.'],
+      ['Confirmation', 'Filed against your VIN on 27 Jun 2023.'],
+    ],
+    note: 'This repair is complete. The revised pump carries the same warranty as the original.',
+  },
+};
+
+const PLANS = [
+  { id: 'standard', name: 'Standard', price: '$0', cta: 'Switch to Standard',
+    features: [['1 vehicle monitored', 1], ['Monthly recall checks', 1], ['Real-time alerts', 0]] },
+  { id: 'plus', name: 'Plus', price: '$9', cta: 'Upgrade to Plus', recommend: true,
+    features: [['Up to 3 vehicles', 1], ['Weekly recall checks', 1], ['Real-time email alerts', 1]] },
+  { id: 'pro', name: 'Pro', price: '$29', cta: 'Upgrade to Pro',
+    features: [['Unlimited vehicles', 1], ['Continuous monitoring', 1], ['Push & SMS alerts', 1], ['Health analysis reports', 1]] },
+];
+
+class Component extends DCLogic {
+  state = {
+    tab: 'garage',
+    idx: 0,
+    hovered: false, pressed: false, ripples: [],
+    sheet: null,          // 'add' | 'recall'
+    screen: null,         // null | 'stats'
+    statsId: null, gaugeOn: false, count: 0,
+    humpX: 0,
+    rFilter: 'open', rOpen: null, rDetail: null,
+    plan: 'pro',
+    chatShown: 0, chatTyping: false, chatDraft: '', chatLog: [],
+    hubIdx: 0, hubGroup: 'all', hubLight: null, article: null, artDir: 0, artLeaving: null, artDrag: 0,
+    mapOpen: false, tiltOn: false, tiltX: 0, tiltY: 0,
+    svcReason: false,
+    svcMethod: 'dropoff', svcDate: '13', svcTime: '09:30 AM', svcDone: false,
+    pfPush: true, pfEmail: true, pfBio: false,
+    vin: '',
+    scheduled: false,
+    toast: null,
+    splash: true,
+    vehicles: [
+      { id: 1, name: 'Model S Plaid', meta: '2024 Tesla · 42,000 mi', health: 65, range: '340 mi', vin: '···· F12345', sync: 'SYNCED 2 MIN AGO', recall: { code: 'NHTSA 24V-137', title: 'Rear camera image failure' }, odo: 42000, oilIn: 1200, tireIn: 3400, brakeIn: 9000, regDays: 42, psi: '42 / 40', battery: 92 },
+      { id: 2, name: 'Taycan 4S', meta: '2022 Porsche · 17,680 mi', health: 91, range: '227 mi', vin: '···· K88201', sync: 'SYNCED 12 MIN AGO', recall: null, odo: 17680, oilIn: 4300, tireIn: 900, brakeIn: 12000, regDays: 190, psi: '41 / 41', battery: 97 },
+      { id: 3, name: 'Civic Type R', meta: '2021 Honda · 31,905 mi', health: 88, range: '402 mi', vin: '···· R55019', sync: 'SYNCED 1 HR AGO', recall: null, odo: 31905, oilIn: 300, tireIn: 2100, brakeIn: 5200, regDays: 12, psi: '38 / 36', battery: 88 },
+    ],
+  };
+
+  componentDidMount() {
+    this.attachRail();
+    this.placeHump();
+    this.enableTilt();
+    requestAnimationFrame(() => this.scrollTo(this.state.idx, false));
+    const menu = document.getElementById('gp-menu');
+    if (menu && window.ResizeObserver) {
+      this._ro = new ResizeObserver(() => this.placeHump());
+      this._ro.observe(menu);
+    }
+  }
+
+  componentDidUpdate() {
+    if (!this.rail || !this.rail.isConnected) this.attachRail();
+    if (!this.hubEl || !this.hubEl.isConnected) this.attachHub();
+    const art = this.state.screen === 'article' ? this.state.article : null;
+    if (art !== this._artSeen) {
+      this._artSeen = art;
+      if (art) requestAnimationFrame(() => this.playArticleSwipe());
+    }
+    this.placeHump();
+  }
+
+  placeHump() {
+    const menu = document.getElementById('gp-menu');
+    const hump = document.getElementById('gp-hump');
+    if (!menu || !hump) return;
+    const items = menu.querySelectorAll('[data-tab-item]');
+    const i = Math.max(0, TABS.findIndex(t => t.id === this.state.tab));
+    const item = items[i];
+    if (!item) return;
+    const a = item.getBoundingClientRect();
+    const m = menu.getBoundingClientRect();
+    if (!a.width || !m.width) return;
+    const left = Math.round(a.left - m.left - (hump.offsetWidth - a.width) / 2);
+    if (left !== this.state.humpX) this.setState({ humpX: left });
+  }
+
+  componentWillUnmount() {
+    if (this.rail) this.rail.removeEventListener('scroll', this.onRailScroll);
+    clearTimeout(this._t);
+    clearInterval(this._c);
+    if (this._ro) this._ro.disconnect();
+    if (this._tiltBound) window.removeEventListener('deviceorientation', this.onTiltMotion);
+    clearInterval(this._hub);
+    clearTimeout(this._art);
+    clearTimeout(this._chat);
+  }
+
+  attachRail() {
+    const el = document.getElementById('gp-rail');
+    if (!el || el === this.rail) return;
+    if (this.rail) this.rail.removeEventListener('scroll', this.onRailScroll);
+    this.rail = el;
+    el.addEventListener('scroll', this.onRailScroll, { passive: true });
+  }
+
+  flash(msg) {
+    clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: null }), 2200);
+  }
+
+  centerOf(card, el) {
+    return card.offsetLeft - el.offsetLeft + card.offsetWidth / 2 - el.clientWidth / 2;
+  }
+
+  scrollTo(i, smooth = true) {
+    this.attachRail();
+    const el = this.rail;
+    if (!el) return;
+    const n = this.state.vehicles.length;
+    const card = el.children[n + i];
+    if (card) this.glide(el, this.centerOf(card, el), smooth);
+  }
+
+  onRailScroll = () => {
+    const el = this.rail;
+    if (!el) return;
+    const kids = Array.from(el.children);
+    const n = this.state.vehicles.length;
+    if (kids.length < n * 3) return;
+    let best = 0, dist = Infinity;
+    kids.forEach((c, i) => {
+      const d = Math.abs(this.centerOf(c, el) - el.scrollLeft);
+      if (d < dist) { dist = d; best = i; }
+    });
+    const set = this.centerOf(kids[n], el) - this.centerOf(kids[0], el);
+    if (set > 0) {
+      if (best < n) { el.scrollLeft += set; best += n; }
+      else if (best >= n * 2) { el.scrollLeft -= set; best -= n; }
+    }
+    const live = best % n;
+    if (live !== this.state.idx) this.setState({ idx: live });
+  };
+
+  addVehicle = () => {
+    const raw = this.state.vin.trim().toUpperCase();
+    const d = DECODE[raw] || { name: 'New Vehicle', meta: 'Decoded from VIN', health: 90, range: '—' };
+    const v = {
+      id: Date.now(), name: d.name, meta: d.meta, health: d.health, range: d.range,
+      vin: '···· ' + raw.slice(-6), sync: 'SYNCED JUST NOW', recall: null,
+      odo: 8410, oilIn: 4800, tireIn: 2600, brakeIn: 21000, regDays: 240, psi: '40 / 40', battery: 99,
+    };
+    this.setState(s => ({ vehicles: [...s.vehicles, v], sheet: null, vin: '' }), () => {
+      requestAnimationFrame(() => this.scrollTo(this.state.vehicles.length - 1, false));
+      this.flash(d.name + ' added · monitoring for recalls');
+    });
+  };
+
+  openStats(id) {
+    clearInterval(this._c);
+    const v = this.state.vehicles.find(x => x.id === id);
+    const target = v ? v.health : 0;
+    this.setState({ screen: 'stats', statsId: id, gaugeOn: false, count: 0 }, () => {
+      requestAnimationFrame(() => this.setState({ gaugeOn: true }));
+      const t0 = Date.now();
+      this._c = setInterval(() => {
+        const p = Math.min(1, (Date.now() - t0) / 1400);
+        const e = 1 - Math.pow(1 - p, 3);
+        this.setState({ count: Math.round(target * e) });
+        if (p >= 1) clearInterval(this._c);
+      }, 32);
+    });
+  }
+
+  statsFor(v) {
+    const CIRC = 2 * Math.PI * 66;
+    const tone = (n, warn, bad) => (n <= bad ? '#D0021B' : n <= warn ? '#c98a1f' : '#01a08c');
+    const mi = n => n.toLocaleString('en-US') + ' mi';
+    const open = v.recall && !this.state.scheduled;
+    const word = v.health >= 90 ? 'Excellent' : v.health >= 80 ? 'Good' : v.health >= 65 ? 'Fair' : 'Needs work';
+    const gaugeColor = v.health >= 80 ? '#01a08c' : v.health >= 65 ? '#0F638F' : '#D0021B';
+    const due = [
+      { key: 'oil', label: 'Oil & filter', in: v.oilIn, span: 6000, unit: 'mi', warn: 1500, bad: 500, last: mi(v.odo - (6000 - v.oilIn)) },
+      { key: 'tire', label: 'Tire rotation', in: v.tireIn, span: 6000, unit: 'mi', warn: 1500, bad: 500, last: mi(v.odo - (6000 - v.tireIn)) },
+      { key: 'brake', label: 'Brake fluid', in: v.brakeIn, span: 24000, unit: 'mi', warn: 6000, bad: 2000, last: mi(v.odo - (24000 - v.brakeIn)) },
+    ];
+    return {
+      name: v.name,
+      metaUpper: v.meta.toUpperCase() + ' · VIN ' + v.vin,
+      hasRecall: !!open,
+      noRecall: !open,
+      recallCode: open ? v.recall.code : '',
+      recallTitle: open ? v.recall.title : '',
+      clearTitle: v.recall ? 'Recall remedy scheduled' : 'No open recalls',
+      clearMeta: v.recall ? 'THU 10:30 AM · ' + v.recall.code : v.sync.replace('SYNCED ', ''),
+      onRecallDetails: () => this.setState({ tab: 'recalls', screen: null, rFilter: 'open', rOpen: 'v' + v.id }),
+      recallCta: this.metalPill({
+        key: 'schedStats', tint: 'blue', label: 'Schedule Repair', icon: 'ri-calendar-2-line',
+        flex: 1.4, width: 'auto', height: 50, radius: 999, gap: 8, iconSize: 16, fontSize: 14,
+        onClick: () => { this.setState({ scheduled: true }); this.flash('Service booked · Thu 10:30 AM'); },
+      }),
+      circ: CIRC.toFixed(0),
+      dash: (this.state.gaugeOn ? CIRC - (v.health / 100) * CIRC : CIRC).toFixed(0),
+      count: this.state.count,
+      word,
+      gaugeColor,
+      summary: open
+        ? 'One open safety recall is holding this score down. Everything else is inside spec.'
+        : 'All monitored systems are inside spec for a ' + v.meta.split(' ')[0] + ' at this mileage.',
+      tiles: [
+        { icon: 'ri-dashboard-3-line', tone: '#57565e', label: 'ODOMETER', value: mi(v.odo), note: 'Read ' + v.sync.replace('SYNCED ', '').toLowerCase() },
+        { icon: 'ri-oil-line', tone: tone(v.oilIn, 1500, 500), label: 'NEXT OIL CHANGE', value: mi(v.oilIn), note: v.oilIn <= 500 ? 'Overdue soon' : 'On schedule' },
+        { icon: 'ri-loader-2-line', tone: tone(v.tireIn, 1500, 500), label: 'TIRE ROTATION', value: mi(v.tireIn), note: 'Pressure ' + v.psi + ' psi' },
+        { icon: 'ri-battery-charge-line', tone: tone(v.battery, 90, 80), label: 'BATTERY HEALTH', value: v.battery + '%', note: v.regDays <= 30 ? 'Registration due in ' + v.regDays + ' days' : 'Registration in ' + v.regDays + ' days' },
+      ],
+      service: due.map(d => ({
+        label: d.label,
+        due: 'in ' + d.in.toLocaleString('en-US') + ' ' + d.unit,
+        pct: Math.max(4, Math.min(100, Math.round(100 - (d.in / d.span) * 100))) + '%',
+        tone: tone(d.in, d.warn, d.bad),
+        meta: 'LAST DONE AT ' + d.last.toUpperCase(),
+      })),
+    };
+  }
+
+  allRecalls() {
+    const { vehicles, scheduled } = this.state;
+    const live = vehicles.filter(v => v.recall).map(v => ({
+      id: 'v' + v.id, vid: v.id, code: v.recall.code, title: v.recall.title,
+      severity: 'Safety recall', remedy: 'Software update, free',
+      dealer: 'Tesla Service — 6.2 mi', est: '45 minutes',
+      state: scheduled ? 'scheduled' : 'open',
+      done: scheduled ? 'Booked Thu 10:30 AM' : 'Reported 12 Feb 2026',
+    }));
+    return [...live, ...HISTORY.map(h => ({ ...h, state: 'closed' }))];
+  }
+
+  vehicleName(vid) {
+    return (this.state.vehicles.find(v => v.id === vid) || {}).name || 'Vehicle';
+  }
+
+  stateMeta() {
+    return {
+      open: { label: 'OPEN', chipBg: '#D0021B', chipFg: '#ffffff', icon: 'ri-alarm-warning-fill', status: 'ACTION REQUIRED' },
+      scheduled: { label: 'SCHEDULED', chipBg: '#0F638F', chipFg: '#EAF7FF', icon: 'ri-calendar-check-fill', status: 'REPAIR SCHEDULED' },
+      closed: { label: 'RESOLVED', chipBg: 'rgba(0,0,0,0.06)', chipFg: '#3a3941', icon: 'ri-checkbox-circle-fill', status: 'RESOLVED' },
+    };
+  }
+
+  detailVals() {
+    const x = this.allRecalls().find(r => r.id === this.state.rDetail);
+    if (!x) return {};
+    const m = this.stateMeta()[x.state];
+    const info = REASONS[x.code] || { why: '', facts: [], steps: [], note: '' };
+    return {
+      code: x.code, title: x.title, status: m.status, chipBg: m.chipBg, chipFg: m.chipFg, chipIcon: m.icon,
+      vehicle: this.vehicleName(x.vid) + ' · ' + x.done,
+      facts: info.facts.map(([k, v]) => ({ k, v })),
+      why: info.why,
+      steps: info.steps.map(([title, body], i) => ({ n: i + 1, title, body })),
+      note: info.note,
+      onBack: () => this.setState({ screen: null, rDetail: null }),
+      onCall: () => this.flash('Calling the service centre is not wired up here'),
+      cta: x.state === 'open'
+        ? this.metalPill({
+            key: 'detail-cta', tint: 'blue', label: 'Schedule Repair', icon: 'ri-calendar-2-line',
+            flex: 1, width: 'auto', height: 54, radius: 999, gap: 9, iconSize: 17, fontSize: 15,
+            onClick: () => { this.setState({ scheduled: true, rFilter: 'scheduled' }); this.flash('Service booked · Thu 10:30 AM'); },
+          })
+        : React.createElement('div', {
+            style: { flex: 1, height: 54, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 999, background: '#F2F1EE', color: '#6b6a72', fontSize: 15, fontWeight: 500 },
+          }, React.createElement('i', { className: 'ri-checkbox-circle-line', style: { fontSize: 17 } }), x.state === 'scheduled' ? 'Scheduled Thu 10:30 AM' : 'Repair complete'),
+    };
+  }
+
+  recallsVals() {
+    const { vehicles, rFilter, rOpen } = this.state;
+    const all = this.allRecalls();
+    const counts = {
+      open: all.filter(x => x.state === 'open').length,
+      scheduled: all.filter(x => x.state === 'scheduled').length,
+      closed: all.filter(x => x.state === 'closed').length,
+    };
+    const name = vid => this.vehicleName(vid);
+    const meta = this.stateMeta();
+    const shown = all.filter(x => x.state === rFilter);
+    const total = all.length || 1;
+
+    return {
+      heroGlow: counts.open > 0,
+      heroShell: counts.open ? '#232228' : '#F2F1EE',
+      heroFace: counts.open ? 'rgba(255,255,255,0.86)' : '#F2F1EE',
+      heroTitle: counts.open ? counts.open + (counts.open === 1 ? ' needs action' : ' need action') : counts.scheduled ? counts.scheduled + ' in the shop' : 'Fleet is clear',
+      heroSub: counts.open
+        ? 'A free remedy is available. Booking it clears the flag on your vehicle health score.'
+        : counts.scheduled
+          ? 'Repair booked. The flag clears once the dealer files the work against your VIN.'
+          : 'Every recall raised against your VINs has been repaired and filed.',
+      heroIcon: counts.open ? 'ri-alarm-warning-fill' : counts.scheduled ? 'ri-calendar-check-fill' : 'ri-shield-check-fill',
+      heroIconBg: counts.open ? '#D0021B' : counts.scheduled ? '#0F638F' : '#01a08c',
+      strip: [
+        { grow: counts.open, color: '#D0021B' },
+        { grow: counts.scheduled, color: '#0F638F' },
+        { grow: counts.closed, color: '#01a08c' },
+      ].filter(s => s.grow > 0),
+      legend: [
+        { color: '#D0021B', text: counts.open + ' OPEN' },
+        { color: '#0F638F', text: counts.scheduled + ' SCHEDULED' },
+        { color: '#01a08c', text: counts.closed + ' RESOLVED' },
+      ],
+      headline: counts.open
+        ? counts.open + (counts.open === 1 ? ' OPEN RECALL · ' : ' OPEN RECALLS · ') + vehicles.length + ' VEHICLES MONITORED'
+        : 'NOTHING OPEN · ' + vehicles.length + ' VEHICLES MONITORED',
+      filters: ['open', 'scheduled', 'closed'].map(k => {
+        const on = rFilter === k;
+        return {
+          label: meta[k].label, count: counts[k],
+          bg: on ? (k === 'open' && counts.open ? '#FBE9EB' : '#F2F1EE') : '#FFFFFF',
+          border: on ? (k === 'open' && counts.open ? '#F0B9C0' : 'rgba(0,0,0,0.14)') : 'rgba(0,0,0,0.08)',
+          fg: k === 'open' && counts.open ? '#D0021B' : '#17161A',
+          meta: on ? '#3a3941' : '#63626a',
+          onTap: () => this.setState({ rFilter: k, rOpen: null }),
+        };
+      }),
+      empty: shown.length === 0,
+      emptyText: rFilter === 'open' ? 'No open recalls across your fleet.' : rFilter === 'scheduled' ? 'Nothing scheduled right now.' : 'No repair history yet.',
+      items: shown.map(x => {
+        const m = meta[x.state];
+        const expanded = rOpen === x.id;
+        return {
+          code: x.code, title: x.title, vehicle: name(x.vid) + ' · ' + x.done,
+          status: m.status, chipBg: m.chipBg, chipFg: m.chipFg, chipIcon: m.icon,
+          glow: x.state === 'open',
+          shell: x.state === 'open' ? '#232228' : '#F2F1EE',
+          face: x.state === 'open' ? 'rgba(255,255,255,0.86)' : '#F2F1EE',
+          caret: expanded ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line',
+          expanded,
+          rows: [
+            { k: 'SEVERITY', v: x.severity },
+            { k: 'REMEDY', v: x.remedy },
+            { k: 'WHERE', v: x.dealer },
+            { k: 'EST. TIME', v: x.est },
+          ],
+          actionable: x.state === 'open',
+          cta: x.state === 'open' ? this.metalPill({
+            key: 'r-' + x.id, tint: 'blue', label: 'Schedule Repair', icon: 'ri-calendar-2-line',
+            flex: 1.4, width: 'auto', height: 48, radius: 999, gap: 8, iconSize: 16, fontSize: 14,
+            onClick: () => { this.setState({ scheduled: true, rFilter: 'scheduled', rOpen: null }); this.flash('Service booked · Thu 10:30 AM'); },
+          }) : null,
+          onToggle: () => this.setState({ rOpen: expanded ? null : x.id }),
+          onBulletin: (e) => { e.stopPropagation(); this.setState({ screen: 'detail', rDetail: x.id }); },
+        };
+      }),
+    };
+  }
+
+  serviceVals() {
+    const { svcMethod, svcDate, svcTime, svcDone, vehicles, scheduled } = this.state;
+    const open = vehicles.find(v => v.recall);
+    const dateLabel = 'Tuesday, Oct ' + svcDate;
+
+    return {
+      showForm: !svcDone,
+      showDone: svcDone,
+      ref: 'REF: ' + (open ? open.recall.code.replace('NHTSA ', 'NHTSA-') : 'NHTSA-24V001'),
+      reason: open ? open.recall.title : 'System Diagnostic & Update',
+      reasonCaution: !!open,
+      reasonShell: open ? 'transparent' : '#F2F1EE',
+      reasonTone: open ? '#D0021B' : '#0F638F',
+      reasonIcon: open ? 'ri-alarm-warning-fill' : 'ri-settings-3-line',
+      reasonHint: open ? 'TAP FOR RECALL DETAILS' : 'ROUTINE MAINTENANCE VISIT',
+      onOpenReason: () => this.setState({ svcReason: true }),
+      onCloseReason: () => this.setState({ svcReason: false }),
+      reasonOpen: this.state.svcReason && !!open,
+      reasonSheet: open ? {
+        code: open.recall.code,
+        title: open.recall.title,
+        vehicle: open.name + ' · ' + open.meta,
+        why: (REASONS[open.recall.code] || {}).why || '',
+        rows: [
+          { k: 'SEVERITY', v: 'Safety recall' },
+          { k: 'REMEDY', v: 'Software update, free' },
+          { k: 'WHERE', v: SVC_CENTER.name + ' — ' + SVC_CENTER.distance },
+          { k: 'EST. TIME', v: '45 minutes' },
+        ],
+        onFull: () => this.setState({ svcReason: false, tab: 'recalls', rFilter: 'open', screen: 'detail', rDetail: 'v' + open.id }),
+      } : {},
+      center: SVC_CENTER.name,
+      address: SVC_CENTER.address,
+      distance: SVC_CENTER.distance,
+      onChange: (e) => { if (e) e.stopPropagation(); this.flash('Dealer map is not wired up here'); },
+      coords: SVC_CENTER.coords,
+      mapOn: 1,
+      coordH: '20px',
+      ruleScale: 'scaleX(1)',
+      pinBg: 'rgba(255,255,255,0.86)',
+      tiltState: this.state.tiltOn ? 'LIVE TILT' : 'LIVE',
+      tilt: 'rotateX(' + this.state.tiltX.toFixed(2) + 'deg) rotateY(' + this.state.tiltY.toFixed(2) + 'deg)',
+      onTiltMove: this.onTiltPointer,
+      onTiltLeave: () => { if (!this.state.tiltOn) this.setState({ tiltX: 0, tiltY: 0 }); },
+      methods: [
+        { key: 'dropoff', label: 'Drop-off', icon: 'ri-car-line' },
+        { key: 'concierge', label: 'Concierge', icon: 'ri-home-4-line' },
+      ].map(m => {
+        const on = svcMethod === m.key;
+        return {
+          label: m.label, icon: m.icon,
+          bg: on ? '#FFFFFF' : 'transparent',
+          shadow: on ? '0 1px 2px rgba(0,0,0,0.08)' : 'none',
+          fg: on ? '#17161A' : '#6b6a72',
+          onTap: () => this.setState({ svcMethod: m.key }),
+        };
+      }),
+      dates: SVC_DATES.map(d => {
+        const on = svcDate === d.date;
+        return {
+          day: d.day, date: d.date,
+          bg: on ? '#E7F1F7' : '#FFFFFF',
+          border: on ? '#0F638F' : 'rgba(0,0,0,0.1)',
+          fg: on ? '#0F638F' : '#17161A',
+          meta: on ? '#0F638F' : '#63626a',
+          onTap: () => this.setState({ svcDate: d.date }),
+        };
+      }),
+      times: SVC_TIMES.map((t, i) => {
+        const off = i === 0;
+        const on = !off && svcTime === t;
+        return {
+          label: t,
+          bg: on ? '#E7F1F7' : '#FFFFFF',
+          border: on ? '#0F638F' : 'rgba(0,0,0,0.1)',
+          fg: on ? '#0F638F' : '#17161A',
+          opacity: off ? 0.35 : 1,
+          cursor: off ? 'default' : 'pointer',
+          onTap: off ? null : () => this.setState({ svcTime: t }),
+        };
+      }),
+      confirmCta: this.metalPill({
+        key: 'svc-confirm', tint: 'blue', label: 'Confirm Appointment', icon: 'ri-calendar-check-line',
+        flex: 1, width: 'auto', height: 54, radius: 999, gap: 9, iconSize: 17, fontSize: 15,
+        onClick: () => {
+          this.setState({ svcDone: true, scheduled: true });
+          this.flash('Service booked · ' + dateLabel + ' at ' + svcTime);
+        },
+      }),
+      details: [
+        { icon: 'ri-calendar-line', label: 'DATE & TIME', value: dateLabel + ' at ' + svcTime, secondary: svcMethod === 'concierge' ? 'Concierge pick-up' : 'Drop-off', line: 'transparent' },
+        { icon: 'ri-map-pin-line', label: 'LOCATION', value: SVC_CENTER.name, secondary: SVC_CENTER.address, line: 'rgba(0,0,0,0.08)' },
+      ],
+      steps: [
+        { label: 'Recall detected', state: 'done' },
+        { label: 'Appointment confirmed', state: 'active' },
+        { label: 'Repair pending', state: 'pending' },
+      ].map((st, i, arr) => ({
+        label: st.label,
+        rail: i === arr.length - 1 ? 'transparent' : 'rgba(0,0,0,0.12)',
+        nodeBg: st.state === 'pending' ? '#F2F1EE' : '#FFFFFF',
+        nodeBorder: st.state === 'active' ? '2px solid #0F638F' : st.state === 'done' ? '1px solid #9a99a2' : '1px solid rgba(0,0,0,0.12)',
+        dot: st.state === 'pending' ? 'transparent' : st.state === 'active' ? '#0F638F' : '#9a99a2',
+        fg: st.state === 'active' ? '#0F638F' : st.state === 'pending' ? '#9a99a2' : '#3a3941',
+        size: st.state === 'active' ? '20px' : '15px',
+        weight: st.state === 'active' ? 600 : 400,
+        track: st.state === 'active' ? '-0.4px' : '0',
+      })),
+      returnCta: this.metalPill({
+        key: 'svc-return', tint: 'blue', label: 'Return to Garage', icon: 'ri-inbox-line',
+        flex: 1, width: 'auto', height: 54, radius: 999, gap: 9, iconSize: 17, fontSize: 15,
+        onClick: () => this.setState({ tab: 'garage', svcDone: false }),
+      }),
+    };
+  }
+
+  profileVals() {
+    const { vehicles, scheduled, pfPush, pfEmail, pfBio } = this.state;
+    const sw = (on, key) => ({
+      track: on ? '#0F638F' : '#dcdbd8',
+      knob: on ? 'translate3d(18px,0,0)' : 'translate3d(0,0,0)',
+      onTap: () => this.setState(s => ({ [key]: !s[key] })),
+    });
+
+    return {
+      ...this.membershipVals(),
+      initials: USER.initials,
+      name: USER.name,
+      member: USER.memberSince,
+      info: [
+        { label: 'EMAIL', value: USER.email },
+        { label: 'PHONE', value: USER.phone },
+      ],
+      onEdit: () => this.flash('Profile editing stays local in this prototype'),
+      toggles: [
+        { label: 'Push Notifications', ...sw(pfPush, 'pfPush') },
+        { label: 'Email Alerts', ...sw(pfEmail, 'pfEmail') },
+        { label: 'Biometric Login', ...sw(pfBio, 'pfBio') },
+      ],
+      onAddVehicle: () => this.setState({ sheet: 'add' }),
+      garage: vehicles.map(v => {
+        const open = v.recall && !scheduled;
+        return {
+          name: v.name,
+          make: v.meta,
+          vin: 'VIN: ' + v.vin.replace('···· ', '') + 'XXXXXX',
+          status: open ? '1 Active Recall' : 'All Clear',
+          statusColor: open ? '#D0021B' : '#01a08c',
+          iconColor: open ? '#D0021B' : '#9a99a2',
+          onOpen: () => this.openStats(v.id),
+        };
+      }),
+      chatCta: this.metalPill({
+        key: 'pf-chat', tint: 'blue', label: 'Start Chat', icon: 'ri-chat-3-line',
+        flex: 1, width: 'auto', height: 50, radius: 999, gap: 8, iconSize: 16, fontSize: 14,
+        onClick: () => this.openChat(),
+      }),
+      activity: ACTIVITY,
+      onDelete: () => this.flash('No account data is stored by this build'),
+    };
+  }
+
+  openChat() {
+    this.setState({ screen: 'chat', chatShown: 0, chatTyping: false, chatDraft: '', chatLog: CHAT_SCRIPT }, () => this.revealChat(0));
+  }
+
+  revealChat(i) {
+    clearTimeout(this._chat);
+    const log = this.state.chatLog;
+    if (!log || i >= log.length || this.state.screen !== 'chat') return;
+    const m = log[i];
+    const step = () => {
+      this.setState({ chatShown: i + 1, chatTyping: false }, () => this.scrollChat());
+      this._chat = setTimeout(() => this.revealChat(i + 1), m.from === 'them' ? 900 : 500);
+    };
+    if (m.from === 'them') {
+      this.setState({ chatTyping: true }, () => this.scrollChat());
+      this._chat = setTimeout(step, 1200);
+    } else {
+      this._chat = setTimeout(step, 320);
+    }
+  }
+
+  scrollChat() {
+    requestAnimationFrame(() => {
+      const el = document.getElementById('gp-chat-scroll');
+      if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    });
+  }
+
+  sendChat = () => {
+    const text = (this.state.chatDraft || '').trim();
+    if (!text) return;
+    const mine = { from: 'me', content: text };
+    const reply = { from: 'them', content: 'Noted. A specialist will pick this up with your Model S Plaid record attached — expect a reply in this thread within the hour.' };
+    this.setState(s => ({ chatLog: [...s.chatLog, mine], chatShown: s.chatShown + 1, chatDraft: '' }), () => {
+      this.scrollChat();
+      clearTimeout(this._chat);
+      this.setState({ chatTyping: true });
+      this._chat = setTimeout(() => {
+        this.setState(s => ({ chatLog: [...s.chatLog, reply], chatShown: s.chatShown + 1, chatTyping: false }), () => this.scrollChat());
+      }, 1400);
+    });
+  };
+
+  chatVals() {
+    const log = (this.state.chatLog || []).slice(0, this.state.chatShown);
+    const draft = (this.state.chatDraft || '').trim();
+    return {
+      status: this.state.chatTyping ? 'Typing…' : 'Online · replies in minutes',
+      typing: this.state.chatTyping,
+      draft: this.state.chatDraft || '',
+      sendBg: draft ? '#0F638F' : 'rgba(255,255,255,0.06)',
+      sendFg: draft ? '#FFFFFF' : 'rgba(255,255,255,0.3)',
+      onDraft: e => this.setState({ chatDraft: e.target.value }),
+      onKey: e => { if (e.key === 'Enter') { e.preventDefault(); this.sendChat(); } },
+      onSend: this.sendChat,
+      onReplay: () => this.openChat(),
+      onClose: () => { clearTimeout(this._chat); this.setState({ screen: null }); },
+      messages: log.map(m => {
+        const mine = m.from === 'me';
+        return {
+          content: m.content,
+          dir: mine ? 'row-reverse' : 'row',
+          anim: mine ? 'bub-in-r' : 'bub-in-l',
+          avatar: !mine,
+          bg: mine ? 'linear-gradient(135deg,#2E93C4 0%,#0B4E73 100%)' : 'rgba(39,39,42,0.9)',
+          fg: mine ? '#FFFFFF' : '#F4F4F5',
+          edge: mine ? 'transparent' : 'rgba(255,255,255,0.10)',
+          tl: mine ? '16px' : '6px',
+          tr: mine ? '6px' : '16px',
+          shadow: mine ? '0 8px 24px -6px rgba(15,99,143,.5)' : '0 4px 12px -2px rgba(0,0,0,.3)',
+        };
+      }),
+    };
+  }
+
+  onTiltMotion = (e) => {
+    const beta = e.beta || 0, gamma = e.gamma || 0;
+    const clamp = (v, n) => Math.max(-n, Math.min(n, v));
+    const nx = clamp((beta - 35) * 0.28, 8);
+    const ny = clamp(gamma * 0.28, 8);
+    if (Math.abs(nx - this.state.tiltX) > 0.25 || Math.abs(ny - this.state.tiltY) > 0.25) {
+      this.setState({ tiltX: -nx, tiltY: ny, tiltOn: true });
+    }
+  };
+
+  enableTilt() {
+    if (this._tiltBound) return;
+    const attach = () => {
+      window.addEventListener('deviceorientation', this.onTiltMotion);
+      this._tiltBound = true;
+    };
+    const DOE = window.DeviceOrientationEvent;
+    if (DOE && typeof DOE.requestPermission === 'function') {
+      DOE.requestPermission().then(r => { if (r === 'granted') attach(); }).catch(() => {});
+    } else if (DOE) {
+      attach();
+    }
+  }
+
+  onTiltPointer = (e) => {
+    const card = e.currentTarget;
+    const r = card.getBoundingClientRect();
+    const nx = ((e.clientY - (r.top + r.height / 2)) / (r.height / 2)) * 8;
+    const ny = ((e.clientX - (r.left + r.width / 2)) / (r.width / 2)) * 8;
+    if (!this.state.tiltOn) this.setState({ tiltX: -nx, tiltY: ny });
+  };
+
+  hubRail() {
+    const el = document.getElementById('gp-hub-rail');
+    if (!el || el.children.length < ARTICLES.length * 3) return null;
+    return el;
+  }
+
+  hubCenter(card, el) {
+    return card.offsetLeft - el.offsetLeft + card.offsetWidth / 2 - el.clientWidth / 2;
+  }
+
+  glide(el, to, smooth) {
+    cancelAnimationFrame(el.__raf);
+    if (!smooth) { el.scrollLeft = to; return; }
+    const from = el.scrollLeft, t0 = performance.now(), dur = 420;
+    const step = () => {
+      const p = Math.min(1, (performance.now() - t0) / dur);
+      const e = 1 - Math.pow(1 - p, 3);
+      el.scrollLeft = from + (to - from) * e;
+      if (p < 1) el.__raf = requestAnimationFrame(step);
+    };
+    el.__raf = requestAnimationFrame(step);
+  }
+
+  hubScrollTo(i, smooth = true) {
+    const el = this.hubRail();
+    if (!el) return;
+    const card = el.children[ARTICLES.length + i];
+    if (card) this.glide(el, this.hubCenter(card, el), smooth);
+  }
+
+  onHubScroll = () => {
+    const el = this.hubRail();
+    if (!el) return;
+    const n = ARTICLES.length;
+    const kids = Array.from(el.children);
+    let best = 0, dist = Infinity;
+    kids.forEach((c, i) => {
+      const d = Math.abs(this.hubCenter(c, el) - el.scrollLeft);
+      if (d < dist) { dist = d; best = i; }
+    });
+    const set = this.hubCenter(kids[n], el) - this.hubCenter(kids[0], el);
+    if (set > 0) {
+      if (best < n) { el.scrollLeft += set; best += n; }
+      else if (best >= n * 2) { el.scrollLeft -= set; best -= n; }
+    }
+    const live = best % n;
+    if (live !== this.state.hubIdx) this.setState({ hubIdx: live });
+  };
+
+  attachHub() {
+    const el = this.hubRail();
+    if (!el || el === this.hubEl) return;
+    if (this.hubEl) this.hubEl.removeEventListener('scroll', this.onHubScroll);
+    this.hubEl = el;
+    el.addEventListener('scroll', this.onHubScroll, { passive: true });
+    this.hubScrollTo(this.state.hubIdx, false);
+    this.startHubAuto();
+  }
+
+  startHubAuto() {
+    clearInterval(this._hub);
+    this._hub = setInterval(() => {
+      if (this.state.tab !== 'hub' || this.state.screen || this.state.hubLight) return;
+      const el = this.hubRail();
+      if (!el) return;
+      const next = el.children[ARTICLES.length + this.state.hubIdx + 1];
+      if (next) this.glide(el, this.hubCenter(next, el), true);
+    }, 5000);
+  }
+
+  hubVals() {
+    const { hubIdx, hubGroup, hubLight } = this.state;
+    const groupMeta = {
+      all: { label: 'ALL', dot: '#17161A' },
+      critical: { label: 'STOP NOW', dot: '#D0021B' },
+      warning: { label: 'CAUTION', dot: '#C98A1F' },
+      info: { label: 'STATUS', dot: '#01a08c' },
+    };
+    const shown = LIGHTS.filter(l => hubGroup === 'all' || l.group === hubGroup);
+    const active = LIGHTS.find(l => l.id === hubLight);
+    const badge = { critical: ['STOP DRIVING', '#D0021B', '#FFFFFF'], warning: ['GET IT CHECKED', '#FBE9CB', '#7A5307'], info: ['STATUS ONLY', '#E7F1F7', '#0B4E73'] };
+
+    return {
+      headline: ARTICLES.length + ' ARTICLES · ' + LIGHTS.length + ' DASHBOARD LIGHTS',
+      counter: String(hubIdx + 1).padStart(2, '0') + ' / ' + String(ARTICLES.length).padStart(2, '0'),
+      rail: [0, 1, 2].flatMap(() => ARTICLES.map(a => ({
+        kicker: a.kicker, icon: a.icon, wash: a.wash, title: a.title, dek: a.dek, read: a.read,
+        onOpen: () => this.setState({ screen: 'article', article: a.id, artDir: 0 }),
+      }))),
+      dots: ARTICLES.map((a, i) => ({
+        w: i === hubIdx ? '22px' : '6px',
+        bg: i === hubIdx ? '#17161A' : '#dcdbd8',
+        onTap: () => this.hubScrollTo(i),
+      })),
+      groups: ['all', 'critical', 'warning', 'info'].map(k => {
+        const on = hubGroup === k;
+        return {
+          label: groupMeta[k].label, dot: groupMeta[k].dot,
+          bg: on ? '#F2F1EE' : '#FFFFFF',
+          edge: on ? 'rgba(0,0,0,0.14)' : 'rgba(0,0,0,0.08)',
+          fg: on ? '#17161A' : '#63626a',
+          onTap: () => this.setState({ hubGroup: k }),
+        };
+      }),
+      lights: shown.map(l => ({
+        icon: l.icon, glyph: l.glyph || '', short: l.short, tone: l.tone,
+        edge: l.id === hubLight ? 'rgba(0,0,0,0.20)' : 'transparent',
+        onTap: () => this.setState({ hubLight: l.id }),
+      })),
+      lightOpen: !!active,
+      light: active ? {
+        icon: active.icon, glyph: active.glyph || '', tone: active.tone, name: active.name,
+        means: active.means, action: active.action,
+        badge: badge[active.group][0], badgeBg: badge[active.group][1], badgeFg: badge[active.group][2],
+      } : {},
+      onCloseLight: () => this.setState({ hubLight: null }),
+    };
+  }
+
+  goArticle(dir) {
+    const i = ARTICLES.findIndex(x => x.id === this.state.article);
+    if (i < 0) return;
+    const n = ARTICLES.length;
+    const next = ARTICLES[(i + dir + n) % n];
+    clearTimeout(this._art);
+    this.setState({ article: next.id, artDir: dir, artLeaving: this.state.article, artDrag: 0 });
+    this._art = setTimeout(() => this.setState({ artLeaving: null }), 380);
+    this.hubScrollTo((i + dir + n) % n, false);
+  }
+
+  playArticleSwipe() {
+    const EASE = 'cubic-bezier(.22,1,.36,1)';
+    const dir = this.state.artDir;
+    const el = document.getElementById('gp-art');
+    if (el && el.animate) {
+      const from = dir === 0 ? 'translateY(100%)' : dir > 0 ? 'translateX(100%)' : 'translateX(-100%)';
+      el.getAnimations().forEach(a => a.cancel());
+      el.animate([{ transform: from }, { transform: 'translateX(0)' }], { duration: 360, easing: EASE });
+    }
+    const out = document.getElementById('gp-art-leave');
+    if (out && out.animate && dir !== 0) {
+      const to = dir > 0 ? 'translateX(-22%)' : 'translateX(22%)';
+      out.getAnimations().forEach(a => a.cancel());
+      out.animate([{ transform: 'translateX(0)', opacity: 1 }, { transform: to, opacity: 0 }],
+        { duration: 360, easing: EASE, fill: 'forwards' });
+    }
+  }
+
+  articlePanel(a, opts) {
+    const h = React.createElement;
+    return h('div', {
+      key: opts.key,
+      style: Object.assign({
+        position: 'absolute', inset: 0, background: '#FFFFFF', borderRadius: 30,
+        overflow: 'hidden', display: 'flex', flexDirection: 'column', pointerEvents: 'none',
+      }, opts.style),
+    },
+      h('div', { style: { flex: 'none', display: 'flex', alignItems: 'center', gap: 12, padding: '18px 20px 8px' } },
+        h('div', { style: { width: 38, height: 38, marginLeft: -9, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+          h('i', { className: 'ri-close-line', style: { fontSize: 23, color: '#17161A' } })),
+        h('span', { style: { fontFamily: "'Geist Mono',monospace", fontSize: 10, letterSpacing: '1.8px', color: '#57565e' } }, a.kicker)),
+      h('div', { style: { flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 18, padding: '8px 20px 32px' } },
+        h('div', { style: { height: 150, flex: 'none', borderRadius: 18, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 16, background: a.wash } },
+          h('i', { className: a.icon, style: { fontSize: 56, color: 'rgba(255,255,255,0.85)' } })),
+        h('div', { style: { fontSize: 30, lineHeight: '35px', fontWeight: 600, letterSpacing: '-1.1px', color: '#17161A' } }, a.title),
+        h('div', { style: { fontSize: 15, lineHeight: '24px', color: '#3a3941' } }, a.body[0].text)));
+  }
+
+  onArtDown = (e) => {
+    if (this.state.artLeaving) return;
+    this._drag = { x: e.clientX, y: e.clientY, live: false };
+  };
+
+  onArtMove = (e) => {
+    const d = this._drag;
+    if (!d) return;
+    const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    if (!d.live) {
+      if (Math.abs(dy) > Math.abs(dx) || Math.abs(dx) < 8) return;
+      d.live = true;
+    }
+    this.setState({ artDrag: dx });
+  };
+
+  onArtUp = () => {
+    const d = this._drag;
+    this._drag = null;
+    if (!d || !d.live) return;
+    const dx = this.state.artDrag;
+    this.setState({ artDrag: 0 });
+    if (Math.abs(dx) > 70) this.goArticle(dx < 0 ? 1 : -1);
+  };
+
+  articlePeek() {
+    const dx = this.state.artDrag;
+    if (!dx || this.state.artLeaving) return null;
+    const i = ARTICLES.findIndex(x => x.id === this.state.article);
+    if (i < 0) return null;
+    const n = ARTICLES.length;
+    const a = ARTICLES[(i + (dx < 0 ? 1 : -1) + n) % n];
+    const off = dx < 0 ? 100 : -100;
+    return this.articlePanel(a, {
+      key: 'peek-' + a.id,
+      style: { zIndex: 27, transform: 'translateX(calc(' + off + '% + ' + dx + 'px))' },
+    });
+  }
+
+  articleLeaver() {
+    const h = React.createElement;
+    const a = ARTICLES.find(x => x.id === this.state.artLeaving);
+    if (!a) return null;
+    return h('div', {
+      key: 'leave-' + a.id,
+      id: 'gp-art-leave',
+      style: {
+        position: 'absolute', inset: 0, zIndex: 27, background: '#FFFFFF', borderRadius: 30,
+        overflow: 'hidden', display: 'flex', flexDirection: 'column', pointerEvents: 'none',
+      },
+    },
+      h('div', { style: { flex: 'none', display: 'flex', alignItems: 'center', gap: 12, padding: '18px 20px 8px' } },
+        h('div', { style: { width: 38, height: 38, marginLeft: -9, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+          h('i', { className: 'ri-close-line', style: { fontSize: 23, color: '#17161A' } })),
+        h('span', { style: { fontFamily: "'Geist Mono',monospace", fontSize: 10, letterSpacing: '1.8px', color: '#57565e' } }, a.kicker)),
+      h('div', { style: { flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: 18, padding: '8px 20px 32px' } },
+        h('div', { style: { height: 150, flex: 'none', borderRadius: 18, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 16, background: a.wash } },
+          h('i', { className: a.icon, style: { fontSize: 56, color: 'rgba(255,255,255,0.85)' } })),
+        h('div', { style: { fontSize: 30, lineHeight: '35px', fontWeight: 600, letterSpacing: '-1.1px', color: '#17161A' } }, a.title),
+        h('div', { style: { fontSize: 15, lineHeight: '24px', color: '#3a3941' } }, a.body[0].text)));
+  }
+
+  articleVals() {
+    const a = ARTICLES.find(x => x.id === this.state.article);
+    if (!a) return {};
+    const i = ARTICLES.indexOf(a);
+    const next = ARTICLES[(i + 1) % ARTICLES.length];
+    const dir = this.state.artDir;
+    return {
+      kicker: a.kicker, icon: a.icon, wash: a.wash, title: a.title, read: a.read, date: a.date,
+      body: a.body.map(b => ({ heading: b.heading || '', text: b.text })),
+      key: a.id,
+      animCss: 'none',
+      leaver: this.articleLeaver(),
+      peek: this.articlePeek(),
+      drag: this.state.artDrag ? 'translateX(' + this.state.artDrag + 'px)' : 'none',
+      dragShadow: this.state.artDrag ? '0 0 40px rgba(0,0,0,.18)' : 'none',
+      dragEase: this.state.artDrag ? 'none' : 'transform .3s cubic-bezier(.22,1,.36,1)',
+      onDown: this.onArtDown,
+      onMove: this.onArtMove,
+      onUp: this.onArtUp,
+      nextTitle: next.title,
+      onNext: (e) => { if (e) e.stopPropagation(); this.goArticle(1); },
+      onPrev: (e) => { if (e) e.stopPropagation(); this.goArticle(-1); },
+      onClose: () => { clearTimeout(this._art); this.setState({ screen: null, article: null, artDir: 0, artLeaving: null }); },
+    };
+  }
+
+  membershipVals() {
+    const h = React.createElement;
+    const { plan, vehicles } = this.state;
+    const current = PLANS.find(p => p.id === plan) || PLANS[0];
+    return {
+      plan: 'AEGIS ' + current.name.toUpperCase() + ' ACTIVE',
+      planLine: current.name + ' · ' + current.price + '/month',
+      onOpenMembership: () => this.setState({ screen: 'membership' }),
+      onCloseMembership: () => this.setState({ screen: null }),
+      plans: PLANS.map(p => {
+        const active = p.id === plan;
+        return {
+          name: p.name, price: p.price,
+          shine: !!p.recommend,
+          badge: !!p.recommend,
+          pad: p.recommend ? '2px' : '0px',
+          edge: p.recommend ? 'transparent' : 'rgba(0,0,0,0.10)',
+          shell: p.recommend ? 'transparent' : '#FFFFFF',
+          features: p.features.map(([label, ok]) => ({
+            label, icon: ok ? 'ri-check-line' : 'ri-close-line',
+            color: ok ? '#17161A' : '#a3a2aa', text: ok ? '#6b6a72' : '#a3a2aa',
+          })),
+          cta: p.recommend
+            ? this.metalPill({
+                key: 'plan-' + p.id, label: active ? 'Current plan' : p.cta, icon: 'ri-sparkling-2-line',
+                flex: 'none', width: '100%', height: 48, radius: 12, gap: 8, iconSize: 16, fontSize: 14,
+                onClick: () => { this.setState({ plan: p.id }); this.flash(p.name + ' membership active'); },
+              })
+            : h('div', {
+                onClick: () => { if (!active) { this.setState({ plan: p.id }); this.flash(p.name + ' membership active'); } },
+                style: {
+                  height: 48, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  borderRadius: 12, fontSize: 14, fontWeight: 500, boxSizing: 'border-box',
+                  cursor: active ? 'default' : 'pointer',
+                  background: active ? '#F2F1EE' : '#FFFFFF',
+                  border: active ? '1px solid transparent' : '1px solid rgba(0,0,0,0.14)',
+                  color: active ? '#6b6a72' : '#17161A',
+                },
+              }, active ? 'Current plan' : p.cta),
+        };
+      }),
+    };
+  }
+
+  metalPill(o) {
+    const h = React.createElement;
+    const hovered = this.state.hoverKey === o.key;
+    const pressed = this.state.pressKey === o.key;
+    const radius = o.radius ?? 100;
+    const width = o.width ?? 132;
+    const height = o.height ?? 44;
+    const spin = (typeof width === 'number' ? width : 320) * 2.4;
+    const ramp = o.tint === 'blue' ? TINT_BLUE : o.tint === 'mix' ? TINT_MIX : TINT;
+    const face = o.tint === 'blue'
+      ? 'linear-gradient(160deg,#2E93C4 0%,#0F638F 55%,#0B4E73 100%)'
+      : 'linear-gradient(180deg,#202020 0%,#000 100%)';
+    const ink = o.tint === 'blue' ? '#EAF7FF' : '#8A8F94';
+    const dur = (7 / (pressed ? 3 : hovered ? 1.7 : 1)).toFixed(2) + 's';
+    const fire = (e) => {
+      const r = e.currentTarget.getBoundingClientRect();
+      const id = Date.now() + Math.random();
+      this.setState(s => ({ ripples: [...s.ripples, { id, x: e.clientX - r.left, y: e.clientY - r.top }] }));
+      setTimeout(() => this.setState(s => ({ ripples: s.ripples.filter(x => x.id !== id) })), 600);
+      o.onClick && o.onClick(e);
+    };
+    return h('div', { style: { position: 'relative', width, height, flex: o.flex, transform: pressed ? 'translateY(1px) scale(.98)' : 'none', transition: 'transform .15s cubic-bezier(.4,0,.2,1)' } },
+      h('div', { key: 'c', style: {
+        position: 'absolute', inset: 0, borderRadius: radius, overflow: 'hidden',
+        boxShadow: pressed ? '0 0 0 1px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.3)'
+          : hovered ? '0 0 0 1px rgba(0,0,0,.4), 0 8px 5px rgba(0,0,0,.12), 0 2px 4px rgba(0,0,0,.2)'
+          : '0 0 0 1px rgba(0,0,0,.3), 0 14px 10px rgba(0,0,0,.08), 0 3px 6px rgba(0,0,0,.16)',
+        transition: 'box-shadow .15s cubic-bezier(.4,0,.2,1)' } },
+        h('div', { style: { position: 'absolute', left: '50%', top: '50%', width: spin, height: spin, background: `conic-gradient(from 0deg, ${ramp.join(', ')}, ${ramp[0]})`, filter: 'blur(1.5px)', animation: `lm-spin3 ${dur} linear infinite`, transform: 'translate(-50%,-50%)' } }),
+        h('div', { style: { position: 'absolute', inset: 2, borderRadius: radius, background: face, boxShadow: pressed ? 'inset 0 2px 4px rgba(0,0,0,.4)' : 'none' } })),
+      h('div', { key: 'f', style: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: o.gap ?? 6, zIndex: 3, pointerEvents: 'none', flexDirection: o.iconRight ? 'row-reverse' : 'row' } },
+        h('i', { className: o.icon, style: { fontSize: o.iconSize ?? 15, color: ink, filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.5))' } }),
+        h('span', { style: { fontFamily: "'Geist',system-ui,sans-serif", fontSize: o.fontSize ?? 13, color: ink, textShadow: '0 1px 2px rgba(0,0,0,.5)', whiteSpace: 'nowrap' } }, o.label)),
+      h('button', {
+        key: 'h',
+        onMouseEnter: () => this.setState({ hoverKey: o.key }),
+        onMouseLeave: () => this.setState({ hoverKey: null, pressKey: null }),
+        onMouseDown: () => this.setState({ pressKey: o.key }),
+        onMouseUp: () => this.setState({ pressKey: null }),
+        onClick: fire, 'aria-label': o.label,
+        style: { position: 'absolute', inset: 0, zIndex: 4, background: 'transparent', border: 'none', cursor: 'pointer', outline: 'none', overflow: 'hidden', borderRadius: radius, padding: 0 },
+      }, this.state.ripples.map(r => h('span', { key: r.id, style: { position: 'absolute', left: r.x, top: r.y, width: 20, height: 20, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 70%)', pointerEvents: 'none', animation: 'lm-rip3 .6s ease-out' } }))));
+  }
+
+  metalButton() {
+    return this.metalPill({
+      key: 'add', tint: 'blue', label: 'Add Vehicle', icon: 'ri-sparkling-2-line',
+      onClick: () => this.setState({ sheet: 'add' }),
+    });
+  }
+
+  dots() {
+    const h = React.createElement;
+    return h('svg', { 'aria-hidden': 'true', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', pointerEvents: 'none', fill: 'rgba(120,120,120,0.48)', maskImage: 'linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(180deg, transparent 0, #000 10%, #000 90%, transparent 100%)', WebkitMaskImage: 'linear-gradient(90deg, transparent 0, #000 14%, #000 86%, transparent 100%), linear-gradient(180deg, transparent 0, #000 10%, #000 90%, transparent 100%)', maskComposite: 'intersect', WebkitMaskComposite: 'source-in' } },
+      h('defs', null, h('pattern', { id: 'gp-dots', width: 16, height: 16, patternUnits: 'userSpaceOnUse', patternContentUnits: 'userSpaceOnUse' }, h('circle', { cx: 1, cy: 1, r: 1 }))),
+      h('rect', { width: '100%', height: '100%', strokeWidth: 0, fill: 'url(#gp-dots)' }));
+  }
+
+  pager() {
+    const h = React.createElement;
+    return h('div', { style: { display: 'flex', alignItems: 'center', gap: 6 } },
+      this.state.vehicles.map((v, i) => h('div', {
+        key: v.id,
+        onClick: () => this.scrollTo(i),
+        style: {
+          width: i === this.state.idx ? 22 : 6, height: 2, borderRadius: 1, cursor: 'pointer',
+          background: i === this.state.idx ? (v.recall ? '#D0021B' : '#17161A') : '#dcdbd8',
+          transition: 'width .25s ease, background .25s ease',
+        },
+      })));
+  }
+
+  sheetShell(title, sub, body, action) {
+    const h = React.createElement;
+    return h('div', { style: { position: 'absolute', inset: 0, zIndex: 20, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' } },
+      h('div', { onClick: () => this.setState({ sheet: null }), style: { position: 'absolute', inset: 0, background: 'rgba(23,22,26,0.28)', backdropFilter: 'blur(2px)', animation: 'fade-in .2s ease' } }),
+      h('div', { style: { position: 'relative', background: '#FFFFFF', borderRadius: '22px 22px 0 0', boxShadow: '0 -8px 40px rgba(0,0,0,.18)', padding: '10px 20px 28px', animation: 'sheet-up .28s cubic-bezier(.2,.8,.2,1)' } },
+        h('div', { style: { width: 36, height: 4, borderRadius: 2, background: '#dcdbd8', margin: '0 auto 18px' } }),
+        h('div', { style: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 } },
+          h('div', { style: { flex: 1 } },
+            h('div', { style: { fontSize: 22, fontWeight: 600, letterSpacing: '-0.5px', color: '#17161A' } }, title),
+            h('div', { style: { fontFamily: "'Geist Mono',monospace", fontSize: 10, letterSpacing: '1.6px', color: '#57565e', marginTop: 6 } }, sub)),
+          action || null),
+        body));
+  }
+
+  addSheet() {
+    const h = React.createElement;
+    const raw = this.state.vin.trim().toUpperCase();
+    const decoded = DECODE[raw];
+    const ok = raw.length >= 11;
+    return this.sheetShell('Add a vehicle', 'ENTER VIN · 17 CHARACTERS', h('div', { style: { display: 'flex', flexDirection: 'column', gap: 14, marginTop: 20 } },
+      h('input', {
+        value: this.state.vin, autoFocus: true, placeholder: '1FTVW1EL5NWG00001',
+        onChange: e => this.setState({ vin: e.target.value }),
+        onKeyDown: e => { if (e.key === 'Enter' && ok) this.addVehicle(); },
+        style: { fontFamily: "'Geist Mono',monospace", fontSize: 15, letterSpacing: '1.2px', color: '#17161A', padding: '15px 16px', borderRadius: 12, border: '1px solid rgba(0,0,0,0.14)', background: '#F7F6F4', outline: 'none', width: '100%', boxSizing: 'border-box' },
+      }),
+      h('div', { style: { display: 'flex', gap: 8 } },
+        h('div', { onClick: () => this.setState({ vin: DEMO_VIN }), style: { display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#3a3941', padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(0,0,0,0.14)', cursor: 'pointer' } }, h('i', { className: 'ri-file-list-3-line', style: { fontSize: 14 } }), 'Use sample VIN'),
+        h('div', { onClick: () => this.flash('Camera scan is not wired up in this prototype'), style: { display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#3a3941', padding: '8px 12px', borderRadius: 999, border: '1px solid rgba(0,0,0,0.14)', cursor: 'pointer' } }, h('i', { className: 'ri-camera-line', style: { fontSize: 14 } }), 'Scan')),
+      decoded ? h('div', { style: { display: 'flex', alignItems: 'center', gap: 10, padding: '12px 14px', borderRadius: 12, background: '#F2F1EE', animation: 'fade-in .2s ease' } },
+        h('i', { className: 'ri-checkbox-circle-fill', style: { fontSize: 17, color: '#01a08c' } }),
+        h('div', null,
+          h('div', { style: { fontSize: 14, fontWeight: 500, color: '#17161A' } }, decoded.name),
+          h('div', { style: { fontSize: 12, color: '#6b6a72' } }, decoded.meta))) : null,
+      h('div', {
+        onClick: () => ok ? this.addVehicle() : this.flash('Enter a VIN first'),
+        style: { marginTop: 4, textAlign: 'center', padding: '15px 0', borderRadius: 999, background: ok ? '#17161A' : '#E7E6E3', color: ok ? '#fff' : '#9a99a2', fontSize: 14, fontWeight: 500, cursor: 'pointer', transition: 'background .2s ease' },
+      }, 'Add to garage')), h('div', {
+        onClick: () => this.setState({ screen: 'vinhelp' }),
+        'aria-label': 'Where do I find my VIN?',
+        style: {
+          width: 36, height: 36, flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          borderRadius: 10, border: '1px solid rgba(0,0,0,0.14)', background: '#FFFFFF', cursor: 'pointer',
+        },
+      }, h('i', { className: 'ri-information-line', style: { fontSize: 18, color: '#3a3941' } })));
+  }
+
+  recallSheet() {
+    const h = React.createElement;
+    const v = this.state.vehicles.find(x => x.recall);
+    if (!v) return null;
+    const done = this.state.scheduled;
+    const row = (k, val) => h('div', { style: { display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderBottom: '1px solid rgba(0,0,0,0.07)' } },
+      h('span', { style: { fontFamily: "'Geist Mono',monospace", fontSize: 10, letterSpacing: '1.2px', color: '#57565e' } }, k),
+      h('span', { style: { fontSize: 13, color: '#17161A' } }, val));
+    return this.sheetShell(v.recall.title, v.recall.code + ' · ' + v.name.toUpperCase(), h('div', { style: { marginTop: 18 } },
+      row('SEVERITY', 'Safety recall'),
+      row('REMEDY', 'Software update, free'),
+      row('DEALER', 'Tesla Service — 6.2 mi'),
+      row('EST. TIME', '45 minutes'),
+      h('div', { style: { display: 'flex', gap: 10, marginTop: 20 } },
+        this.metalPill({
+          key: 'sched', tint: 'blue', label: done ? 'Scheduled' : 'Schedule Repair', icon: 'ri-calendar-2-line',
+          flex: 1.5, width: 'auto', height: 54, radius: 16, gap: 9, iconSize: 17, fontSize: 15,
+          onClick: () => { this.setState({ scheduled: true, sheet: null }); this.flash('Service booked · Thu 10:30 AM'); },
+        }),
+        h('div', {
+          onClick: () => { this.setState({ sheet: null, tab: 'recalls' }); this.flash(v.recall.code + ' · opening recall detail'); },
+          style: { flex: 1, height: 54, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, borderRadius: 999, border: '1px solid rgba(0,0,0,0.14)', color: '#17161A', fontSize: 14, fontWeight: 500, cursor: 'pointer', boxSizing: 'border-box' },
+        }, 'Details', h('i', { className: 'ri-arrow-right-up-line', style: { fontSize: 15 } })))));
+  }
+
+  
+
+  toastEl() {
+    const h = React.createElement;
+    if (!this.state.toast) return null;
+    return h('div', { style: { position: 'absolute', left: 20, right: 20, bottom: 104, zIndex: 30, display: 'flex', alignItems: 'center', gap: 10, padding: '13px 15px', borderRadius: 12, background: '#17161A', color: '#F4F3F5', fontSize: 13, animation: 'fade-in .2s ease', boxShadow: '0 8px 24px rgba(0,0,0,.2)' } },
+      h('i', { className: 'ri-checkbox-circle-line', style: { fontSize: 16 } }), this.state.toast);
+  }
+
+  renderVals() {
+    const { vehicles, idx, tab, scheduled } = this.state;
+    const recallCount = vehicles.filter(v => v.recall && !scheduled).length;
+    const stub = TABS.find(t => t.id === tab) || TABS[0];
+    const statsVehicle = vehicles.find(v => v.id === this.state.statsId);
+    const onStats = this.state.screen === 'stats' && !!statsVehicle;
+    const onDetail = this.state.screen === 'detail' && !!this.state.rDetail;
+
+    return {
+      isDetail: onDetail,
+      d: onDetail ? this.detailVals() : {},
+      isStats: onStats,
+      s: onStats ? this.statsFor(statsVehicle) : {},
+      goBack: () => { clearInterval(this._c); this.setState({ screen: null }); },
+      dots: this.dots(),
+      metalButton: this.metalButton(),
+      pager: this.pager(),
+      isGarage: tab === 'garage' && !onStats && !onDetail,
+      isRecalls: tab === 'recalls' && !onStats && !onDetail,
+      r: tab === 'recalls' && !onStats && !onDetail ? this.recallsVals() : {},
+      isService: tab === 'service' && !onStats && !onDetail,
+      sv: tab === 'service' && !onStats && !onDetail ? this.serviceVals() : {},
+      isMembership: this.state.screen === 'membership',
+      isVinHelp: this.state.screen === 'vinhelp',
+      vh: {
+        onClose: () => this.setState({ screen: null }),
+        onManual: () => this.setState({ screen: null, sheet: 'add' }),
+        onScan: () => { this.setState({ screen: null, sheet: 'add' }); this.flash('Camera scan is not wired up in this prototype'); },
+        spots: [
+          { icon: 'ri-window-line', tag: 'MOST COMMON', title: 'Base of the windshield', body: 'Stand outside on the driver’s side and look through the glass at the far corner of the dashboard. A small metal plate is riveted there.' },
+          { icon: 'ri-car-line', tag: 'DOOR JAMB', title: 'Driver’s door frame', body: 'Open the driver’s door and check the sticker on the B-pillar or the edge of the door itself, usually beside the tyre pressure label.' },
+          { icon: 'ri-file-text-line', tag: 'PAPERWORK', title: 'Registration or insurance', body: 'The VIN is printed on your registration card, title and insurance documents — often the fastest place to read it from.' },
+          { icon: 'ri-settings-3-line', tag: 'IN-CAR', title: 'Vehicle software', body: 'Many newer cars list the VIN under Settings, Software or Service info on the centre display.' },
+        ],
+      },
+      isChat: this.state.screen === 'chat',
+      ch: this.state.screen === 'chat' ? this.chatVals() : {},
+      isProfile: tab === 'profile' && !onStats && !onDetail,
+      pf: (tab === 'profile' && !onStats && !onDetail) || this.state.screen === 'membership' ? this.profileVals() : {},
+      isHub: tab === 'hub' && !onStats && !onDetail,
+      hb: tab === 'hub' && !onStats && !onDetail ? this.hubVals() : {},
+      isArticle: this.state.screen === 'article' && !!this.state.article,
+      ar: this.state.screen === 'article' && this.state.article ? this.articleVals() : {},
+      isStub: tab !== 'garage' && tab !== 'recalls' && tab !== 'service' && tab !== 'hub' && tab !== 'profile' && !onStats && !onDetail,
+      stubTitle: stub.label.charAt(0) + stub.label.slice(1).toLowerCase(),
+      stubIcon: stub.off,
+      fleetLine: vehicles.length + (vehicles.length === 1 ? ' VEHICLE · ' : ' VEHICLES · ') + (recallCount ? recallCount + ' RECALL' : 'ALL CLEAR'),
+      counter: String(idx + 1).padStart(2, '0') + ' / ' + String(vehicles.length).padStart(2, '0'),
+      allClear: recallCount === 0,
+      alerts: recallCount ? vehicles.filter(v => v.recall).map(v => ({
+        title: v.recall.title,
+        meta: v.recall.code + ' · ' + v.name.toUpperCase(),
+        onOpen: () => this.setState({ sheet: 'recall' }),
+      })) : [],
+      railCards: [0, 1, 2].flatMap(() => vehicles.map((v, i) => {
+        const open = v.recall && !scheduled;
+        return {
+          ...v,
+          hasRecall: !!open,
+          opacity: i === idx ? 1 : 0.55,
+          healthPct: v.health + '%',
+          healthFill: open ? 'linear-gradient(90deg,#ffb741,#D0021B)' : '#01a08c',
+          badgeIcon: open ? 'ri-close-circle-fill' : 'ri-checkbox-circle-fill',
+          badgeColor: open ? '#D0021B' : '#01a08c',
+          badgeLeft: open ? 'Recall open' : 'No recalls',
+          badgeRight: open ? 'Fix available' : 'Monitored',
+          actionLabel: open ? 'Review recall' : 'Open',
+          actionBg: open ? '#D0021B' : 'rgba(0,0,0,0.05)',
+          actionFg: open ? '#ffffff' : '#17161A',
+          onSelect: () => { if (i !== idx) this.scrollTo(i); else this.openStats(v.id); },
+          onAction: (e) => { e.stopPropagation(); open ? this.setState({ sheet: 'recall' }) : this.openStats(v.id); },
+        };
+      })),
+      tabs: TABS.map(t => {
+        const on = tab === t.id;
+        return {
+          icon: on ? t.on : t.off,
+          label: t.label,
+          color: on ? '#17181A' : '#FFFFFF',
+          dim: on ? 1 : 0.62,
+          lift: on ? 'translate3d(0,-6px,0)' : 'translate3d(0,0,0)',
+          pop: on ? 'scale(1)' : 'scale(0)',
+          onTap: () => this.setState({ tab: t.id, sheet: null, screen: null, rDetail: null, hubLight: null, article: null }),
+        };
+      }),
+      humpX: 'translate3d(' + this.state.humpX + 'px,0,0)',
+      overlay: this.state.sheet === 'add' ? this.addSheet() : this.state.sheet === 'recall' ? this.recallSheet() : null,
+      toast: this.toastEl(),
+      splashOn: this.state.splash,
+      splashDone: () => this.setState({ splash: false }),
+    };
+  }
+}
+</script>
+</body>
+</html>

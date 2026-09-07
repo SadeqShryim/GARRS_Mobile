@@ -1,0 +1,67 @@
+{
+  "name": "recall-hub",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
+  "dependencies": {
+    "@expo-google-fonts/geist": "^0.4.2",
+    "@expo-google-fonts/geist-mono": "^0.4.3",
+    "@expo/ui": "~57.0.16",
+    "@expo/vector-icons": "^15.0.2",
+    "@react-native-masked-view/masked-view": "0.3.2",
+    "expo": "~57.0.20",
+    "expo-blur": "~57.0.2",
+    "expo-constants": "~57.0.17",
+    "expo-device": "~57.0.1",
+    "expo-font": "~57.0.3",
+    "expo-glass-effect": "~57.0.1",
+    "expo-image": "~57.0.4",
+    "expo-linear-gradient": "~57.0.1",
+    "expo-linking": "~57.0.9",
+    "expo-router": "~57.0.19",
+    "expo-splash-screen": "~57.0.8",
+    "expo-status-bar": "~57.0.1",
+    "expo-symbols": "~57.0.2",
+    "expo-system-ui": "~57.0.3",
+    "expo-web-browser": "~57.0.2",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-gesture-handler": "~2.32.0",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0",
+    "react-native-svg": "15.15.4",
+    "react-native-web": "~0.21.0",
+    "react-native-worklets": "0.10.1",
+    "remixicon": "^4.5.0",
+    "zustand": "^5.0.15"
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "^13.3.3",
+    "@types/jest": "^29.5.14",
+    "@types/react": "~19.2.2",
+    "jest": "~29.7.0",
+    "jest-expo": "~57.0.5",
+    "pngjs": "^7.0.0",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "test": "jest",
+    "typecheck": "tsc --noEmit",
+    "build-glyphmap": "node scripts/build-remix-glyphmap.mjs",
+    "bake-assets": "node scripts/bake-assets.mjs",
+    "serve-design": "node scripts/serve-design.mjs"
+  },
+  "private": true,
+  "jest": {
+    "preset": "jest-expo",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.ts"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@sentry/react-native|native-base|react-native-svg)"
+    ]
+  }
+}
