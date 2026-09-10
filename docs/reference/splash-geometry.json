@@ -1,0 +1,530 @@
+{
+  "note": "All values in CSS px of the 430×932 frame. Rects are {x,y,w,h}. Frames are seconds since the timeline started (the screenshot was taken between t_before and t_after). Captured on a REPLAY run (transitions snapped off for the restart) because the source runtime does not attach the row refs on its first run — on a fresh load the rows never scroll, only the wrap scales and blurs.",
+  "frames": {
+    "marquee-0s": {
+      "t_before": 0.356,
+      "t_after": 0.647
+    },
+    "marquee-1s": {
+      "t_before": 1.012,
+      "t_after": 1.288
+    },
+    "marquee-2s": {
+      "t_before": 2.011,
+      "t_after": 2.33
+    },
+    "marquee-2.6s": {
+      "t_before": 2.604,
+      "t_after": 2.889
+    },
+    "photo": {
+      "t_before": 3.2,
+      "t_after": 3.74
+    },
+    "bubble": {
+      "t_before": 4.609,
+      "t_after": 4.804
+    },
+    "fade": {
+      "t_before": 6.815,
+      "t_after": 7.026
+    },
+    "auth-email": {
+      "t_before": 8.309,
+      "t_after": 8.537
+    },
+    "auth-email-filled": {
+      "t_before": 8.957,
+      "t_after": 9.205
+    },
+    "auth-password": {
+      "t_before": 10.026,
+      "t_after": 10.281
+    },
+    "auth-password-filled": {
+      "t_before": 10.701,
+      "t_after": 10.962
+    },
+    "auth-password-eye": {
+      "t_before": 11.267,
+      "t_after": 11.52
+    },
+    "auth-confirm": {
+      "t_before": 12.338,
+      "t_after": 12.575
+    },
+    "auth-confirm-error": {
+      "t_before": 13.299,
+      "t_after": 13.535
+    },
+    "replay-0.3s": {
+      "t_before": 0.304,
+      "t_after": 0.583,
+      "note": "captured after tapping REPLAY on the auth screen — the auth layer is still fading out"
+    }
+  },
+  "mark": {
+    "tile": {
+      "x": 188,
+      "y": 425.5,
+      "w": 54,
+      "h": 54
+    },
+    "icon": {
+      "x": 200.9375,
+      "y": 438,
+      "w": 28.125,
+      "h": 29
+    },
+    "caption": {
+      "x": 171,
+      "y": 493.5,
+      "w": 88,
+      "h": 13,
+      "lines": 1,
+      "font": "\"Geist Mono\", monospace",
+      "size": "10px",
+      "lh": "normal",
+      "weight": "400",
+      "ls": "2.8px",
+      "color": "rgba(255, 255, 255, 0.6)"
+    }
+  },
+  "replay": {
+    "pill": {
+      "x": 332.6875,
+      "y": 14,
+      "w": 83.3125,
+      "h": 30
+    },
+    "icon": {
+      "x": 344.6875,
+      "y": 22.5,
+      "w": 12.5,
+      "h": 13
+    },
+    "label": {
+      "x": 363.1875,
+      "y": 23,
+      "w": 40.8125,
+      "h": 12,
+      "lines": 1,
+      "font": "\"Geist Mono\", monospace",
+      "size": "9px",
+      "lh": "normal",
+      "weight": "400",
+      "ls": "1.4px",
+      "color": "rgba(255, 255, 255, 0.8)"
+    }
+  },
+  "marquee": [
+    {
+      "x": -964.0663452148438,
+      "y": -348.88214111328125,
+      "w": 2358.132568359375,
+      "h": 1629.76416015625,
+      "transform": "translate(-50%, -50%) rotate(-25deg) scale(1.0074)",
+      "filter": "none",
+      "children": 6
+    },
+    {
+      "x": -990.4771728515625,
+      "y": -463.0995788574219,
+      "w": 2361.263671875,
+      "h": 1181.0977783203125,
+      "transform": "translate3d(-28.927px, 0px, 0px)",
+      "filter": "",
+      "children": 14
+    },
+    {
+      "x": -2043.8912353515625,
+      "y": 168.1699981689453,
+      "w": 2361.263671875,
+      "h": 1181.0977783203125,
+      "transform": "translate3d(-1241.46px, 0px, 0px)",
+      "filter": "",
+      "children": 14
+    },
+    {
+      "x": -889.7918701171875,
+      "y": -229.94094848632812,
+      "w": 2361.263671875,
+      "h": 1181.097900390625,
+      "transform": "translate3d(-36.1588px, 0px, 0px)",
+      "filter": "",
+      "children": 14
+    },
+    {
+      "x": -1930.0006103515625,
+      "y": 395.1709289550781,
+      "w": 2361.263671875,
+      "h": 1181.0977783203125,
+      "transform": "translate3d(-1234.23px, 0px, 0px)",
+      "filter": "",
+      "children": 14
+    },
+    {
+      "x": -789.1066284179688,
+      "y": 3.2178139686584473,
+      "w": 2361.263671875,
+      "h": 1181.0977783203125,
+      "transform": "translate3d(-43.3906px, 0px, 0px)",
+      "filter": "",
+      "children": 14
+    },
+    {
+      "x": -1816.1099853515625,
+      "y": 622.1718139648438,
+      "w": 2361.263671875,
+      "h": 1181.097900390625,
+      "transform": "translate3d(-1226.99px, 0px, 0px)",
+      "filter": "",
+      "children": 14
+    }
+  ],
+  "tile0": {
+    "x": -991.4857177734375,
+    "y": 544.5745239257812,
+    "w": 201.1162109375,
+    "h": 173.8228759765625
+  },
+  "marqueeAt26": {
+    "transform": "translate(-50%, -50%) rotate(-25deg) scale(1.14802)",
+    "filter": "blur(12.61px)"
+  },
+  "bubble": {
+    "box": {
+      "x": 34.84375,
+      "y": 425,
+      "w": 360.296875,
+      "h": 82
+    },
+    "text": {
+      "x": 62.84375,
+      "y": 449,
+      "w": 304.296875,
+      "h": 34,
+      "lines": 1,
+      "font": "Geist, system-ui, sans-serif",
+      "size": "29px",
+      "lh": "34px",
+      "weight": "600",
+      "ls": "-0.7px",
+      "color": "rgb(255, 255, 255)"
+    },
+    "highlight": {
+      "x": 56.453125,
+      "y": 427,
+      "w": 216.1875,
+      "h": 27.875
+    }
+  },
+  "auth": {
+    "header": {
+      "tile": {
+        "x": 160.515625,
+        "y": 22,
+        "w": 26,
+        "h": 26
+      },
+      "title": {
+        "x": 194.515625,
+        "y": 25.5,
+        "w": 74.96875,
+        "h": 19,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "15px",
+        "lh": "normal",
+        "weight": "600",
+        "ls": "-0.2px",
+        "color": "rgb(255, 255, 255)"
+      }
+    },
+    "email": {
+      "heading": {
+        "x": 24,
+        "y": 296,
+        "w": 382,
+        "h": 104,
+        "lines": 1,
+        "font": "\"Instrument Serif\", Georgia, serif",
+        "size": "52px",
+        "lh": "52px",
+        "weight": "400",
+        "ls": "-1px",
+        "color": "rgb(255, 255, 255)"
+      },
+      "headingBreaks": [
+        "Get started",
+        "with Recall Hub"
+      ],
+      "continueWith": {
+        "x": 172.8125,
+        "y": 416,
+        "w": 84.375,
+        "h": 17,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "13px",
+        "lh": "normal",
+        "weight": "500",
+        "ls": "normal",
+        "color": "rgba(255, 255, 255, 0.62)"
+      },
+      "google": {
+        "x": 147.078125,
+        "y": 461,
+        "w": 47.90625,
+        "h": 18,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "14px",
+        "lh": "normal",
+        "weight": "600",
+        "ls": "normal",
+        "color": "rgb(255, 255, 255)"
+      },
+      "googlePill": {
+        "x": 102.078125,
+        "y": 449,
+        "w": 110.90625,
+        "h": 42
+      },
+      "googleMark": {
+        "x": 120.078125,
+        "y": 460.5,
+        "w": 19,
+        "h": 19
+      },
+      "apple": {
+        "x": 270.78125,
+        "y": 461,
+        "w": 39.140625,
+        "h": 18,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "14px",
+        "lh": "normal",
+        "weight": "600",
+        "ls": "normal",
+        "color": "rgb(255, 255, 255)"
+      },
+      "applePill": {
+        "x": 224.984375,
+        "y": 449,
+        "w": 102.9375,
+        "h": 42
+      },
+      "appleIcon": {
+        "x": 242.984375,
+        "y": 459.5,
+        "w": 19.796875,
+        "h": 21
+      },
+      "or": {
+        "x": 206.5625,
+        "y": 509,
+        "w": 16.875,
+        "h": 14,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "11px",
+        "lh": "normal",
+        "weight": "600",
+        "ls": "0.4px",
+        "color": "rgba(255, 255, 255, 0.5)"
+      },
+      "orRow": {
+        "x": 24,
+        "y": 507,
+        "w": 382,
+        "h": 18
+      },
+      "emailField": {
+        "x": 97.75,
+        "y": 544,
+        "w": 271.25,
+        "h": 54
+      },
+      "emailFieldBox": {
+        "x": 55,
+        "y": 545,
+        "w": 320,
+        "h": 52
+      },
+      "mailIcon": {
+        "x": 71,
+        "y": 561,
+        "w": 18.75,
+        "h": 20
+      },
+      "footer": {
+        "x": 272.328125,
+        "y": 885,
+        "w": 41.671875,
+        "h": 17,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "13px",
+        "lh": "normal",
+        "weight": "500",
+        "ls": "normal",
+        "color": "rgb(255, 255, 255)"
+      },
+      "footerLine": {
+        "x": 115.984375,
+        "y": 885,
+        "w": 198.015625,
+        "h": 17
+      },
+      "arrow": {
+        "x": 329,
+        "y": 551,
+        "w": 40,
+        "h": 40
+      },
+      "arrowIcon": {
+        "x": 339.625,
+        "y": 561,
+        "w": 18.75,
+        "h": 20
+      }
+    },
+    "password": {
+      "heading": {
+        "x": 47.421875,
+        "y": 324.5,
+        "w": 335.15625,
+        "h": 48,
+        "lines": 1,
+        "font": "\"Instrument Serif\", Georgia, serif",
+        "size": "46px",
+        "lh": "48px",
+        "weight": "400",
+        "ls": "normal",
+        "color": "rgb(255, 255, 255)"
+      },
+      "headingBreaks": [
+        "Create your",
+        "password"
+      ],
+      "sub": null,
+      "emailField": {
+        "x": 97.75,
+        "y": 418.5,
+        "w": 271.25,
+        "h": 54
+      },
+      "pwField": {
+        "x": 109,
+        "y": 484.5,
+        "w": 260,
+        "h": 54
+      },
+      "pwFieldBox": {
+        "x": 55,
+        "y": 485.5,
+        "w": 320,
+        "h": 52
+      },
+      "eye": {
+        "x": 67,
+        "y": 494.5,
+        "w": 34,
+        "h": 34
+      },
+      "eyeIcon": {
+        "x": 74.625,
+        "y": 501.5,
+        "w": 18.75,
+        "h": 20
+      },
+      "goBack": {
+        "x": 201.0625,
+        "y": 551.5,
+        "w": 49.453125,
+        "h": 17,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "13px",
+        "lh": "normal",
+        "weight": "400",
+        "ls": "normal",
+        "color": "rgba(255, 255, 255, 0.6)"
+      },
+      "goBackIcon": {
+        "x": 179.46875,
+        "y": 552.5,
+        "w": 14.59375,
+        "h": 15
+      }
+    },
+    "confirm": {
+      "heading": {
+        "x": 117.078125,
+        "y": 357.5,
+        "w": 195.828125,
+        "h": 48,
+        "lines": 1,
+        "font": "\"Instrument Serif\", Georgia, serif",
+        "size": "46px",
+        "lh": "48px",
+        "weight": "400",
+        "ls": "normal",
+        "color": "rgb(255, 255, 255)"
+      },
+      "sub": {
+        "x": 108.515625,
+        "y": 415.5,
+        "w": 212.953125,
+        "h": 17,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "13px",
+        "lh": "normal",
+        "weight": "500",
+        "ls": "normal",
+        "color": "rgba(255, 255, 255, 0.6)"
+      },
+      "cfField": {
+        "x": 109,
+        "y": 451.5,
+        "w": 260,
+        "h": 54
+      },
+      "cfFieldBox": {
+        "x": 55,
+        "y": 452.5,
+        "w": 320,
+        "h": 52
+      },
+      "error": {
+        "x": 55,
+        "y": 503,
+        "w": 320,
+        "h": 17,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "12.5px",
+        "lh": "normal",
+        "weight": "400",
+        "ls": "normal",
+        "color": "rgb(255, 138, 148)"
+      },
+      "goBack": {
+        "x": 201.0625,
+        "y": 534,
+        "w": 49.453125,
+        "h": 17,
+        "lines": 1,
+        "font": "Geist, system-ui, sans-serif",
+        "size": "13px",
+        "lh": "normal",
+        "weight": "400",
+        "ls": "normal",
+        "color": "rgba(255, 255, 255, 0.6)"
+      }
+    }
+  }
+}
