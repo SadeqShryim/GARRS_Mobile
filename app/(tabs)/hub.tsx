@@ -1,2 +1,2 @@
-import { TabStub } from '../../src/screens/TabStub';
-export default function HubRoute() { return <TabStub tab="hub" />; }
+import { HubScreen } from '../../src/screens/hub/HubScreen';
+export default function HubRoute() { return <HubScreen />; }
