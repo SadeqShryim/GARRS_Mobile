@@ -6,7 +6,7 @@ import { dur } from '../theme/tokens';
 
 // deviceorientation → expo-sensors DeviceMotion. rotation.beta/gamma arrive in radians; the maths (tiltFor) wants degrees.
 // Each accepted reading retargets the card's rotateX/rotateY over 120 ms linear (the source's `transition: transform .12s linear`).
-// If the sensor is unavailable or denied, the card stays flat and the pill reads LIVE (spec §9).
+// If the sensor is unavailable, the card stays flat and the pill reads LIVE (spec §9).
 export function useTilt() {
   const tiltX = useSharedValue(0);
   const tiltY = useSharedValue(0);
@@ -18,11 +18,13 @@ export function useTilt() {
     (async () => {
       try {
         if (!(await DeviceMotion.isAvailableAsync())) return;
-        const p = await DeviceMotion.requestPermissionsAsync();
-        if (!p.granted || cancelled) return;
+        // Ask, but do not gate on the answer: Android's HIGH_SAMPLING_RATE_SENSORS permission only matters above 200 Hz, and
+        // Expo Go reports it denied while still delivering 60 ms updates (verified on the emulator, 2026-09-10).
+        await DeviceMotion.requestPermissionsAsync().catch(() => undefined);
+        if (cancelled) return;
         DeviceMotion.setUpdateInterval(60);
         sub = DeviceMotion.addListener((m) => {
-          if (!m.rotation) return;
+          if (!m.rotation) return;   // the first sample can arrive before the rotation-vector sensor reports
           const next = tiltFor(m.rotation.beta * RAD_TO_DEG, m.rotation.gamma * RAD_TO_DEG);
           if (!tiltChanged(last.current, next)) return;
           last.current = next;
