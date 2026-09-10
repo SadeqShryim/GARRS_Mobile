@@ -107,3 +107,40 @@ const disc = blobDisc(BLOB * SCALE, BLEED * SCALE);
 blur(disc, 16 * SCALE);
 writeFileSync(`${OUT}/glow-blob.png`, PNG.sync.write(disc));
 console.log(`glow-blob.png ${disc.width}x${disc.height}`);
+
+// --- Slice 2: auth blobs (Splash.dc.html, the blobOp layer) ---
+// Each blob is a w×h box filled with radial-gradient(circle, rgba(c,a0) 0%, rgba(c,0) 70%) — `circle` = farthest-corner
+// radius — clipped to an ellipse (border-radius: 50%), then filter: blur(sigma). Baked at 1× with a 180 px bleed (≥ 3σ).
+const BLOB_BLEED = 180;
+const AUTH_BLOBS = [
+  { name: 'blob-1', w: 420, h: 300, sigma: 58, rgb: [201, 138, 58], a0: 0.85 },
+  { name: 'blob-2', w: 340, h: 300, sigma: 54, rgb: [109, 74, 224], a0: 0.8 },
+  { name: 'blob-3', w: 300, h: 280, sigma: 60, rgb: [142, 27, 42], a0: 0.8 },
+  { name: 'blob-4', w: 300, h: 240, sigma: 56, rgb: [27, 110, 150], a0: 0.75 },
+];
+function authBlob({ w, h, rgb, a0 }) {
+  const W = w + 2 * BLOB_BLEED;
+  const H = h + 2 * BLOB_BLEED;
+  const png = new PNG({ width: W, height: H });
+  const cx = W / 2, cy = H / 2, rx = w / 2, ry = h / 2;
+  const R = Math.hypot(rx, ry) * 0.7;                      // the gradient reaches 0 at 70% of the farthest-corner radius
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      const dx = x + 0.5 - cx, dy = y + 0.5 - cy;
+      const e = Math.hypot(dx / rx, dy / ry);               // 1 on the ellipse edge
+      const cover = Math.max(0, Math.min(1, (1 - e) * Math.min(rx, ry) + 0.5));   // ~1 px anti-aliased ellipse edge
+      const d = Math.hypot(dx, dy);
+      const a = d < R ? a0 * (1 - d / R) : 0;
+      const o = (y * W + x) * 4;
+      png.data[o] = rgb[0]; png.data[o + 1] = rgb[1]; png.data[o + 2] = rgb[2];
+      png.data[o + 3] = Math.round(a * cover * 255);
+    }
+  }
+  return png;
+}
+for (const b of AUTH_BLOBS) {
+  const png = authBlob(b);
+  blur(png, b.sigma);
+  writeFileSync(`${OUT}/${b.name}.png`, PNG.sync.write(png));
+  console.log(`${b.name}.png ${png.width}x${png.height}`);
+}
