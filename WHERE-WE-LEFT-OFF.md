@@ -105,6 +105,7 @@ Set up 2026-09-07 with the SDK command-line tools, no Android Studio:
   mode and typed-route generation), `adb reverse tcp:8081 tcp:8081`, and open `exp://127.0.0.1:8081`
   on the device. **Never** `expo start --localhost`. If Expo Go shows "Something went wrong", tap its
   reload. Re-sending the `exp://` intent to a running app triggers a full reload.
+- **Phone off the Wi-Fi (remote demo):** Expo's own `npx expo start --tunnel` failed on 2026-09-10 with ngrok `ERR_NGROK_108` (Expo's shared anonymous ngrok account at its session limit — nothing on this PC). Working alternative with the already-installed `cloudflared`: `cloudflared tunnel --url http://localhost:8081 --no-autoupdate` prints an `https://<random>.trycloudflare.com` URL; then `EXPO_PACKAGER_PROXY_URL=https://<random>.trycloudflare.com npx expo start` makes the manifest and bundle URLs point at the tunnel; on the phone open Expo Go → "Enter URL manually" → `exp://<random>.trycloudflare.com`. Verified from this PC: the manifest and the 12 MB Android bundle come through the tunnel. The hostname changes every time cloudflared restarts.
 - Soft keyboard: for scripted typing disable Gboard first (`adb shell ime disable …LatinIME`); it
   re-enables itself after every reboot.
 - Chrome is installed (`C:\Program Files\Google\Chrome\Application\chrome.exe`) and is what
@@ -138,7 +139,8 @@ controller rather than trusted from the implementer's report.
 - **Approved downloads so far:** Expo Go; the Android SDK components and JDK (2026-09-07); npm
   packages `@shopify/react-native-skia` and `@expo-google-fonts/instrument-serif` (2026-09-09);
   `expo-sensors` (2026-09-10, implied by "get the rest of the app functional for the demo" — the
-  README names it for the tilt map; object if that was wrong). Anything else: ask.
+  README names it for the tilt map; object if that was wrong); `@expo/ngrok` (2026-09-10, asked for a
+  remote link — Expo's tunnel then failed on Expo's side, see the environment notes). Anything else: ask.
 - **Git is allowed** and pushes are wanted — the user reads the repo from another machine.
   A user file `Recording 2026-09-10 011300.mp4` sits untracked at the repo root; it was never committed.
 - **Questions are parked, not asked** — written into the spec's "parked decisions" and
