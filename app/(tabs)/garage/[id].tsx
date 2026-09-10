@@ -5,12 +5,12 @@ import { useAppStore } from '../../../src/store/useAppStore';
 export default function StatsRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const switchTab = useAppStore((s) => s.switchTab);
+  const showRecall = useAppStore((s) => s.showRecall);
   return (
     <VehicleStatsScreen
       id={Number(id)}
       onBack={() => router.back()}
-      onRecallDetails={() => { switchTab('recalls'); router.navigate('/(tabs)/recalls'); }}
+      onRecallDetails={() => { showRecall('v' + id); router.navigate('/(tabs)/recalls'); }}
     />
   );
 }

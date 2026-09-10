@@ -42,7 +42,7 @@ export function HumpTabBar({ state, navigation, insets }: BottomTabBarProps) {
               tab={t}
               on={t.id === activeId}
               onLayout={(e) => { const { x, width } = e.nativeEvent.layout; setBoxes((b) => ({ ...b, [t.id]: { x, width } })); }}
-              onPress={() => { switchTab(t.id); navigation.navigate(t.id, t.id === 'garage' ? { screen: 'index' } : undefined); }}
+              onPress={() => { switchTab(t.id); navigation.navigate(t.id, t.id === 'garage' || t.id === 'recalls' ? { screen: 'index' } : undefined); }}
             />
           ))}
         </View>

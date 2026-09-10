@@ -30,7 +30,7 @@ describe('HumpTabBar', () => {
     fireEvent.press(getByLabelText('RECALLS'));
     expect(useAppStore.getState().tab).toBe('recalls');
     expect(useAppStore.getState().sheet).toBeNull();
-    expect(p.navigation.navigate).toHaveBeenCalledWith('recalls', undefined);
+    expect(p.navigation.navigate).toHaveBeenCalledWith('recalls', { screen: 'index' });
   });
   it('tapping garage returns the garage stack to its root', () => {
     const p = props(1);
