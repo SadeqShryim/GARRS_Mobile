@@ -12,6 +12,15 @@ export const color = {
   scrim: 'rgba(23,22,26,0.28)',
   // Slice 2 — Splash.dc.html
   tileA: '#111116', tileB: '#0C0C10', tilePhoto: '#0E0E12', markInk: '#08222E', authBlueInk: '#04222C', authError: '#FF8A94', warning: '#E8A317',
+  // Slice 3 — app tabs
+  infoBg: '#E7F1F7', dangerBg: '#FBE9EB', dangerEdge: '#F0B9C0', dangerInk: '#7a5257',
+  warnBadgeBg: '#FBE9CB', warnBadgeInk: '#7A5307', ink8: '#a3a2aa',
+  hair10: 'rgba(0,0,0,0.10)', hair12: 'rgba(0,0,0,0.12)', hair20: 'rgba(0,0,0,0.20)', tint06: 'rgba(0,0,0,0.06)',
+  chatTop: '#18181B', chatBottom: '#09090B', chatBubble: 'rgba(39,39,42,0.9)', chatField: 'rgba(39,39,42,0.5)',
+  chatEdge: 'rgba(255,255,255,0.10)', chatHair: 'rgba(255,255,255,0.06)', chatDim: 'rgba(255,255,255,0.42)',
+  chatMuted: 'rgba(255,255,255,0.6)', chatSendOff: 'rgba(255,255,255,0.3)', chatPlaceholder: 'rgba(255,255,255,0.45)', chatInk: '#F4F4F5',
+  mapInk: 'rgba(23,22,26,0.25)', mapInk2: 'rgba(23,22,26,0.20)', mapInk3: 'rgba(23,22,26,0.10)', mapTint: 'rgba(23,22,26,0.05)',
+  pinHalo: 'rgba(15,99,143,0.45)', doneRing: 'rgba(15,99,143,0.28)', doneGlow: 'rgba(15,99,143,0.14)',
 } as const;
 
 export const font = {
@@ -25,14 +34,18 @@ export const ease = {
   gauge: [0.43, 0.13, 0.23, 0.96], press: [0.4, 0, 0.2, 1], cssEaseOut: [0, 0, 0.58, 1],
   // Slice 2 — CSS `ease`, `ease-in-out`, and the bubble pop's cubic-bezier(.2,.9,.25,1)
   css: [0.25, 0.1, 0.25, 1], inOut: [0.42, 0, 0.58, 1], bubble: [0.2, 0.9, 0.25, 1],
+  // Slice 3 — cubic-bezier(.22,1,.36,1) (article swipe, chat bubbles)
+  swipe: [0.22, 1, 0.36, 1],
 } as const;
 export const bez = (e: readonly [number, number, number, number]) => Easing.bezier(e[0], e[1], e[2], e[3]);
 
 export const dur = {
   press: 150, fade: 200, dim: 250, sheet: 280, color: 300, screen: 340, health: 500, hump: 550, bar: 800,
   gauge: 1400, toast: 2200, metalIdle: 7000, metalPressed: 2333, blob: 5000, ripple: 600,
+  // Slice 3
+  swipe: 360, snap: 300, leave: 380, toggle: 220, tilt: 120, strip: 500, bubbleIn: 350, dotBob: 800, hubAuto: 5000, shine: 4000, filter: 200, map: 350, chatReply: 1400,
 } as const;
 
 export const blur = { face: 55, scrim: 7 } as const;   // tuned in Task 22
 
-export const layout = { card: 318, railGap: 14, humpW: 61, humpH: 13.7, bezelBaked: 768, blobBaked: 210, blobBleed: 48 } as const;
+export const layout = { card: 318, railGap: 14, humpW: 61, humpH: 13.7, bezelBaked: 768, blobBaked: 210, blobBleed: 48, shineBaked: 1024 } as const;

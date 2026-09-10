@@ -144,3 +144,19 @@ for (const b of AUTH_BLOBS) {
   writeFileSync(`${OUT}/${b.name}.png`, PNG.sync.write(png));
   console.log(`${b.name}.png ${png.width}x${png.height}`);
 }
+
+// --- Slice 3: shine borders (GaragePrototype.dc.html lines 764 and 377) ---
+// conic-gradient(from 0deg, …) rotating 4 s linear behind the Plus plan card (blur 4) and the service caution card (blur 3).
+// The source's last stop repeats the first; conic() appends ramp[0] itself, so the ramps below omit it.
+// Baked at SHINE px square; ShineBorder scales the texture to ceil(hypot(w, h)) of the card (≈ 540 dp), so the blur is baked at ~2×.
+const SHINE = 1024;
+const SHINES = {
+  plus: { ramp: ['#3b82f6', '#ef4444', '#2dd4bf'], blur: 4 },
+  caution: { ramp: ['#D0021B', '#ffb741', '#D0021B', '#ffb741'], blur: 3 },
+};
+for (const [name, s] of Object.entries(SHINES)) {
+  const png = conic(s.ramp, SHINE);
+  blur(png, s.blur * 2);
+  writeFileSync(`${OUT}/shine-${name}.png`, PNG.sync.write(png));
+  console.log(`shine-${name}.png ${png.width}x${png.height}`);
+}

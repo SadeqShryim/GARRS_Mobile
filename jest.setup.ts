@@ -89,3 +89,31 @@ jest.mock('@shopify/react-native-skia', () => {
   };
   return new Proxy(named, { get: (t, key) => (key in t ? t[key as string] : typeof key === 'string' ? node(key) : undefined) });
 });
+
+// Slice 3: gesture-handler's official jest setup (article swipe), expo-sensors (tilt map), expo-router hooks used by screens.
+require('react-native-gesture-handler/jestSetup');
+
+jest.mock('expo-sensors', () => ({
+  DeviceMotion: {
+    setUpdateInterval: jest.fn(),
+    isAvailableAsync: jest.fn(async () => false),
+    requestPermissionsAsync: jest.fn(async () => ({ granted: true, status: 'granted' })),
+    addListener: jest.fn(() => ({ remove: jest.fn() })),
+  },
+}));
+
+jest.mock('expo-router', () => {
+  const React = require('react') as typeof import('react');
+  const router = { navigate: jest.fn(), push: jest.fn(), back: jest.fn(), replace: jest.fn() };
+  return {
+    __esModule: true,
+    router,
+    useRouter: () => router,
+    useIsFocused: () => true,
+    useFocusEffect: (cb: () => void | (() => void)) => { React.useEffect(cb, []); },
+    useLocalSearchParams: () => ({}),
+    Stack: () => null,
+    Tabs: () => null,
+    Slot: () => null,
+  };
+});
