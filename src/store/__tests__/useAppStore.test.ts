@@ -47,3 +47,53 @@ describe('store', () => {
     s().dismissSplash(); expect(s().splash).toBe(false);
   });
 });
+
+describe('store — Slice 3', () => {
+  it('starts with the design defaults', () => {
+    expect(s()).toMatchObject({ rFilter: 'open', rOpen: null, plan: 'pro', hubIdx: 0, hubGroup: 'all', hubLight: null, article: null, svcMethod: 'dropoff', svcDate: '13', svcTime: '09:30 AM', svcDone: false, pfPush: true, pfEmail: true, pfBio: false });
+  });
+  it('recall filter, toggle, showRecall and scheduleFromRecalls', () => {
+    s().toggleRecall('v1'); expect(s().rOpen).toBe('v1');
+    s().toggleRecall('v1'); expect(s().rOpen).toBeNull();
+    s().toggleRecall('h1'); s().setRecallFilter('closed');
+    expect(s()).toMatchObject({ rFilter: 'closed', rOpen: null });
+    s().showRecall('v1');
+    expect(s()).toMatchObject({ tab: 'recalls', screen: null, rFilter: 'open', rOpen: 'v1' });
+    s().scheduleFromRecalls();
+    expect(s()).toMatchObject({ scheduled: true, rFilter: 'scheduled', rOpen: null, toast: 'Service booked · Thu 10:30 AM' });
+  });
+  it('setPlan toasts the plan name', () => {
+    s().setPlan('plus');
+    expect(s()).toMatchObject({ plan: 'plus', toast: 'Plus membership active' });
+  });
+  it('hub: index, group, light sheet, article screen', () => {
+    s().setHubIdx(2); s().setHubGroup('warning'); s().openLight('l8');
+    expect(s()).toMatchObject({ hubIdx: 2, hubGroup: 'warning', hubLight: 'l8' });
+    s().closeLight(); expect(s().hubLight).toBeNull();
+    s().openArticle('a2'); expect(s()).toMatchObject({ screen: 'article', article: 'a2' });
+    s().setArticle('a3'); expect(s().article).toBe('a3');
+    s().closeArticle(); expect(s()).toMatchObject({ screen: null, article: null });
+  });
+  it('service: selections, confirm toasts the chosen slot, return resets the form', () => {
+    s().setSvcMethod('concierge'); s().setSvcDate('15'); s().setSvcTime('02:30 PM');
+    s().confirmService();
+    expect(s()).toMatchObject({ svcDone: true, scheduled: true, toast: 'Service booked · Tuesday, Oct 15 at 02:30 PM' });
+    s().returnToGarage();
+    expect(s()).toMatchObject({ tab: 'garage', svcDone: false });
+  });
+  it('togglePref flips one preference', () => {
+    s().togglePref('pfBio'); expect(s().pfBio).toBe(true);
+    s().togglePref('pfPush'); expect(s().pfPush).toBe(false);
+    expect(s().pfEmail).toBe(true);
+  });
+  it('switchTab also closes the light sheet and the article', () => {
+    s().openLight('l1'); s().openArticle('a1');
+    s().switchTab('hub');
+    expect(s()).toMatchObject({ tab: 'hub', sheet: null, screen: null, hubLight: null, article: null });
+  });
+  it('openScreen / closeScreen', () => {
+    s().openScreen('chat'); expect(s().screen).toBe('chat');
+    s().closeScreen(); expect(s().screen).toBeNull();
+    s().openSheet('reason'); expect(s().sheet).toBe('reason');
+  });
+});
