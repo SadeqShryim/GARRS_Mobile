@@ -24,3 +24,5 @@ Spec: docs/superpowers/specs/2026-09-10-slice3-app-tabs-design.md (binding autho
 ### RESUME HERE
 CURRENT STATE: spec committed; briefs being written (`task-N-brief.md` in this directory; the plan file is assembled from them). Nothing dispatched yet.
 NEXT: finish the briefs, run the pre-flight scan, dispatch wave 1 (Task 1), then waves 2–4 as above. After each report: controller re-runs `npm test && npm run typecheck`, records `Task N: complete` here, commits with the checkpoint message. Then Task 12, the controller's emulator pass (13) with the emulator recipe in CLAUDE.md, docs, push.
+- Task 1: complete (controller-verified: 34 suites / 177 tests, typecheck clean). Deviation accepted: double-quoted string literals for the two lines containing the curly apostrophe — content verbatim. Committed.
+- Wave 2 dispatched in parallel: Task 2 (haiku, lib derivations) and Task 4 (sonnet, primitives + garage Rail refactor). Disjoint files.
