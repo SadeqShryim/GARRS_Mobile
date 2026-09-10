@@ -1,5 +1,6 @@
 import { Geist_300Light, Geist_400Regular, Geist_500Medium, Geist_600SemiBold } from '@expo-google-fonts/geist';
 import { GeistMono_400Regular, GeistMono_500Medium } from '@expo-google-fonts/geist-mono';
+import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { BlurTargetView } from 'expo-blur';
 import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
@@ -19,6 +20,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded] = useFonts({
     Geist_300Light, Geist_400Regular, Geist_500Medium, Geist_600SemiBold, GeistMono_400Regular, GeistMono_500Medium,
+    InstrumentSerif_400Regular,
     remixicon: require('../src/assets/fonts/remixicon.ttf'),
   });
   const target = useRef<View>(null);

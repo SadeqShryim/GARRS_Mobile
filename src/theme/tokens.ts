@@ -10,16 +10,21 @@ export const color = {
   hair: 'rgba(0,0,0,0.09)', hair08: 'rgba(0,0,0,0.08)', hair07: 'rgba(0,0,0,0.07)', hair13: 'rgba(0,0,0,0.13)',
   hair14: 'rgba(0,0,0,0.14)', tint02: 'rgba(0,0,0,0.02)', tint05: 'rgba(0,0,0,0.05)',
   scrim: 'rgba(23,22,26,0.28)',
+  // Slice 2 — Splash.dc.html
+  tileA: '#111116', tileB: '#0C0C10', tilePhoto: '#0E0E12', markInk: '#08222E', authBlueInk: '#04222C', authError: '#FF8A94', warning: '#E8A317',
 } as const;
 
 export const font = {
   sans300: 'Geist_300Light', sans400: 'Geist_400Regular', sans500: 'Geist_500Medium', sans600: 'Geist_600SemiBold',
   mono400: 'GeistMono_400Regular', mono500: 'GeistMono_500Medium',
+  serif400: 'InstrumentSerif_400Regular',
 } as const;
 
 export const ease = {
   standard: [0.2, 0.8, 0.2, 1], hump: [0.2, 0.9, 0.2, 1], sheet: [0.2, 0.85, 0.2, 1],
   gauge: [0.43, 0.13, 0.23, 0.96], press: [0.4, 0, 0.2, 1], cssEaseOut: [0, 0, 0.58, 1],
+  // Slice 2 — CSS `ease`, `ease-in-out`, and the bubble pop's cubic-bezier(.2,.9,.25,1)
+  css: [0.25, 0.1, 0.25, 1], inOut: [0.42, 0, 0.58, 1], bubble: [0.2, 0.9, 0.25, 1],
 } as const;
 export const bez = (e: readonly [number, number, number, number]) => Easing.bezier(e[0], e[1], e[2], e[3]);
 

@@ -46,3 +46,45 @@ jest.mock('expo-linear-gradient', () => {
       React.createElement(View, { style: p.style }, p.children),
   };
 });
+
+// Slice 2: @shopify/react-native-skia — components render as Views (testID `skia-<Name>` unless given), hooks return null,
+// Skia.* factories return inert objects so derived values can run in JS. Nothing here draws.
+jest.mock('@shopify/react-native-skia', () => {
+  const React = require('react') as typeof import('react');
+  const { View } = require('react-native') as typeof import('react-native');
+  const node = (name: string) => {
+    const C = ({ children, testID }: { children?: React.ReactNode; testID?: string }) => React.createElement(View, { testID: testID ?? `skia-${name}` }, children);
+    C.displayName = name;
+    return C;
+  };
+  const inert = () => ({});
+  const path = () => {
+    const p: Record<string, jest.Mock> = {};
+    for (const m of ['moveTo', 'lineTo', 'arcToTangent', 'close', 'addRRect']) p[m] = jest.fn(() => p);
+    return p;
+  };
+  const XYWHRect = (x: number, y: number, width: number, height: number) => ({ x, y, width, height });
+  const RRectXY = (rect: unknown, rx: number, ry: number) => ({ rect, rx, ry });
+  const Skia = {
+    Paint: () => ({ setImageFilter: jest.fn(), setAlphaf: jest.fn(), setColor: jest.fn() }),
+    ImageFilter: { MakeBlur: inert, MakeColorFilter: inert },
+    ColorFilter: { MakeMatrix: inert },
+    Path: { Make: path },
+    XYWHRect,
+    RRectXY,
+    Point: (x: number, y: number) => ({ x, y }),
+  };
+  const named: Record<string, unknown> = {
+    __esModule: true,
+    Skia,
+    TileMode: { Clamp: 0, Repeat: 1, Mirror: 2, Decal: 3 },
+    useImage: () => null,
+    useFont: () => null,
+    useTypeface: () => null,
+    useCanvasRef: () => ({ current: null }),
+    vec: (x = 0, y = 0) => ({ x, y }),
+    rect: XYWHRect,
+    rrect: RRectXY,
+  };
+  return new Proxy(named, { get: (t, key) => (key in t ? t[key as string] : typeof key === 'string' ? node(key) : undefined) });
+});
