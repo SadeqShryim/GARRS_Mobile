@@ -6,7 +6,7 @@ import { useAppStore } from '../store/useAppStore';
 import { AddVehicleSheet } from '../screens/AddVehicleSheet';
 import { RecallSheet } from '../screens/RecallSheet';
 import { VinHelpScreen } from '../screens/VinHelpScreen';
-import { SplashStub } from '../screens/SplashStub';
+import { Splash } from '../screens/splash/Splash';
 import { Toast } from '../ui/Toast';
 
 export function OverlayHost() {
@@ -34,7 +34,7 @@ export function OverlayHost() {
       {sheet === 'recall' && <RecallSheet onDetails={() => router.navigate('/(tabs)/recalls')} />}
       {screen === 'vinhelp' && <VinHelpScreen />}
       <Toast />
-      {splash && <SplashStub onDone={dismissSplash} />}
+      {splash && <Splash onDone={dismissSplash} />}
     </View>
   );
 }

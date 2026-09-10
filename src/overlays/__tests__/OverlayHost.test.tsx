@@ -4,6 +4,7 @@ import { OverlayHost } from '../OverlayHost';
 import { resetAppStore, useAppStore } from '../../store/useAppStore';
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ navigate: jest.fn() }) }));
+jest.mock('../../screens/splash/useMarqueeDrive');
 
 type Handler = () => boolean | null | undefined;
 const handlers: Handler[] = [];
@@ -38,5 +39,12 @@ describe('OverlayHost hardware back', () => {
   it('lets the system handle back when nothing is open', () => {
     render(<OverlayHost />);
     expect(pressBack()).toBe(false);
+  });
+  it('mounts the real Splash while splash is true', () => {
+    useAppStore.setState({ splash: true });
+    const { getByText, getByTestId } = render(<OverlayHost />);
+    expect(getByTestId('stage')).toBeTruthy();
+    expect(getByText('REPLAY')).toBeTruthy();
+    expect(getByText('RECALL HUB')).toBeTruthy();
   });
 });
