@@ -20,7 +20,7 @@ export function SlideUpScreen({ caption, onClose, footer, children, testID, gap 
         </Pressable>
         <Mono size={10} ls={1.8} color={color.ink3}>{caption}</Mono>
       </View>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap, paddingTop: 8, paddingHorizontal: 20, paddingBottom: 32 }}>{children}</ScrollView>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap, paddingTop: 8, paddingHorizontal: 20, paddingBottom: 32 }} showsVerticalScrollIndicator={false}>{children}</ScrollView>
       {footer ? (
         <View style={{ flexDirection: 'row', gap: 10, paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 + insets.bottom, borderTopWidth: 1, borderTopColor: color.hair07 }}>{footer}</View>
       ) : null}
