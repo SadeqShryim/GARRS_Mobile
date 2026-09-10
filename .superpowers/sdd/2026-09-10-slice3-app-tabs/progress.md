@@ -28,3 +28,5 @@ NEXT: finish the briefs, run the pre-flight scan, dispatch wave 1 (Task 1), then
 - Wave 2 dispatched in parallel: Task 2 (haiku, lib derivations) and Task 4 (sonnet, primitives + garage Rail refactor). Disjoint files.
 - Tasks 2, 4: complete (controller-verified on the merged tree: 36 suites / 196 tests, typecheck clean). Task 2 deviation accepted: toBeCloseTo for the float tilt assertions. Task 4 deviations accepted: no pointerEvents prop on the rotating Animated.Image (matches MetalButton); scroll test event carries layoutMeasurement/contentSize. Committed one per task.
 - Wave 3 dispatched in parallel: Task 3 (sonnet, store) and Task 5 (sonnet, useTilt + TiltMap). Disjoint files.
+- Tasks 3, 5: complete (controller-verified: 37 suites / 206 tests, typecheck clean; no deviations). Committed one per task.
+- Wave 4 dispatched in parallel (all sonnet): Task 6 (Recalls + detail + routes), 7 (Service), 8 (Hub + LightSheet), 9 (ArticleReader), 10 (Profile + Membership), 11 (Chat). Disjoint files; Task 12 (OverlayHost) follows.
