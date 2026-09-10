@@ -60,7 +60,7 @@ jest.mock('@shopify/react-native-skia', () => {
   const inert = () => ({});
   const path = () => {
     const p: Record<string, jest.Mock> = {};
-    for (const m of ['moveTo', 'lineTo', 'arcToTangent', 'close', 'addRRect']) p[m] = jest.fn(() => p);
+    for (const m of ['moveTo', 'lineTo', 'arcToTangent', 'close', 'addRRect', 'build', 'detach']) p[m] = jest.fn(() => p);
     return p;
   };
   const XYWHRect = (x: number, y: number, width: number, height: number) => ({ x, y, width, height });
@@ -70,6 +70,7 @@ jest.mock('@shopify/react-native-skia', () => {
     ImageFilter: { MakeBlur: inert, MakeColorFilter: inert },
     ColorFilter: { MakeMatrix: inert },
     Path: { Make: path },
+    PathBuilder: { Make: path },
     XYWHRect,
     RRectXY,
     Point: (x: number, y: number) => ({ x, y }),

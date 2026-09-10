@@ -31,7 +31,7 @@ describe('Bubble', () => {
   }
   it('shows the copy and reports its frame for the Skia backdrop', () => {
     const { getByText, getByTestId } = render(<Host />);
-    expect(getByText('Did you f*cking check?')).toBeTruthy();
+    expect(getByText(/Did you f\*cking[ \u00A0]check\?/)).toBeTruthy();
     fireEvent(getByTestId('bubble-face'), 'layout', { nativeEvent: { layout: { x: 35, y: 425, width: 360, height: 82 } } });
     expect(captured!.frame.value).toEqual({ x: 35, y: 425, w: 360, h: 82 });
   });

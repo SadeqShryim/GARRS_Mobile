@@ -75,9 +75,10 @@ function Veil({ width, height, opacity }: { width: number; height: number; opaci
 }
 
 // The face's outline: border-radius 28px with border-bottom-left-radius 9px (Skia rrects are uniform per axis, so a path).
+// Built with PathBuilder — the mutable SkPath methods are deprecated in Skia 2.x and warn at runtime.
 export function bubblePath(x: number, y: number, w: number, h: number, r = 28, rbl = 9) {
   'worklet';
-  const p = Skia.Path.Make();
+  const p = Skia.PathBuilder.Make();
   p.moveTo(x + r, y);
   p.lineTo(x + w - r, y);
   p.arcToTangent(x + w, y, x + w, y + r, r);
@@ -88,7 +89,7 @@ export function bubblePath(x: number, y: number, w: number, h: number, r = 28, r
   p.lineTo(x, y + r);
   p.arcToTangent(x, y, x + r, y, r);
   p.close();
-  return p;
+  return p.build();
 }
 
 // backdrop-filter: blur(16px) saturate(1.6), clipped to the face and moving with the pop. CSS fades a backdrop-filtered element

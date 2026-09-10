@@ -45,6 +45,9 @@ export function fadeOutBubble(v: BubbleValues) {
 }
 
 const FILL = ['rgba(255,255,255,0.10)', 'rgba(255,255,255,0.22)', 'rgba(255,255,255,0.08)'] as const;
+// text-wrap: pretty has no RN equivalent. At 430 the copy is one line; at 412 dp it must wrap, and pretty would keep
+// "f*cking check?" together. A no-break space before "check?" reproduces both outcomes with the verbatim glyphs.
+const PRETTY_COPY = COPY.bubble.replace('f*cking check?', 'f*cking\u00A0check?');
 const STOPS = [0, 0.45, 1] as const;
 
 export function Bubble({ v }: { v: BubbleValues }) {
@@ -75,7 +78,7 @@ export function Bubble({ v }: { v: BubbleValues }) {
               <Ellipse cx="50" cy="50" rx="50" ry="50" fill="url(#hl)" />
             </Svg>
           </View>
-          <Sans size={29} lh={34} weight={600} ls={-0.7} color="#FFFFFF" center style={styles.copy}>{COPY.bubble}</Sans>
+          <Sans size={29} lh={34} weight={600} ls={-0.7} color="#FFFFFF" style={styles.copy}>{PRETTY_COPY}</Sans>
         </View>
       </Animated.View>
     </Animated.View>
