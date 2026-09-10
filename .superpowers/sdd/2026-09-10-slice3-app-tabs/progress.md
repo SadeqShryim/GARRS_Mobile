@@ -16,7 +16,23 @@ Spec: docs/superpowers/specs/2026-09-10-slice3-app-tabs-design.md (binding autho
 - A user file `Recording 2026-09-10 011300.mp4` appeared untracked at the repo root during this session — not committed, not touched (commits use explicit paths).
 
 ## Pre-flight scan (plan vs. itself and Global Constraints)
-(filled in after the briefs are written)
+
+| Pair / task | Produces vs consumes | Finding |
+|---|---|---|
+| T1 → T2, T3 | `RECALLS_COPY.bookedToast`, `LIVE_RECALL`, `STATE_META`, `EMPTY_REASON`, `SVC_*`, `TRACKER`, `PLANS`, `CHAT_SCRIPT`, `CANNED_REPLY`; Slice 3 types | every name T2/T3 import is defined in T1 — OK |
+| T1 → all screens | tokens `color.infoBg/dangerBg/dangerEdge/dangerInk/hair08/hair10/hair12/hair14/hair20/ink7/ink8/doneRing/chat*/map*`, `dur.strip/color/hubAuto/swipe/snap/leave/toggle/tilt/bubbleIn/dotBob/screen/shine`, `ease.css/swipe/sheet/press`; global mocks for expo-router (`router` export), expo-sensors, gesture-handler | defined in T1 (hair07/hair08/hair14/shellDark/textOnDark pre-exist from Slice 1) — OK |
+| T2 → T6/T7/T8/T9/T10/T11 | `lib/recalls` (allRecalls, vehicleName, recallCounts, heroVals, FILTERS, filterVals, emptyText, itemRows, detailFor), `lib/service` (openRecallVehicle, reasonVals, reasonRows, doneDetails, trackerSteps, tiltFor, tiltChanged, RAD_TO_DEG), `lib/hub` (GROUPS, groupChip, HUB_COPY, hubHeadline, hubCounter, visibleLights, lightById, BADGE, articleById, articleIndex, neighbour, nextTitle), `lib/chat` (revealPlan, SEND_REPLY_DELAY), `lib/membership` (planLabel, planLine, planToast, featureVals) | each consumer imports exactly these — OK |
+| T3 → screens | `openScreen/closeScreen`, `setRecallFilter/toggleRecall/showRecall/scheduleFromRecalls`, `setPlan`, `setHubIdx/setHubGroup/openLight/closeLight/openArticle/setArticle/closeArticle`, `setSvcMethod/Date/Time/confirmService/returnToGarage`, `togglePref`; `sheet: 'reason'`, `screen: 'membership' | 'chat' | 'article'` | consumers use exactly these — OK |
+| T4 → screens | `StatusChip{bg,fg,icon?,label,ls?,padX?,padY?}`, `Toggle{on,label,onPress}`, `ShineBorder{ramp,radius,style,testID}` (+ `shine` testID), `SheetShell{onClose,handleMargin,paddingBottom,gap,testID}`, `InfiniteRail` + `InfiniteRailHandle{scrollTo,advance}` | LightSheet passes ls/padX/padY; HubScreen uses the ref handle — OK |
+| T5 → T7 | `TiltMap` (no props) | OK |
+| T6 ↔ T7/T8/T10 routes | T6 owns `app/(tabs)/recalls/*`, `garage/[id].tsx`, `HumpTabBar`; T7 `service.tsx`; T8 `hub.tsx`; T10 `profile.tsx` + `SlideUpScreen` | disjoint — OK |
+| T8 ↔ T9 (same directory) | T8: HubScreen, ArticleCard, LightSheet, hub.test; T9: ArticlePanel, ArticleReader, ArticleReader.test | disjoint — OK |
+| T10 ↔ T11 (same directory) | T10: ProfileScreen, MembershipScreen, PlanCard, profile.test; T11: ChatScreen, ChatScreen.test | disjoint — OK |
+| T7/T8/T9/T10/T11 → T12 | `ReasonSheet`, `LightSheet`, `ArticleReader`, `MembershipScreen`, `ChatScreen` (no props); testIDs `sheet-reason`, `sheet-light`, `article-reader`, `screen-membership`, `screen-chat` | T12's OverlayHost + test use exactly these — OK |
+| Global: no RN `<Modal>` | none — OK |
+| Global: MetalButton props | `tint="default"`, `width="auto"`, `flex`, `testID` all exist (Slice 1) — OK |
+
+Scan result: no conflicts requiring a ruling beyond the rulings above.
 
 ## Progress
 - 2026-09-10: research complete (whole design read; 41 reference captures + geometry); spec written and committed (235b195); expo-sensors installed.
