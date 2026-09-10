@@ -95,3 +95,56 @@ Checked per state: geometry against `splash-geometry.json` (header 22 + inset, R
 - Auth tap points (px): email field `540 1512`; password field `540 1352`; eye `196 1352`; confirm field `540 1265`; Google pill `388 1246`.
 - `am start … exp://127.0.0.1:8081` while the app is already open triggers a full reload (~60 s on this PC); use REPLAY to restart the timeline instead.
 - Skia logs `RNSkia: updateAndRelease() failed. The exception above can safely be ignored` on Android — harmless, per its own message.
+
+
+# Slice 3 verification — Recalls, Service, Hub, Profile on Android emulator (s24ultraProxy, Pixel 8 / API 35)
+
+Date: 2026-09-10
+Reference: docs/reference/app-<state>.png (design, 430×932 @2x, `scripts/app-refs.mjs`)   Emulator: docs/reference/emu-app-<state>.png (411 dp @2.625x, `scripts/emu-app-shots.mjs` + adb)
+Checked per state: geometry against `app-geometry.json` → type → colours → state content → motion by eye on the emulator.
+
+| State | Reference | Emulator | Status | Notes |
+|---|---|---|---|---|
+| Garage (regression after the `InfiniteRail` refactor) | garage-idle (Slice 1) | emu-app-garage, emu-app-garage-after-return | match | rail, mask, dimming, pager unchanged; the scheduled state (ALL CLEAR / No recalls / Open) after Return to Garage |
+| Recalls — open / expanded | app-recalls-open, -open-expanded | emu-app-recalls-open, -open-expanded | match | title, two-line headline, hero glow card, strip, legend, filter tiles, the open card, rows on expand |
+| Recalls — scheduled (empty) / resolved / resolved expanded | app-recalls-scheduled-empty, -closed, -closed-expanded | emu-app-… | match | empty row copy, three history cards, SEVERITY/REMEDY/WHERE/EST. TIME rows |
+| Recalls — after Schedule Repair | app-recalls-after-schedule | emu-app-recalls-after-schedule | match | toast, filter jumps to SCHEDULED, hero "1 in the shop", strip re-grows |
+| Recall detail — open / bottom / scheduled | app-recall-detail-open, -open-bottom, -scheduled | emu-app-… | match | chip, facts grid, WHY THIS MATTERS, THE REMEDY steps, note, pinned footer (metal CTA → grey "Scheduled Thu 10:30 AM" pill), phone button toast; hardware back pops the route |
+| Service — form / bottom / selected | app-service-form, -form-bottom, -form-selected | emu-app-… | match | caution shine card, tilt map, method segment, date rail, 3-column times with the first disabled, Confirm; selections Concierge / THU / 02:30 PM |
+| Service — reason sheet | app-service-reason-sheet | emu-app-service-reason-sheet | match | chip + code, title, vehicle line, rows, why, Continue booking / Full recall (→ recall detail) |
+| Service — confirmation / bottom | app-service-done, -done-bottom | emu-app-… | match | 146 px ring with the gradient check, details card, status tracker, Return to Garage; toast "Service booked · Tuesday, Oct 15 at 02:30 PM" |
+| Hub — idle / auto-advance / grid | app-hub-idle, -auto-2, -grid-bottom | emu-app-… | match | tripled rail with the 9 %/91 % mask, counter 01 → 02 after 5 s, dots, four group chips, 20 tiles (ABS glyph), info row |
+| Hub — STOP NOW / STATUS filters | app-hub-critical, -info | emu-app-hub-critical, -info | match | 5 and 6 tiles |
+| Light sheet — ABS / Oil / Cruise | app-hub-light-abs, -oil, -cruise | emu-app-… | match | 52 px dark tile with icon or glyph, badge per group (GET IT CHECKED / STOP DRIVING / STATUS ONLY), means, WHAT TO DO, Got it; hardware back closes it |
+| Article reader — a2 / mid-transition / a3 / bottom | app-article-a2, -swipe-mid, -a3, -a3-bottom | emu-app-… | match | close + kicker + prev/next, wash, meta row, headings, SWIPE hint, NEXT ARTICLE card; the leaver slides 22 % and fades while the next enters |
+| Article reader — real swipes | — | emu-app-article-after-swipe, -after-swipe-back | ok | a left swipe past 70 px → a4, a right swipe → back to a3; a vertical drag scrolls the body |
+| Profile — top / mid / bottom / toggle | app-profile, -mid, -bottom, -toggle | emu-app-… | match | initials, plan pill, membership row, account details, three toggles, garage rows (VIN chips, status), concierge card, activity, danger zone |
+| Membership — top / bottom / Plus selected / profile after | app-membership, -bottom, -plus, app-profile-plus | emu-app-… | match | Plus shine border, Recommend badge, default-tint metal CTA ("Current plan" once selected), Pro "Current plan" → "Upgrade to Pro", toast "Plus membership active", profile pill/line update |
+| Chat — typing / two messages / full / draft / sent-typing / sent | app-chat-* | emu-app-chat-* | match | header, scripted reveal on the source's timers, bubble entrances, dot bob, send button state, canned reply after 1.4 s |
+
+## Known, accepted differences (spec §9, §15)
+- Glass faces over the dark `#232228` shell (recalls hero and open card) read whiter than the design's 86 % white, because `expo-blur`'s light tint sits between the blob and the face — the same look Slice 1 accepted on the stats recall card.
+- The tilt map on the emulator is fixed at one tilt (`LIVE TILT`, the virtual sensor never moves); the phone pass judges the motion.
+- Copy wraps where 412 dp is narrower than 430: the recalls headline (two lines — as the design at 430), the hub "Tap any warning light…" line, the a2 article title (three lines instead of two).
+- Tab content scrolls under the translucent status bar (edge-to-edge), as every Slice 1 screen does.
+- Tapping a garage row on the Profile tab opens the stats screen with the **Garage** tab active (the stats route lives in the garage stack); the design keeps Profile highlighted (spec §15.8).
+- The hub rail's auto-advance keeps running while a light sheet or an article is open in the sense that the interval exists, but ticks are skipped (the source's guard); the rail resumes on the next tick.
+
+## Differences found and fixed during this pass
+- **Tilt map never armed in Expo Go.** `DeviceMotion.requestPermissionsAsync()` returns `denied` in Expo Go (the HIGH_SAMPLING_RATE_SENSORS permission is not in its manifest) although 60 ms updates are delivered anyway; `useTilt` now asks but no longer gates on the answer (commit 6d2176c). The first sample can arrive without `rotation`; it is skipped.
+- **Scroll indicator on slide-up screens** (membership, VIN help) — hidden like every other screen (85af5e7).
+
+## Differences found and NOT fixed (need a decision)
+- Spec §15.1–8 stand: chat state local; reason sheet closes on tab switch; recall detail is a route; auto-advance guard; stats "Details" expands the list item; initials at weight 600; emulator tilt static; stats-from-profile activates the Garage tab.
+
+## Frame times
+- `dumpsys gfxinfo host.exp.exponent` over 14 s of the service form (caution shine + tilt map) and the membership screen (Plus shine): 873 frames rendered, janky 6 (0.69 %), 90th percentile 19 ms, 95th 23 ms — on the emulator's host-GL path, a lower bound; the S24 Ultra is the frame-rate authority (Task 14).
+
+## Emulator driving notes (Slice 3)
+- Tab bar tap points (device px, 1080×2400): Garage `126 2280`, Recalls `332 2280`, Service `539 2280`, Hub `746 2280`, Profile `954 2280`. Leave the splash with the Google pill at `388 1246`.
+- `node scripts/emu-app-shots.mjs "tap X Y" "sleep MS" "shot NAME" …` drives a sequence and writes `docs/reference/emu-app-NAME.png`; steps: `tap`, `swipe X1 Y1 X2 Y2 [ms]`, `back`, `enter`, `text …`, `sleep`, `shot`.
+- Screens keep their scroll position across tab switches; header buttons inside a ScrollView (recall detail back arrow, article close) scroll away — use hardware back, which pops the detail route and closes every overlay in z-order.
+- The hub rail auto-advances every 5 s, so "the centred card" changes while you drive; open an article by tapping the centred card, then use prev/next.
+- Chat typing: disable Gboard first (`adb shell ime disable com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME`), tap the field at `480 2215`, `input text …`, send at `974 2215`; re-enable the IME afterwards.
+- **Metro:** never start it with `CI=1` — that disables watch mode (no fast refresh, typed routes are not regenerated). `.expo/types/router.d.ts` is regenerated on `expo start`; a stale copy fails `tsc` on new routes until Metro runs.
+- **Emulator crash-consent dialog:** if a previous instance died, the next launch shows "Showing crashdialog to get consent" and never boots; delete `%LOCALAPPDATA%\Temp\AndroidEmulator\emu-crash-*.db` and launch with `-no-metrics`.

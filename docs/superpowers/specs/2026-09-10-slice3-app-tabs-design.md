@@ -1,7 +1,7 @@
 # Slice 3 — The rest of the app: Recalls, Service, Hub, Profile and their overlays
 
 **Date:** 2026-09-10
-**Status:** approved by construction — the user asked to "get the rest of the app functional for the demo"; open questions are parked in §15 rather than asked (standing instruction).
+**Status:** approved by construction — the user asked to "get the rest of the app functional for the demo"; open questions are parked in §15 rather than asked (standing instruction). Built and emulator-verified 2026-09-10 (see `docs/reference/verification.md`, Slice 3 section).
 **Source of truth:** `design_handoff_recall_hub/design/GaragePrototype.dc.html` (line numbers below refer to it; template lines 127–1005, logic lines 1006–2379). Where this spec and the source disagree, the source wins. Reference captures: `docs/reference/app-*.png` (430×932 @2x) and `docs/reference/app-geometry.json`, produced by `scripts/app-refs.mjs` (installed Chrome over CDP, no downloads).
 
 ## 1. Purpose
@@ -162,7 +162,7 @@ The scrim + panel + handle of `sheetShell` (line 2203) without the title block: 
 The tripled-list, centre-snapping, silently-recentring `FlatList` with the 9 %/91 % edge mask, generalised: `{ count, index, onIndexChange, renderItem(i, active), keyFor(i), testID }` + an imperative handle `{ scrollTo(i, animated), advance() }`. `advance()` = scroll one **slot** forward from the current slot (animated), then after `dur.swipe + 60 ms` recentre silently if the slot left the middle copy — the source's `startHubAuto` glides to `children[n + hubIdx + 1]` and lets the scroll handler recentre (lines 1866–1898). Garage's `Rail` keeps its exact behaviour by delegating to it.
 
 ### `TiltMap` (lines 388–441)
-See §8 Service. Sensor: `expo-sensors` `DeviceMotion` (`setUpdateInterval(60)`), `rotation.beta/gamma` in radians → degrees → `tiltFor`; only when `tiltChanged` → `tiltOn = true`, `withTiming(120 ms, linear)` into shared values; `transform: [{ perspective: 1000 }, { rotateX }, { rotateY }]`. Permission: `DeviceMotion.requestPermissionsAsync()` when available; if unavailable/denied the card stays flat with `LIVE` (the source's desktop fallback uses the pointer, which has no touch equivalent — §9).
+See §8 Service. Sensor: `expo-sensors` `DeviceMotion` (`setUpdateInterval(60)`), `rotation.beta/gamma` in radians → degrees → `tiltFor`; only when `tiltChanged` → `tiltOn = true`, `withTiming(120 ms, linear)` into shared values; `transform: [{ perspective: 1000 }, { rotateX }, { rotateY }]`. Permission: `DeviceMotion.requestPermissionsAsync()` is called but its answer is **not** a gate — Expo Go reports `denied` (no HIGH_SAMPLING_RATE_SENSORS in its manifest) while still delivering 60 ms updates (found on the emulator, 2026-09-10); the permission only matters above 200 Hz. If the sensor is unavailable the card stays flat with `LIVE` (the source's desktop fallback uses the pointer, which has no touch equivalent — §9).
 
 ## 8. Screens — every measurement is from the cited lines; anything not listed is read from the source
 
@@ -313,3 +313,4 @@ Slice 3 is complete when: all five tabs are real (the stub is deleted); every st
 5. **Stats "Details" expands the item in the recalls list** (`showRecall`, line 1401) instead of Slice 1's placeholder navigation; the recall sheet's `Details` keeps switching to the tab with its toast (line 2261). Both are the source's behaviour.
 6. **Initials at weight 600** (§9). Load Geist 700 if the heavier glyphs matter.
 7. **Tilt on the emulator is static** (§9); the phone pass judges it.
+8. **A garage row on the Profile tab opens stats with the Garage tab active** — the stats screen is a route in the garage stack (Slice 1), so `router.navigate` switches tabs; the source keeps Profile highlighted while showing stats in place. Moving stats to a shared overlay would restore that; not worth it for the demo.
