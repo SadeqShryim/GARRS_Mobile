@@ -1,7 +1,7 @@
 # Slice 2 — The real Splash (marquee → crash photo → glass bubble → auth)
 
 **Date:** 2026-09-09
-**Status:** approved by construction — the user asked to "start slice 2 with the real splash screen"; open questions are parked in §15 rather than asked (standing instruction).
+**Status:** approved by construction — the user asked to "start slice 2 with the real splash screen"; open questions are parked in §15 rather than asked (standing instruction). Built and emulator-verified 2026-09-10 (see `docs/reference/verification.md`, Slice 2 section).
 **Source of truth:** `design_handoff_recall_hub/design/Splash.dc.html` (one artboard: the template first, then `class Component extends DCLogic`). Where this spec and the source disagree, the source wins. Measured DOM geometry of the source at 430 × 932 is in `docs/reference/splash-geometry.json`; the reference PNGs are `docs/reference/splash-*.png` (captured by `scripts/splash-refs.mjs`).
 
 ## 1. Purpose
@@ -247,6 +247,6 @@ Slice 2 is complete when: the app launches into the real Splash; the marquee acc
 ## 15. Parked decisions (recorded, not asked)
 
 1. **First-run marquee.** The source's first run never scrolls (runtime quirk); REPLAY scrolls. The port scrolls on every run. If the user prefers the exact first-run look (zoom + blur only), set the speed term to 0 for `runId === 0`.
-2. **Bubble at 412 dp.** Available width `412 − 52 = 360` equals the bubble's width at 430 (`304 + 56`). Geist's native metrics may push the copy to two lines. If it wraps, the design's `text-wrap: pretty` would break it as `Did you` ⏎ `f*cking check?`; the port will wrap greedily (`Did you f*cking` ⏎ `check?`) unless an explicit break is added. Decide on the emulator/phone.
+2. **Bubble at 412 dp — resolved on the emulator (2026-09-10).** Available width `412 − 52 = 360` equals the bubble's width at 430 (`304 + 56`), and the copy measures just over the 304 dp content box, so it wraps at 411 dp. The source's own CSS would do the same: left-aligned (no `text-align` in the source — the port's `center` was removed) with `text-wrap: pretty` → `Did you` ⏎ `f*cking check?`. The port emulates `pretty` with a no-break space before "check?" (`PRETTY_COPY` in `Bubble.tsx`): one line where it fits (≥ 430 dp), that break where it does not. Overrule by trimming the bubble's side padding if a single line on the phone is preferred.
 3. **Auth glass backdrop blur** omitted for frame rate (§9). If the user wants it, `expo-blur` `BlurView`s with `blurTarget` on a native wrapper of the blobs + a baked blurred photo would restore it at a cost of four snapshots per frame.
 4. **Skia on iOS** — untested (no device); Skia is cross-platform, and the only Android-only bits are the two RN `filter: blur` uses.

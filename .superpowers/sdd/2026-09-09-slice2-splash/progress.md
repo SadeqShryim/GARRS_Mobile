@@ -39,3 +39,22 @@ Scan result: no conflicts requiring a ruling beyond the rulings above.
 
 ### RESUME HERE
 CURRENT STATE: spec + plan + briefs written; nothing dispatched yet. Wave 1 (Tasks 1–4) is next, in parallel. After each report: controller re-runs `npm test && npm run typecheck`, records `Task N: complete` here, commits with the checkpoint message. Then wave 2 (5 ∥ 7), 8, wave 3 (6 ∥ 9), 10, then the controller's emulator pass (11) with the emulator recipe in CLAUDE.md, then docs + push.
+- Commit 31a365e: spec, plan, briefs, references, splash JPEGs, package.json (skia + instrument-serif).
+- Wave 1 dispatched in parallel: Task 1 (sonnet), Task 2 (haiku), Task 3 (haiku), Task 4 (haiku). A `task-N-report.md` means finished; no report = cut off → check the brief's file list on disk and re-dispatch only what is missing.
+- Tasks 1, 2, 3, 4: complete (controller-verified on the merged tree: `npm test` 28 suites / 145 tests, `npm run typecheck` clean; no deviations in any report). Committed one per task with the checkpoint messages.
+- Wave 2 dispatched in parallel: Task 5 (sonnet, glass primitives — src/screens/splash/{GlassPill,GlassField,GoogleMark,ReplayPill}.tsx + glass.test.tsx) and Task 7 (sonnet, RN layers — src/screens/splash/{Mark,Blobs,Bubble}.tsx + layers.test.tsx). Disjoint files.
+- Tasks 5, 7: complete (controller-verified: 30 suites / 154 tests, typecheck clean). Task 5 deviation accepted: the GoogleMark test asserts `String(processColor('#4285F4'))` because react-native-svg 15 runs `fill` through processColor before the host tree — test-only, component verbatim. Committed.
+- Wave 3 dispatched in parallel: Task 6 (sonnet, AuthPanel — needs 4 + 5) and Task 8 (sonnet, hooks + manual mock — needs 3 + 7). Disjoint files. Task 9 follows 8; Task 10 follows 6 + 9.
+- Task 8: complete (controller-verified: useSplashTimeline 3/3; typecheck clean). Deviation accepted: the test's `phaseOf` helper is typed against `ReactTestInstance` (strict TS rejects the brief's invented prop shape) — test-only. Committed.
+- Task 9 dispatched (sonnet, Skia stage — src/screens/splash/{Marquee,Stage}.tsx + stage.test.tsx) in parallel with the still-running Task 6 (AuthPanel). Disjoint files.
+- Task 9: complete (controller-verified: stage 3/3, typecheck clean; no deviations, no casts needed). Committed. Task 6 still in flight.
+- Task 6: complete (controller-verified: 33 suites / 167 tests, typecheck clean). Deviation accepted: the hardware-back test wraps the direct handler call in `act()` (React 19 defers a bare useReducer dispatch) — test-only, component verbatim; the implementer's temporary debug test file was removed before reporting. Committed.
+- Task 10 dispatched (sonnet): Splash.tsx composition, OverlayHost swap, SplashStub + its test deleted.
+- Task 10: complete (controller-verified: 33 suites / 168 tests, typecheck clean; no deviations). SplashStub + its test deleted. Committed. ALL CODE TASKS (1–10) COMPLETE.
+- Task 11 (emulator pass) started by the controller.
+- Task 11: complete (controller-executed 2026-09-10). 16 emu-splash-*.png captured; verification.md Slice 2 section written. Two fixes committed (354f657): PathBuilder for the bubble outline (Skia 2.6 deprecation banner), and the bubble copy at 411 dp — the source's left-aligned `text-wrap: pretty` wrap emulated with a no-break space (the port's `center` was not in the source and was removed). Gate after the fixes: 33 suites / 168 tests, typecheck clean. Frame times on the emulator (lower bound only): 216 frames / 4.2 s, 16.7 % janky.
+- Docs updated: WHERE-WE-LEFT-OFF.md rewritten; CLAUDE.md "Active work" + repo status + the Skia analysis note; spec §15.2 resolved; scripts/emu-splash-shots.mjs committed.
+
+### RESUME HERE (supersedes the block above)
+CURRENT STATE: Slice 2 is code complete **and emulator-verified**. Tasks 1–11 complete. Only **Task 12** (on-device pass on the S24 Ultra, appended to `docs/reference/verification.md`) remains — run it with Slice 1's Task 23. Gate: 33 suites / 168 tests, typecheck clean. Everything committed and pushed to origin/main on 2026-09-10.
+NEXT: Task 12 when the phone is at hand (Expo Go over Wi-Fi: `npx expo start`, scan the QR). Check by eye at 120 Hz: marquee smoothness through the blur ramp, the cut, the pop, blob drift, step entrance; the bubble's line count; keyboard behaviour on the email field; back on the password step. Then Slice 3 (no spec or plan yet — brainstorm → spec → plan → briefs; candidates: the four stub tabs, concierge chat, recall detail).

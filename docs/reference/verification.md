@@ -45,3 +45,53 @@ Checked per screen in the brief's order: spacing/alignment → type size/weight/
 - Expo Go 57's floating **Tools button** is turned off in its dev menu (the toggle persists); the first-launch dev-menu sheet must be closed with its ✕, not "Continue".
 - The AVD runs with `hw.keyboard=no`; the soft keyboard opens with the add sheet (autoFocus) and one back press dismisses it without closing the sheet. Android re-enables Gboard after every reboot, so `ime disable` does not stick.
 - `uiautomator dump` cannot reach an idle state because of the continuous animations; verify state from screenshots.
+
+
+# Slice 2 verification — Splash on Android emulator (s24ultraProxy, Pixel 8 / API 35)
+
+Date: 2026-09-10
+Reference: docs/reference/splash-<state>.png (design, 430×932 @2x, `scripts/splash-refs.mjs`)   Emulator: docs/reference/emu-splash-<state>.png (411 dp @2.625x, `scripts/emu-splash-shots.mjs` + adb)
+Skia 2.6.2 inside Expo Go 57 — confirmed working before the slice was planned (probe) and again on the finished screen.
+
+| State | Reference | Emulator | Status | Notes |
+|---|---|---|---|---|
+| Marquee 0 s / 1 s / 2 s / 2.6 s | splash-marquee-*.png | emu-splash-marquee-*.png | match | tile size, −25° rotation, gaps, shadows, glyph tiles, vignette, zoom and the blur ramp all match; tile positions are time-dependent so compare look, not placement. 0 s is a REPLAY capture, so the auth layer is mid cross-fade in both. |
+| Photo cut | splash-photo.png | emu-splash-photo.png | match | sharp photo at 3.2 s with the top/bottom veil; the mark is still ~20 % visible in ours (stacked above the photo — spec §9 flag) |
+| Bubble | splash-bubble.png | emu-splash-bubble.png | diff (width) | blurred/darkened photo, glass gradient, inset borders, highlight and backdrop blur+saturate match; **two lines at 411 dp** — see "fixed" below |
+| Fade | splash-fade.png | emu-splash-fade.png | match | bubble fading while the four blobs rise; backdrop strength fades with it |
+| Auth — email | splash-auth-email.png | emu-splash-auth-email.png | match | header, serif break "Get started / with Recall Hub", Continue with, Google/Apple pills, OR, Email field, footer, blobs |
+| Auth — email filled | splash-auth-email-filled.png | emu-splash-auth-email-filled.png | match | arrow appears on a valid address |
+| Auth — password | splash-auth-password.png | emu-splash-auth-password.png | match | email carried into the sub-line; email field stays; eye-line; Go back |
+| Auth — password filled / eye | splash-auth-password-*.png | emu-splash-auth-password-*.png | match | dots → plain text, eye-off-line, arrow at 6+ characters |
+| Auth — confirm / error | splash-auth-confirm*.png | emu-splash-auth-confirm*.png | match | "Passwords do not match." in #FF8A94, Go back |
+| REPLAY cross-fade | splash-replay-0.3s.png | emu-splash-replay-0.3s.png | match | auth fades out over the restarting marquee |
+| Finish | — | (Garage) | ok | Google pill → `dismissSplash()` → Garage; status bar returns to dark |
+
+Checked per state: geometry against `splash-geometry.json` (header 22 + inset, REPLAY 14/14, pills 42 tall, field 52 tall / 320 wide, OR row, footer 30 + inset) → type → colours → state content → motion by eye on the emulator (acceleration and blur ramp, cut, bubble pop, blob drift, step entrance, cross-fade).
+
+## Known, accepted differences (spec §9)
+- Auth pills, fields and the REPLAY pill have no backdrop blur (invisible over an already-blurred backdrop; `expo-blur` cannot sample the Skia canvas).
+- The bubble's backdrop filter fades by strength (σ and saturation) instead of alpha — indistinguishable in the captures.
+- The mark sits above the photo during the 0.3 s cut instead of beneath it.
+- Pill hover `scale(.98)` is the pressed state.
+- The source's first run never scrolls the marquee (runtime quirk); the port scrolls on every run (spec §15.1).
+- Step-entrance blur (`sp-in`) and the bubble highlight blur use RN `filter: blur` — Android only. The highlight reads soft in `emu-splash-bubble.png`; the 0.5 s entrance was not caught mid-flight by a capture (no error from Reanimated, the prop is accepted).
+
+## Differences found and fixed during this pass
+- **`SkPath.close()` deprecation banner.** Skia 2.6 logs a LogBox warning for the mutable path API, which covered the footer in dev. `bubblePath` now uses `Skia.PathBuilder.Make()…build()` (`src/screens/splash/Stage.tsx`; jest mock updated).
+- **Bubble copy at 411 dp.** The face has exactly 304 dp of content width here (430 − 26·2 − 28·2 = 304 at the design size too), and the copy measures just over it, so it wraps. The source's CSS would wrap the same way, left-aligned, with `text-wrap: pretty` → "Did you / f*cking check?". The port had `textAlign: center` (not in the source — removed) and wrapped greedily as "Did you f*cking / check?". Fixed with a no-break space before "check?" (`PRETTY_COPY` in `Bubble.tsx`): one line when it fits (≥ 430 dp), the pretty break when it does not. Spec §15.2 resolved this way.
+
+## Differences found and NOT fixed (need a decision)
+- **First-run marquee** (spec §15.1): the port scrolls on the first run; the source's first run only zooms and blurs. One constant flips it if the static look is preferred.
+- **Auth glass backdrop blur** (spec §15.3): omitted for frame rate; four `BlurView`s over a native copy of the blobs would restore it.
+- **Hardware back on the email step exits the app** (the design has no back affordance there); on the password/confirm steps it goes back a step (added in this slice). With a real keyboard open, back closes the keyboard first.
+
+## Frame times
+- `dumpsys gfxinfo host.exp.exponent` over REPLAY + 4.2 s (marquee + cut): 216 frames rendered, janky 36 (16.7 %), 90th percentile 65 ms, 95th 73 ms, 99th 85 ms. The emulator renders through software/host GL on this PC (the whole app runs at ~50 fps here); this is a lower bound only — the S24 Ultra (Task 12) is the frame-rate authority.
+
+## Emulator driving notes (Slice 2)
+- REPLAY pill tap point on the 1080×2400 AVD: `934 208` (device px). `node scripts/emu-splash-shots.mjs 934 208 [state …]` captures the timed states with the sleep on the device.
+- **Disable the soft keyboard before typing into the auth fields**: `adb shell ime disable com.google.android.inputmethod.latin/com.android.inputmethod.latin.LatinIME` (re-enable with `ime enable`). With Gboard's floating IME, `adb shell input text` leaves the last word as composing text and the field loses ".app" when focus moves — an injection artefact, not an app defect (verified: raw key events keep the full address). Submit with `input keyevent 66` (Enter) rather than tapping the arrow.
+- Auth tap points (px): email field `540 1512`; password field `540 1352`; eye `196 1352`; confirm field `540 1265`; Google pill `388 1246`.
+- `am start … exp://127.0.0.1:8081` while the app is already open triggers a full reload (~60 s on this PC); use REPLAY to restart the timeline instead.
+- Skia logs `RNSkia: updateAndRelease() failed. The exception above can safely be ignored` on Android — harmless, per its own message.
