@@ -1,2 +1,2 @@
-import { TabStub } from '../../src/screens/TabStub';
-export default function ProfileRoute() { return <TabStub tab="profile" />; }
+import { ProfileScreen } from '../../src/screens/profile/ProfileScreen';
+export default function ProfileRoute() { return <ProfileScreen />; }

@@ -6,7 +6,7 @@ import { bez, color, dur, ease } from '../theme/tokens';
 import { Icon } from './Icon';
 import { Mono } from './Txt';
 
-export function SlideUpScreen({ caption, onClose, footer, children, testID }: { caption: string; onClose: () => void; footer?: ReactNode; children: ReactNode; testID?: string }) {
+export function SlideUpScreen({ caption, onClose, footer, children, testID, gap = 20 }: { caption: string; onClose: () => void; footer?: ReactNode; children: ReactNode; testID?: string; gap?: number }) {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const slide = useSharedValue(1);
@@ -20,7 +20,7 @@ export function SlideUpScreen({ caption, onClose, footer, children, testID }: { 
         </Pressable>
         <Mono size={10} ls={1.8} color={color.ink3}>{caption}</Mono>
       </View>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20, paddingTop: 8, paddingHorizontal: 20, paddingBottom: 32 }}>{children}</ScrollView>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap, paddingTop: 8, paddingHorizontal: 20, paddingBottom: 32 }}>{children}</ScrollView>
       {footer ? (
         <View style={{ flexDirection: 'row', gap: 10, paddingTop: 12, paddingHorizontal: 20, paddingBottom: 18 + insets.bottom, borderTopWidth: 1, borderTopColor: color.hair07 }}>{footer}</View>
       ) : null}
