@@ -24,7 +24,7 @@ export const color = {
 } as const;
 
 export const font = {
-  sans300: 'Geist_300Light', sans400: 'Geist_400Regular', sans500: 'Geist_500Medium', sans600: 'Geist_600SemiBold',
+  sans300: 'Geist_300Light', sans400: 'Geist_400Regular', sans500: 'Geist_500Medium', sans600: 'Geist_600SemiBold', sans700: 'Geist_700Bold',
   mono400: 'GeistMono_400Regular', mono500: 'GeistMono_500Medium',
   serif400: 'InstrumentSerif_400Regular',
 } as const;

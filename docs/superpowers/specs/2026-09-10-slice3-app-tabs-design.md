@@ -263,7 +263,7 @@ Absolute overlay sliding up 340 ms (`screen-up`, `ease.sheet`), background `Line
 | Recalls glow cards | `GlowCard` (exists) with blob 220/200 | the baked blob is 210 px / blur 16; 220/18 and 200/16 are scaled from it — sub-pixel blur differences, accepted (as Slice 1) |
 | Glass faces `backdrop-filter: blur(24px)` on `rgba(255,255,255,.86)` | `GlowCard`'s BlurView only under glow shells | invisible over flat `#F2F1EE`, as Slice 1 |
 | Tilt map `rotateX/rotateY` + `perspective` | RN transforms driven by `DeviceMotion` | **flag:** the emulator's virtual sensor is static (the card sits at one fixed tilt and says `LIVE TILT`); the pointer fallback has no touch equivalent |
-| Pin `drop-shadow` | RN `filter: dropShadow` | Android-only in RN — the target |
+| Pin `drop-shadow` | RN `filter: dropShadow` on Android; the layer shadow (`shadowColor #0F638F`, opacity .45, radius 5) elsewhere | Android is the target; the iOS path (added 2026-09-11) follows the pin's alpha because the view has no background — unverified off Android |
 | Map `backdrop-filter: blur(4px)` on the LIVE pill | omitted | the pill sits on a flat map layer; nothing to blur |
 | Strip `flex-grow` transition | Reanimated animated `flex` | exact |
 | Toggle track colour | `interpolateColor` 220 ms | exact |
@@ -272,14 +272,14 @@ Absolute overlay sliding up 340 ms (`screen-up`, `ease.sheet`), background `Line
 | Chat bubble entrances, dot bob | Reanimated `withTiming` / `withRepeat` | exact |
 | Sheets `sheet-up` + scrim `blur(2px)` | existing `Sheet` behaviour | as Slice 1 |
 | Membership Plus CTA (`metalPill` default tint) | `MetalButton tint="default"` (exists, `metal-default.png`) | exact |
-| Initials `font-weight 700` | Geist 600 | **flag:** Geist 700 is not loaded (the app loads 300–600); adding the face is one line in `_layout.tsx` if wanted |
+| Initials `font-weight 700` | Geist 700 | exact — `Geist_700Bold` loaded 2026-09-11 (it was 600 while only 300–600 were loaded) |
 | Hub rail fling / hub auto-advance glide (420 ms cubic) | `FlatList` snapping / `scrollToOffset` animated | as Slice 1's rail flag: platform deceleration, not the source's cubic |
 
 ## 10. Assets, fonts, icons
 
 - `scripts/bake-assets.mjs` gains `SHINE = { plus: { ramp, blur: 4 }, caution: { ramp, blur: 3 } }` baked with the existing `conic()` at `1024 × 1024` (`shineBaked`) and `blur(png, blur · 2)` → `src/assets/images/shine-plus.png`, `shine-caution.png`.
 - Icons used (all Remixicon 4.5.0, present in the glyph map): `alarm-warning-fill calendar-check-fill checkbox-circle-fill arrow-up-s-line arrow-down-s-line arrow-right-line arrow-left-line arrow-right-s-line arrow-left-s-line arrow-right-up-line phone-line information-line shield-check-fill calendar-2-line settings-3-line map-pin-line car-line home-4-line calendar-check-line calendar-line check-line inbox-line sparkling-2-line vip-crown-2-line pencil-line car-fill customer-service-2-line customer-service-2-fill chat-3-line fire-fill lock-line close-line restart-line send-plane-fill drag-move-2-line` plus every `LIGHTS[].icon` and `ARTICLES[].icon`. Task 1 asserts each exists in the glyph map.
-- No new fonts.
+- No new font packages. `Geist_700Bold` (already inside the installed `@expo-google-fonts/geist`) was added to `_layout.tsx` on 2026-09-11 for the initials.
 
 ## 11. Dependencies
 
@@ -311,6 +311,6 @@ Slice 3 is complete when: all five tabs are real (the stub is deleted); every st
 3. **Recall detail is a stack route**; Android back pops it (the source has no back). Hardware back on every new overlay closes it (as Slices 1–2).
 4. **Hub auto-advance pauses only while the hub tab is focused and no overlay is open** — exactly the source's `startHubAuto` guard; the 5 s interval is never reset by a manual swipe (the source does not reset it either).
 5. **Stats "Details" expands the item in the recalls list** (`showRecall`, line 1401) instead of Slice 1's placeholder navigation; the recall sheet's `Details` keeps switching to the tab with its toast (line 2261). Both are the source's behaviour.
-6. **Initials at weight 600** (§9). Load Geist 700 if the heavier glyphs matter.
+6. ~~**Initials at weight 600**~~ — **resolved 2026-09-11:** `Geist_700Bold` is loaded (no download; it ships in the installed package) and the initials render at 700 as designed.
 7. **Tilt on the emulator is static** (§9); the phone pass judges it.
 8. **A garage row on the Profile tab opens stats with the Garage tab active** — the stats screen is a route in the garage stack (Slice 1), so `router.navigate` switches tabs; the source keeps Profile highlighted while showing stats in place. Moving stats to a shared overlay would restore that; not worth it for the demo.

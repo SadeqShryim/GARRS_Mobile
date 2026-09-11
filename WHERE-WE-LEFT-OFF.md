@@ -1,7 +1,9 @@
 # Where we left off
 
-**Last updated: 2026-09-10, end of session 7** — the session that built and emulator-verified
-**Slice 3, the rest of the app** (Recalls, Service, Hub, Profile and every overlay between them).
+**Last updated: 2026-09-11, session 8** — a short follow-up to session 7, which built and
+emulator-verified **Slice 3, the rest of the app** (Recalls, Service, Hub, Profile and every overlay
+between them). Session 8 added the remote demo link, Geist 700 for the initials, and iOS rendering
+paths for the two Android-only effects (see "Session 8" below).
 
 Read this, then `.superpowers/sdd/2026-09-10-slice3-app-tabs/progress.md` (the Slice 3
 execution ledger). If the two disagree, the ledger is newer and wins. The Slice 1 and Slice 2 ledgers
@@ -38,6 +40,24 @@ design. Only the on-device pass on the phone remains, for all three slices.
 
 ## What happened this session
 
+### Session 8 (2026-09-11) — follow-up
+
+- **Remote demo link** for a phone off the Wi-Fi: a `cloudflared` quick tunnel in front of Metro
+  (`EXPO_PACKAGER_PROXY_URL`), recipe in the environment notes below. Works on Android. On iOS,
+  a signed-in Expo Go refuses it because this PC's Expo CLI is not logged in — the phone user
+  signs out of Expo Go, or the CLI logs in as the same account (your credentials; not done here).
+- **Parked decision 6 resolved:** `Geist_700Bold` was already inside the installed font package,
+  so it is loaded now and the profile initials render at 700 as designed
+  (`emu-app-profile.png` recaptured, matches the design).
+- **iOS paths for the two Android-only effects** (unverified off Android — no iPhone yet): the
+  Service map pin's glow uses the layer shadow instead of `filter: dropShadow`; the splash bubble
+  highlight uses an SVG Gaussian blur instead of `filter: blur`. The SVG path was forced once on
+  the emulator to check its geometry; Android's SVG blur is weaker by implementation, iOS's is
+  calibrated to the web, per the library source. The auth step entrance stays a plain fade on iOS.
+- Gate unchanged: 42 suites / 250 tests, `tsc --noEmit` clean. Committed and pushed.
+
+### Session 7 (2026-09-10)
+
 - **Research first.** The whole app artboard was read; `scripts/app-refs.mjs` captured 41 reference
   PNGs + `docs/reference/app-geometry.json` with the installed Chrome over CDP (no downloads).
   `expo-sensors` was installed for the tilt map (the README's own recommendation) — recorded in the
@@ -67,7 +87,7 @@ All in the spec's §15 and in `verification.md` under "Known, accepted differenc
 4. Hub auto-advance: 5 s interval, ticks skipped while a sheet/screen is open, never reset by a swipe (as the source).
 5. Stats "Details" expands the item in the recalls list (the source's behaviour); the recall sheet's
    Details keeps switching to the tab with its toast.
-6. Initials at weight 600 (Geist 700 is not loaded — one line to add).
+6. ~~Initials at weight 600~~ — resolved in session 8: Geist 700 is loaded and used.
 7. Tilt on the emulator is static; the phone judges the motion.
 8. Tapping a garage row on the Profile tab opens stats with the Garage tab active (the stats route
    lives in the garage stack); the design keeps Profile highlighted.
@@ -81,8 +101,8 @@ All in the spec's §15 and in `verification.md` under "Known, accepted differenc
    auto-advance and swipe, the article swipe both ways, chat bubbles and dots; plus the earlier slices'
    items (marquee, bubble line count, keyboard on the email field; VIN placeholder colour; rail fling).
 2. **After that there is no next slice** — the design is fully ported. Remaining candidates are
-   polish only: Geist 700 for the initials, a shipping variant of the splash copy, iOS verification
-   when a Mac is available.
+   polish only: a shipping variant of the splash copy, and iOS verification when an iPhone or a Mac
+   is available (the iOS rendering paths from session 8 have never been seen on iOS).
 
 ## Environment (this PC — x64 Windows 11)
 
@@ -105,7 +125,7 @@ Set up 2026-09-07 with the SDK command-line tools, no Android Studio:
   mode and typed-route generation), `adb reverse tcp:8081 tcp:8081`, and open `exp://127.0.0.1:8081`
   on the device. **Never** `expo start --localhost`. If Expo Go shows "Something went wrong", tap its
   reload. Re-sending the `exp://` intent to a running app triggers a full reload.
-- **Phone off the Wi-Fi (remote demo):** Expo's own `npx expo start --tunnel` failed on 2026-09-10 with ngrok `ERR_NGROK_108` (Expo's shared anonymous ngrok account at its session limit — nothing on this PC). Working alternative with the already-installed `cloudflared`: `cloudflared tunnel --url http://localhost:8081 --no-autoupdate` prints an `https://<random>.trycloudflare.com` URL; then `EXPO_PACKAGER_PROXY_URL=https://<random>.trycloudflare.com npx expo start` makes the manifest and bundle URLs point at the tunnel; on the phone open Expo Go → "Enter URL manually" → `exp://<random>.trycloudflare.com`. Verified from this PC: the manifest and the 12 MB Android bundle come through the tunnel. The hostname changes every time cloudflared restarts.
+- **Phone off the Wi-Fi (remote demo):** Expo's own `npx expo start --tunnel` failed on 2026-09-10 with ngrok `ERR_NGROK_108` (Expo's shared anonymous ngrok account at its session limit — nothing on this PC). Working alternative with the already-installed `cloudflared`: `cloudflared tunnel --url http://localhost:8081 --no-autoupdate` prints an `https://<random>.trycloudflare.com` URL; then `EXPO_PACKAGER_PROXY_URL=https://<random>.trycloudflare.com npx expo start` makes the manifest and bundle URLs point at the tunnel; on the phone open Expo Go → "Enter URL manually" → `exp://<random>.trycloudflare.com`. Verified from this PC: the manifest and the 12 MB Android bundle come through the tunnel. The hostname changes every time cloudflared restarts. **iPhone:** Expo Go on iOS has no URL field — paste the `exp://` link into Safari and choose Open (or scan a QR of it with the Camera). A **signed-in** Expo Go on iOS refuses a project whose dev server is not logged in to the same Expo account ("You're signed in to Expo Go as X, but not signed in to Expo CLI"; `npx expo whoami` on this PC says "Not logged in"): either the phone user signs out of Expo Go (Profile → Log out) and reopens the link, or the CLI runs `npx expo login` as that account before Metro starts — the credentials are the user's, so this was not done here (2026-09-11).
 - Soft keyboard: for scripted typing disable Gboard first (`adb shell ime disable …LatinIME`); it
   re-enables itself after every reboot.
 - Chrome is installed (`C:\Program Files\Google\Chrome\Application\chrome.exe`) and is what

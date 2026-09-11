@@ -202,7 +202,7 @@ Scrim above them: `rgba(8,8,10,.42)`. Whole layer `opacity = blobOp`, `pointerEv
 | Marquee tiles, shadows, glyphs | Skia rounded rects, image shaders, mask-blurred shadow rects, TTF glyphs | exact; shadows use Skia's rrect blur fast path |
 | Photo cut / blur / darken / zoom | Skia image with animated blur + colour matrix + scale | exact (filter before transform, as CSS) |
 | Bubble backdrop `blur(16px) saturate(1.6)` | Skia `BackdropFilter` clipped to the face's rrect, same pop transform | **flag:** fades by filter strength, not by alpha (Skia cannot alpha a backdrop). Perceptually the same. |
-| Bubble face, inset shadows, highlight | RN gradient + `boxShadow` insets + SVG ellipse under `filter: blur(6)` | highlight blur is Android-only (RN `filter` blur) |
+| Bubble face, inset shadows, highlight | RN gradient + `boxShadow` insets + SVG ellipse under `filter: blur(6)` on Android, or under an SVG `FeGaussianBlur` σ 6 on a 3σ-padded canvas elsewhere (added 2026-09-11) | the RN `filter` blur is Android-only; the SVG path is verified for geometry on the emulator only (Android's SVG blur is weaker by implementation, iOS's is web-calibrated) — see `verification.md` |
 | Auth pills / fields `backdrop-filter: blur(8px)` | gradient + inset shadows only | **flag:** the backdrop is already a σ 11 photo under σ 54–60 blobs, so an 8 px blur has no visible effect; omitted to avoid four full-screen BlurView snapshots per frame over animating blobs |
 | REPLAY `backdrop-filter: blur(6px)` | omitted | **flag:** 28 px pill over the marquee; `expo-blur` cannot sample the Skia canvas |
 | `saturate(1.6)` in the bubble backdrop | colour-matrix in the Skia filter | exact (Slice 1's "no saturate" limit was `expo-blur`'s) |

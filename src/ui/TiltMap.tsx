@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { type DimensionValue, StyleSheet, View } from 'react-native';
+import { type DimensionValue, Platform, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { SERVICE_COPY, SVC_CENTER } from '../fixtures/service';
@@ -77,6 +77,14 @@ export function TiltMap() {
 
 const styles = StyleSheet.create({
   card: { height: 250, borderRadius: 16, backgroundColor: color.surface, borderWidth: 1, borderColor: color.hair10, overflow: 'hidden' },
-  pin: { position: 'absolute', left: '50%', top: '50%', marginLeft: -15, marginTop: -15, width: 30, height: 30, filter: [{ dropShadow: '0 0 10px rgba(15,99,143,0.45)' }] },
+  // drop-shadow(0 0 10px rgba(15,99,143,.45)). RN `filter: dropShadow` is Android-only; elsewhere the layer shadow does the same job —
+  // with no background colour it follows the pin's alpha, and a CSS blur radius of 10 is a Gaussian σ of 5 = `shadowRadius`.
+  pin: {
+    position: 'absolute', left: '50%', top: '50%', marginLeft: -15, marginTop: -15, width: 30, height: 30,
+    ...Platform.select({
+      android: { filter: [{ dropShadow: '0 0 10px rgba(15,99,143,0.45)' }] },
+      default: { shadowColor: color.blueDeep, shadowOpacity: 0.45, shadowRadius: 5, shadowOffset: { width: 0, height: 0 } },
+    }),
+  },
   content: { flex: 1, justifyContent: 'space-between', paddingVertical: 15, paddingHorizontal: 16 },
 });

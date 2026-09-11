@@ -29,7 +29,7 @@ export function ProfileScreen() {
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 16, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
       <View style={{ alignItems: 'center', gap: 8, paddingTop: 20, paddingBottom: 22 }}>
         <View style={{ width: 118, height: 118, borderRadius: 59, alignItems: 'center', justifyContent: 'center', backgroundColor: color.surface, borderWidth: 2, borderColor: color.hair12 }}>
-          <Sans size={42} lh={49} weight={600} ls={-1.5} color={color.ink7}>{USER.initials}</Sans>
+          <Sans size={42} lh={49} weight={700} ls={-1.5} color={color.ink7}>{USER.initials}</Sans>
         </View>
         <Sans size={28} lh={32} weight={600} ls={-0.9} color={color.ink} style={{ marginTop: 4 }}>{USER.name}</Sans>
         <Sans size={13} color={color.ink5}>{USER.memberSince}</Sans>

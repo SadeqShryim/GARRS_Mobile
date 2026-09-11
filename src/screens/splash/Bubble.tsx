@@ -4,9 +4,9 @@
 // The backdrop blur/saturate is drawn by Stage.tsx's BubbleBackdrop from the same shared values.
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
-import { type LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { type LayoutChangeEvent, Platform, StyleSheet, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming, type SharedValue } from 'react-native-reanimated';
-import Svg, { Defs, Ellipse, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
+import Svg, { Defs, Ellipse, FeGaussianBlur, Filter, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 import { COPY } from '../../fixtures/splash';
 import { cssAngleToPoints } from '../../lib/gradient';
 import { bez, ease } from '../../theme/tokens';
@@ -67,21 +67,55 @@ export function Bubble({ v }: { v: BubbleValues }) {
         <View style={styles.clip}>
           <LinearGradient colors={FILL} locations={STOPS} start={pts.start} end={pts.end} style={StyleSheet.absoluteFill} />
           <View pointerEvents="none" style={[StyleSheet.absoluteFill, styles.inset]} />
-          <View pointerEvents="none" style={styles.highlight}>
-            <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <Defs>
-                <SvgGradient id="hl" x1="0" y1="0" x2="0" y2="1">
-                  <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.34} />
-                  <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
-                </SvgGradient>
-              </Defs>
-              <Ellipse cx="50" cy="50" rx="50" ry="50" fill="url(#hl)" />
-            </Svg>
-          </View>
+          <Highlight />
           <Sans size={29} lh={34} weight={600} ls={-0.7} color="#FFFFFF" style={styles.copy}>{PRETTY_COPY}</Sans>
         </View>
       </Animated.View>
     </Animated.View>
+  );
+}
+
+// The highlight ellipse under blur(6px). RN `filter: blur` is Android-only; elsewhere the same Gaussian (σ = 6) runs inside the
+// SVG: the ellipse is drawn at pixel size on a canvas padded by 3σ so the soft edge is not clipped to the highlight's own box.
+const HL_VIEW_BLUR = Platform.OS === 'android';
+const HL_SIGMA = 6;
+const HL_PAD = HL_SIGMA * 3;
+const HL_GRADIENT = (
+  <SvgGradient id="hl" x1="0" y1="0" x2="0" y2="1">
+    <Stop offset="0" stopColor="#FFFFFF" stopOpacity={0.34} />
+    <Stop offset="1" stopColor="#FFFFFF" stopOpacity={0} />
+  </SvgGradient>
+);
+
+function Highlight() {
+  const [hl, setHl] = useState({ w: 0, h: 0 });
+  const onLayout = (e: LayoutChangeEvent) => { const { width: w, height: h } = e.nativeEvent.layout; setHl({ w, h }); };
+  if (HL_VIEW_BLUR) {
+    return (
+      <View pointerEvents="none" style={[styles.highlight, styles.highlightBlur]}>
+        <Svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <Defs>{HL_GRADIENT}</Defs>
+          <Ellipse cx="50" cy="50" rx="50" ry="50" fill="url(#hl)" />
+        </Svg>
+      </View>
+    );
+  }
+  const W = hl.w + HL_PAD * 2;
+  const H = hl.h + HL_PAD * 2;
+  return (
+    <View pointerEvents="none" style={styles.highlight} onLayout={onLayout}>
+      {hl.w > 0 && (
+        <Svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', left: -HL_PAD, top: -HL_PAD }}>
+          <Defs>
+            {HL_GRADIENT}
+            <Filter id="hlb" filterUnits="userSpaceOnUse" x={0} y={0} width={W} height={H}>
+              <FeGaussianBlur stdDeviation={HL_SIGMA} />
+            </Filter>
+          </Defs>
+          <Ellipse cx={W / 2} cy={H / 2} rx={hl.w / 2} ry={hl.h / 2} fill="url(#hl)" filter="url(#hlb)" />
+        </Svg>
+      )}
+    </View>
   );
 }
 
@@ -90,6 +124,7 @@ const styles = StyleSheet.create({
   face: { maxWidth: 378, borderRadius: 28, borderBottomLeftRadius: 9, boxShadow: '0 24px 60px rgba(0,0,0,0.5)' },
   clip: { borderRadius: 28, borderBottomLeftRadius: 9, overflow: 'hidden', paddingVertical: 24, paddingHorizontal: 28 },
   inset: { borderRadius: 28, borderBottomLeftRadius: 9, boxShadow: 'inset 0 1.5px 1px rgba(255,255,255,0.42), inset 0 -2px 2px rgba(0,0,0,0.28), inset 0 0 0 1px rgba(255,255,255,0.20)' },
-  highlight: { position: 'absolute', left: '6%', right: '34%', top: 2, height: '34%', filter: [{ blur: 6 }] },
+  highlight: { position: 'absolute', left: '6%', right: '34%', top: 2, height: '34%' },
+  highlightBlur: { filter: [{ blur: 6 }] },
   copy: { textShadowColor: 'rgba(0,0,0,0.35)', textShadowOffset: { width: 0, height: 2 }, textShadowRadius: 10 },
 });
