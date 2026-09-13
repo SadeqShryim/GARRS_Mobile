@@ -126,13 +126,13 @@ jest.mock('expo-camera', () => {
 
 jest.mock('expo-image-manipulator', () => {
   const saved = { uri: 'file:///crop.jpg', width: 1400, height: 266, base64: 'QUJD' };
-  type Rec = { crop?: unknown; resize?: unknown; save?: unknown };
-  type Ctx = { crop: (r: unknown) => Ctx; resize: (r: unknown) => Ctx; renderAsync: () => Promise<{ saveAsync: (o: unknown) => Promise<typeof saved> }> };
-  const calls: Rec[] = [];
-  const manipulate = jest.fn((_uri: string): Ctx => {
-    const rec: Rec = {};
+  type MockRec = { crop?: unknown; resize?: unknown; save?: unknown };
+  type MockCtx = { crop: (r: unknown) => MockCtx; resize: (r: unknown) => MockCtx; renderAsync: () => Promise<{ saveAsync: (o: unknown) => Promise<typeof saved> }> };
+  const calls: MockRec[] = [];
+  const manipulate = jest.fn((_uri: string): MockCtx => {
+    const rec: MockRec = {};
     calls.push(rec);
-    const ctx: Ctx = {
+    const ctx: MockCtx = {
       crop: jest.fn((r: unknown) => { rec.crop = r; return ctx; }),
       resize: jest.fn((r: unknown) => { rec.resize = r; return ctx; }),
       renderAsync: jest.fn(async () => ({ saveAsync: jest.fn(async (o: unknown) => { rec.save = o; return saved; }) })),
