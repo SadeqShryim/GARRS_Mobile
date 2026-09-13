@@ -1,12 +1,13 @@
+import { longDate } from './dates';
 import { EMPTY_REASON, HISTORY, LIVE_RECALL, RECALLS_COPY, REASONS, STATE_META } from '../fixtures/recalls';
 import type { RecallFilter, RecallItem, RecallState, StateMeta, Vehicle } from '../fixtures/types';
 
 export function allRecalls(vehicles: Vehicle[], scheduled: boolean): RecallItem[] {
   const live: RecallItem[] = vehicles.filter((v) => v.recall).map((v) => ({
     id: 'v' + v.id, vid: v.id, code: v.recall!.code, title: v.recall!.title,
-    severity: LIVE_RECALL.severity, remedy: LIVE_RECALL.remedy, dealer: LIVE_RECALL.dealer, est: LIVE_RECALL.est,
+    severity: LIVE_RECALL.severity, remedy: v.recall!.remedy ?? LIVE_RECALL.remedy, dealer: LIVE_RECALL.dealer, est: LIVE_RECALL.est,
     state: scheduled ? 'scheduled' : 'open',
-    done: scheduled ? LIVE_RECALL.doneScheduled : LIVE_RECALL.doneOpen,
+    done: scheduled ? LIVE_RECALL.doneScheduled : v.recall!.date ? 'Reported ' + longDate(v.recall!.date) : LIVE_RECALL.doneOpen,
   }));
   return [...live, ...HISTORY.map((h) => ({ ...h, state: 'closed' as const }))];
 }

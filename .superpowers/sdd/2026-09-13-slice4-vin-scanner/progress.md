@@ -15,11 +15,13 @@ Spec: `docs/superpowers/specs/2026-09-13-slice4-vin-scanner-design.md`. Plan: `d
 | Task | Status | Notes |
 |---|---|---|
 | 1 deps/config/mocks | done | controller |
-| 2 vin.ts | dispatched | implementer, parallel wave |
+| 2 vin.ts | done — 90842b2 | opus; 35 tests; two load-bearing refinements folded into spec §5.2 (check-ok for untouched non-NA reads; "possibly NA" gate on the step-4 search); two score edges parked in §16.2 |
 | 3 nhtsa.ts | dispatched | implementer, parallel wave |
-| 4 OCR engine | dispatched | implementer, parallel wave |
-| 5 crop/capture | dispatched | implementer, parallel wave |
-| 6 store | dispatched | implementer, parallel wave |
+| 4 OCR engine | done — d8b2cd3 | opus; 14 tests; id-less error breaks the engine; unmount rejects in-flight; `useOcrEngine` outside a provider returns a broken engine |
+| 5 crop/capture | done — 66100ca | sonnet; 18 tests; EXIF 3/6/8 mapping analytically derived, unverified on iOS |
+| 6 store | done — 0bc128d | sonnet; 7 tests; `closeScreen` resets scan only when closing the scanner |
+
+Controller fix during the wave: the two `type` aliases inside the `expo-image-manipulator` jest.mock factory tripped babel-plugin-jest-hoist ("Invalid variable access: Rec") and broke every suite; renamed `MockRec`/`MockCtx` (identifiers inside a mock factory must be `mock`-prefixed) — 1467376.
 | 7 ScanScreen + entry points | pending | after 2–6 |
 | 8 emulator verification + docs | pending | controller |
 | 9 phone pass | pending | with Slices 1–3's phone passes |

@@ -11,7 +11,7 @@ From the Add-vehicle sheet (and the VIN-help footer), the user opens a full-scre
 ## 2. Constraints and decisions that shape the design
 
 - **Expo Go stays the runtime** (Android emulator, the S24 Ultra, the iPhone route). Native OCR (ML Kit, Vision Camera frame processors) needs a development build and a gigabyte of Android toolchain downloads; not approved and not needed for the demo. `expo-camera`, `expo-image-manipulator` and `react-native-webview` all ship in Expo Go 57.
-- **OCR engine: tesseract.js 5 inside a hidden `WebView`.** Hermes has no WebAssembly and no Web Workers, so the engine runs in the WebView's Chromium/WebKit. Scripts and the language model load from CDNs at first use (≈ 4 MB core + 11 MB `eng` model, cached by the WebView afterwards); the phone needs internet, which the NHTSA lookup needs anyway.
+- **OCR engine: tesseract.js 5 inside a hidden `WebView`.** Hermes has no WebAssembly and no Web Workers, so the engine runs in the WebView's Chromium/WebKit. Scripts and the language model load from CDNs at first use (≈ 3.9 MB core + 3.0 MB `eng` best-int model ≈ 7 MB, cached by the WebView afterwards — the model in IndexedDB, which needs the page to have a real https origin, see §7); the phone needs internet, which the NHTSA lookup needs anyway.
 - **Downloads made for this slice** (approved by the request itself, recorded per the standing rule): npm `expo-camera ~57.0.5`, `expo-image-manipulator ~57.0.17`, `react-native-webview 13.16.1` (all SDK-pinned, installed 2026-09-13); `tesseract.js@5` installed **only in the scratch lab** (`$CLAUDE_JOB_DIR/tmp/ocr-lab`, not in the repo) to measure real confidence numbers; the app loads tesseract from jsdelivr at runtime and has no npm dependency on it.
 - **Data source: NHTSA**, keyless and free — vPIC `DecodeVinValues` for the vehicle and `recalls/recallsByVehicle` for open campaigns. Both verified live on 2026-09-13; recorded responses are the test fixtures.
 - **Single-shot flow** exactly as asked: capture → score → add or error. No continuous scanning, no manual correction of the read (parked, §16).
@@ -24,13 +24,14 @@ From the Add-vehicle sheet (and the VIN-help footer), the user opens a full-scre
 |---|---|---|---|
 | `eng` (default, 11 MB) | 14 / 16 | `1`→`T` at position 1 on two Segoe-style plates | mean 98.5, min 93 |
 | `eng` fast (2 MB) | 12 / 16 | the same two plus two **insertions** (18 characters) | mean 97–98 |
+| `eng` best-int (3 MB, `@tesseract.js-data/eng/4.0.0_best_int`) | 14 / 16 | identical reads to the default model | identical |
 
 Timing 20–100 ms per plate in node; expect 0.5–3 s in a phone WebView. Two conclusions drive §6:
 
 1. **The engine's own confidence cannot be the gate.** Wrong characters came back at 93–99 % confidence. Per-symbol confidence is one input, not the verdict.
 2. **VIN structure is the strong signal.** Every failure is caught either by the length rule (insertions) or by the **check digit** (position 9) — the `1`→`T` error moves the weighted sum by 16 and the check digit no longer matches. Common OCR confusions in VIN context are also systematic (`1/T`, `5/S`, `7/T`, `8/B`, `6/G`, `2/Z`, `4/A`, `0/D`, `0/U`), so a bounded candidate search validated by the check digit recovers most misreads instead of failing them.
 
-The default `eng` model is used (§16.3 parks the fast model as a one-line switch). Recorded outputs (text + per-symbol confidence for all 16 plates) are in `src/lib/__tests__/fixtures/ocr-lab.json` and are the unit-test inputs for §5–§6.
+The **best-int** `eng` model is used: same accuracy as the default at 3 MB instead of 11 (§16.3 parks the alternatives as a one-line switch). Recorded outputs (text + per-symbol confidence for all 16 plates) are in `src/lib/__tests__/fixtures/ocr-lab.json` and are the unit-test inputs for §5–§6.
 
 Sample VINs and their check digits (computed): `1HGCM82633A004352` valid (2003 Honda Accord EX-V6 coupé, NHTSA clean, 24 recalls), `JH4KA7561PC008269` valid (1993 Acura Legend, 4 recalls), `WBA3A5C57DF123456` invalid (BMW; European VINs do not carry a check digit — NHTSA still decodes it and flags code 1), `5YJ3E1EA7KF317654` invalid (a made-up Tesla). **The app's own demo VINs (`1FTVW1EL5NWG00001`, `5YJ3E1EA7KF317726`) have invalid check digits** — they are design placeholders; §6 treats them as trusted so scanning the VIN-help sample still adds the F-150 Lightning (§16.4).
 
@@ -82,10 +83,11 @@ export function formatVin(vin: string): string          // '1HGC M826 33A0 0435 
 ### 5.2 Local verdict `readVin`
 
 - No candidates → `{ vin: null, structure: 'malformed', reason: 'Not a 17-character VIN' }`.
-- Best candidate is NA with a valid check digit → `structure: 'check-ok'`.
-- Best candidate is NA and no candidate validates → `{ vin: best.vin, structure: 'check-fail', reason: 'Check digit does not match' }` (the screen fails immediately, no network).
-- Best candidate is non-NA (`positionalOk` after step 3) → `structure: 'unchecked'` — the NHTSA decode decides (§6).
+- Best candidate has a valid check digit **and** is either NA or was matched with zero edits → `structure: 'check-ok'`. (As built in Task 2: a non-NA read that validates untouched is trusted — `JH4KA7561PC008269` is such a VIN — but an *edited* non-NA candidate is never promoted by an accidental 1-in-11 match; it stays `unchecked`.)
+- Best candidate is NA and no candidate validates → `{ vin: best.vin, structure: 'check-fail', reason: 'Check digit does not match' }` (the screen fails immediately, no network). "NA" here means *possibly* NA: the step-4 search also runs when an ambiguous twin of character 1 lies in `1–5` — the lab's only failure mode (`1`→`T` at position 1) is precisely the character that decides NA-ness, and without this the `THG…` reads would sail through as `unchecked` at 99.
+- Otherwise (`positionalOk` after step 3) → `structure: 'unchecked'` — the NHTSA decode decides (§6).
 - A candidate equal to a key of the app's `DECODE` demo table (`src/fixtures/decode.ts`) is returned as `structure: 'check-ok'` regardless of its check digit (§16.4).
+- The verdict also carries `deletions` (needed by §6) and `ocrMean` (0 when malformed).
 
 ## 6. Confidence system (0–100, gate = 90)
 
@@ -103,7 +105,7 @@ The score is shown to the user in both outcomes (`96% MATCH` / `61% — TOO LOW`
 ## 7. OCR engine — `src/ocr/ocrPage.ts` + `src/ocr/OcrEngine.tsx`
 
 **Page** (a TypeScript string constant holding one HTML document):
-- Loads `https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js`; creates the worker with `workerPath` `…/tesseract.js@5/dist/worker.min.js`, `corePath` `https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core-simd-lstm.wasm.js`, `langPath` `https://tessdata.projectnaptha.com/4.0.0` (default `eng`), `workerBlobURL: true`, `logger` forwarding `{status, progress}`.
+- Loads `https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js` (v5 is what the lab verified; v7 is current and API-compatible for this use — parked, §16.3); creates the worker with `workerPath` `…/tesseract.js@5/dist/worker.min.js`, `corePath` `https://cdn.jsdelivr.net/npm/tesseract.js-core@5/tesseract-core-simd-lstm.wasm.js` (a single-file build, wasm embedded, loaded by `importScripts`), `langPath` `https://cdn.jsdelivr.net/npm/@tesseract.js-data/eng/4.0.0_best_int` (lang `eng`, OEM 1 = LSTM only), `workerBlobURL: true`, `logger` forwarding `{status, progress}`. The page's `baseUrl` must be a real https origin (`https://ocr.recallhub.local/`): with an opaque origin IndexedDB throws and the model would download on every scan; jsDelivr serves `access-control-allow-origin: *`, so the blob worker's `importScripts` and the fetches are allowed.
 - `setParameters({ tessedit_char_whitelist: VIN_CHARS, tessedit_pageseg_mode: '7' })` (PSM 7 = single text line; the numeric string is what tesseract.js expects).
 - Messages page → app (`window.ReactNativeWebView.postMessage(JSON.stringify(m))`): `{ type: 'ready' }`, `{ type: 'progress', status, progress }` (0–1), `{ type: 'result', id, text, symbols: [{ t, c }] , ms }`, `{ type: 'error', id?, message }`.
 - Messages app → page (via `injectJavaScript`): `window.__ocr.recognize(id, dataUrl)` where `dataUrl` is `data:image/jpeg;base64,…`. `recognize(image, {}, { text: true, blocks: true })` and symbols are flattened from `blocks → paragraphs → lines → words → symbols` (v5 shape, verified in the lab).
@@ -116,7 +118,7 @@ The score is shown to the user in both outcomes (`96% MATCH` / `61% — TOO LOW`
 
 ## 8. Image pipeline — `src/ocr/crop.ts`, `src/ocr/capture.ts`
 
-- Camera: `CameraView` (expo-camera) `facing="back"`, `ratio="16:9"` where supported, `enableTorch={torch}`, `onCameraReady`, `ref` for `takePictureAsync({ quality: 0.85, skipProcessing: false, base64: false })` → `{ uri, width, height }`. Android returns an upright image when `skipProcessing` is false (the module applies EXIF orientation); the mapping below assumes `width/height` describe the upright pixels.
+- Camera: `CameraView` (expo-camera) `facing="back"`, `enableTorch={torch}`, `onCameraReady`, `ref` for `takePictureAsync({ quality: 0.85, skipProcessing: false, base64: false, exif: true })` → `{ uri, width, height, exif }`. **Do not set `ratio`**: on Android it switches the preview from FILL to FIT and the cover-fit mapping below would be wrong. Android returns an upright image when `skipProcessing` is false (the module applies the orientation; the docs also say the photo is "scaled to match the preview", which the cover-fit maths tolerates either way). iOS 57.0.3+ keeps the orientation in EXIF instead of rotating pixels; `crop.ts` therefore accepts an optional EXIF `Orientation` (6 → the pixels are rotated 90° clockwise relative to upright, 8 → 90° anticlockwise, 3 → 180°) and maps the guide through that rotation; whether expo-image-manipulator already normalises orientation on iOS is unverified (§15, phone pass).
 - Guide rect (screen points): width `W − 32`, height `(W − 32) · 0.19` (a 17-character line is ≈ 5.3 : 1), centred horizontally, its centre at 42 % of the preview height. Corner marks only (§11).
 - `cropRectFor(guide, preview, photo)` (pure): the preview shows the photo **cover-fitted** and centred; `s = max(preview.w / photo.w, preview.h / photo.h)`; the visible photo region is `(photo.w·s − preview.w)/2` … ; map `guide` through the inverse, clamp to the photo, and pad by 6 % of the guide height on every side so descenders and the frame edge survive.
 - `captureVin(cameraRef, guide, preview)` → `ImageManipulator.manipulate(uri).crop(rect).resize({ width: 1400 })` (upscaling short crops is what makes tesseract read them), `renderAsync()`, `saveAsync({ format: SaveFormat.JPEG, compress: 0.9, base64: true })` → `base64`. The resize keeps aspect (height auto). Total pipeline target < 700 ms on the S24 Ultra.
@@ -134,11 +136,11 @@ export function vehicleFromDecode(d: DecodedVehicle, recalls: NhtsaRecall[], raw
 
 ### 9.1 Error codes (from the recorded responses)
 
-`ErrorCode` is a comma-separated list. Observed: `0` clean ("Check Digit is correct"), `1` check digit does not calculate (also raised for European VINs that have no check digit, e.g. the BMW), `6` incomplete VIN (16 chars), `7` manufacturer not registered (the `T…` misread: `"1,7"` with an empty Make). Rule: **fatal** when `Make` is empty **or** codes include `6` or `7` **or** (`northAmerican` and codes include `1`); otherwise **clean**. Code `1` alone on a non-NA VIN is not fatal (the BMW decodes to 2013 BMW 328i). Other codes (8 no detailed data, 14 unused position, …) are informational.
+`ErrorCode` is a comma-separated list (e.g. `"1,7"`, `"1,11,400"`). NHTSA's list: `0` clean (check digit correct); `1` check digit does not calculate (also raised for European VINs that carry none, e.g. the BMW); `2`/`3`/`4` VIN **corrected**, error in one position; `5` errors in a few positions; `6` incomplete VIN; `7` manufacturer not registered; `8` no detailed data; `9` glider warning; `10` off-road vehicle, "not a VIN"; `11` position 10 is not a valid model-year code; `12` model-year warning; `14` unable to provide information for some characters; `400` invalid characters. Rule: **fatal** when `Make` is empty **or** codes intersect `{2, 3, 4, 5, 6, 7, 10, 11, 400}` (NHTSA either could not decode the string or had to *change* it — so the read is wrong) **or** (`northAmerican` and codes include `1`); otherwise **clean**. Code `1` alone on a non-NA VIN is not fatal (the BMW decodes to a 2013 BMW 328i). `8`, `9`, `12`, `14` are informational. Observed in the fixtures: `0` (Honda), `1` (BMW, Tesla), `6` (16 chars), `1,7` with an empty Make (the `T…` misread).
 
 ### 9.2 Recall mapping
 
-`campaign` `19V182000` → `code` `NHTSA 19V-182` (the app's existing code style, e.g. `NHTSA 23V-742`); `component` title-cased with `:` → ` · ` (`AIR BAGS:FRONTAL:DRIVER SIDE:INFLATOR MODULE` → `Air bags · Frontal · Driver side · Inflator module`); `date` from `ReportReceivedDate` which the API returns as **DD/MM/YYYY** (`15/01/2020`); the list is sorted newest first. `parkIt`/`parkOutSide` are optional in the API and default to false.
+`campaign` `19V182000` → `code` `NHTSA 19V-182` (the app's existing code style, e.g. `NHTSA 23V-742`); `component` title-cased with `:` → ` · ` (`AIR BAGS:FRONTAL:DRIVER SIDE:INFLATOR MODULE` → `Air bags · Frontal · Driver side · Inflator module`); `date` from `ReportReceivedDate`, which the recorded responses give as **DD/MM/YYYY** (`15/01/2020`, `27/01/2022`) although NHTSA's docs say MM/DD/YYYY — parse defensively: if the first field > 12 it is the day; if the second field > 12 the first is the month; otherwise assume DD/MM (matches the campaign numbering, e.g. `19V182` ≈ March 2019 for `06/03/2019`); the list is sorted newest first. `parkIt`/`parkOutSide`/`overTheAirUpdate` are omitted on some rows and default to false. The response key is lowercase `results`.
 
 ## 10. Store — `src/store/useAppStore.ts`
 
@@ -193,8 +195,8 @@ Unit tests: `vin.test.ts` (check digit on the four sample VINs and the two demo 
 ## 16. Parked decisions (made on the user's behalf; overrule any of them)
 
 1. **Tesseract-in-WebView instead of native ML Kit.** Keeps Expo Go and avoids a ~1 GB toolchain download. Accuracy on real plates will be lower than ML Kit; the confidence gate is what makes that safe. If the demo needs better first-shot accuracy, the same `OcrEngine` interface can be backed by a native module in a dev build later.
-2. **Weights of the score** (0.6 OCR / 0.4 structure, −3 per substitution, −6 per deletion, gate 90) are tuned on the 16 lab plates only; the phone pass may retune them.
-3. **Default `eng` model (11 MB)** over `eng` fast (2 MB): 14/16 vs 12/16 in the lab. One string in `ocrPage.ts` switches it.
+2. **Weights of the score** (0.6 OCR / 0.4 structure, −3 per substitution, −6 per deletion, gate 90) are tuned on the 16 lab plates only; the phone pass may retune them. Two edges found while building Task 2: an 18-character read that needs one deletion **and** one substitution lands exactly on the gate (0.6·98 + 40 − 9 = 89.8 → 90, passes) — a −7 deletion penalty or a gate of 91 would close it; and the 2-substitution search space is dense enough that most North-American 17-character reads find *some* check-digit-valid 2-substitution candidate, so the −3 per substitution is the only thing keeping a doubly-wrong read at 93 rather than 99. The NHTSA decode (make must be non-empty, no correction codes) is the second line of defence for both.
+3. **`eng` best-int model (3 MB) and tesseract.js 5.** Best-int matched the 11 MB default read for read in the lab; the 2 MB fast model lost two plates. tesseract.js 7 is current (faster relaxed-SIMD core, same `recognize(…, {}, { blocks: true })` shape) but was not lab-tested; both are one string each in `ocrPage.ts`.
 4. **The app's demo VINs are trusted.** The VIN-help page shows `1FTVW1EL5NWG00001`, whose check digit is invalid (design placeholder). Scanning it adds the F-150 Lightning from the demo table without NHTSA, so the in-app sample keeps working.
 5. **Automatic add at ≥ 90**, as asked; the success card is informational (1.6 s, or Done). A confirm-before-add variant is one flag in `ScanScreen`.
 6. **Telemetry of a scanned vehicle** (odometer, service intervals, tyre pressure, battery) reuses the constants `addVehicle` already uses — the demo has no source for them.
