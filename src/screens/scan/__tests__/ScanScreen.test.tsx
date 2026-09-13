@@ -149,11 +149,13 @@ describe('ScanScreen — capture (§4, §11)', () => {
     // addScannedVehicle already landed: the vehicle is in the garage, the rail is on it, the sheet is gone.
     expect(s().vehicles).toHaveLength(4);
     expect(s()).toMatchObject({ idx: 3, sheet: null, screen: null });
-    expect(s().toast).toBe('Accord EX-V6 added · 1 recall found');
+    // the toast waits for the card to leave, so it never covers the card's recall line
+    expect(s().toast).toBeNull();
 
     act(() => { jest.advanceTimersByTime(ADDED_DWELL_MS); });
     expect(s().scan.phase).toBe('idle');
     expect(s().screen).toBeNull();
+    expect(s().toast).toBe('Accord EX-V6 added · 1 recall found');
   });
 
   it('Done closes the card without waiting for the dwell', async () => {

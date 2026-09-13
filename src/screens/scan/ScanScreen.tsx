@@ -76,7 +76,7 @@ function ScanFrame() {
   const setScan = useAppStore((s) => s.setScan);
   const resetScan = useAppStore((s) => s.resetScan);
   const addScannedVehicle = useAppStore((s) => s.addScannedVehicle);
-  const closeScreen = useAppStore((s) => s.closeScreen);
+  const finishScan = useAppStore((s) => s.finishScan);
   const setVin = useAppStore((s) => s.setVin);
   const vehicles = useAppStore((s) => s.vehicles);
   const idx = useAppStore((s) => s.idx);
@@ -85,9 +85,10 @@ function ScanFrame() {
   const granted = !!permission?.granted;
   const live = phase === 'idle' || phase === 'reading' || phase === 'checking';
 
-  // `addScannedVehicle` already cleared `screen`, so closing is also a scan reset (OverlayHost keeps the card
-  // mounted while the phase is 'added' — see its header comment).
-  const close = useCallback(() => { closeScreen(); resetScan(); }, [closeScreen, resetScan]);
+  // `addScannedVehicle` already cleared `screen`, so closing is a scan reset (OverlayHost keeps the card mounted while
+  // the phase is 'added' — see its header comment); `finishScan` also shows the prepared "added" toast at that moment,
+  // after the card, rather than over it.
+  const close = useCallback(() => { finishScan(); }, [finishScan]);
 
   // Closing mid-read (header X, hardware back) abandons the scan: the engine rejects the pending request on
   // unmount, and a late result must not add a vehicle — or pop the success card back up over the garage.

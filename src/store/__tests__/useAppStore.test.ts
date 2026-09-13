@@ -103,19 +103,19 @@ describe('Slice 4 — scan', () => {
     s().setScan({ phase: 'reading', score: 42 });
     s().openScan();
     expect(s().screen).toBe('scan');
-    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null, toast: null });
   });
   it('setScan merges a patch without dropping other fields', () => {
     s().openScan();
     s().setScan({ phase: 'reading' });
-    expect(s().scan).toMatchObject({ phase: 'reading', score: null, vin: null, vehicleName: null, reason: null });
+    expect(s().scan).toMatchObject({ phase: 'reading', score: null, vin: null, vehicleName: null, reason: null, toast: null });
     s().setScan({ score: 96, vin: '1HGCM82633A004352' });
     expect(s().scan).toMatchObject({ phase: 'reading', score: 96, vin: '1HGCM82633A004352' });
   });
   it('resetScan restores the idle state', () => {
     s().setScan({ phase: 'failed', reason: 'Confidence below 90 %' });
     s().resetScan();
-    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null, toast: null });
   });
   it('addScannedVehicle with a recall: appends, selects it, closes overlays, toasts "1 recall found"', () => {
     s().openSheet('add'); s().openScan(); s().setVin('1HGCM82633A004352');
@@ -127,25 +127,39 @@ describe('Slice 4 — scan', () => {
     expect(s().sheet).toBeNull();
     expect(s().screen).toBeNull();
     expect(s().vin).toBe('');
+    // the toast is prepared, not shown: it would cover the success card. finishScan (dwell / Done / back) shows it.
+    expect(s().toast).toBeNull();
+    expect(s().scan.toast).toBe('Accord EX-V6 added · 1 recall found');
+    s().finishScan();
     expect(s().toast).toBe('Accord EX-V6 added · 1 recall found');
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null, toast: null });
     jest.advanceTimersByTime(2200);
     expect(s().toast).toBeNull();
   });
   it('addScannedVehicle without a recall toasts "monitoring for recalls"', () => {
     const v = { id: 100, name: 'New Vehicle', meta: 'Decoded from VIN', health: 90, range: '—', vin: '···· FGHIJK', sync: 'SYNCED JUST NOW', recall: null, odo: 8410, oilIn: 4800, tireIn: 2600, brakeIn: 21000, regDays: 240, psi: '40 / 40', battery: 99 };
     s().addScannedVehicle(v);
+    expect(s().scan.toast).toBe('New Vehicle added · monitoring for recalls');
+    s().finishScan();
     expect(s().toast).toBe('New Vehicle added · monitoring for recalls');
+  });
+  it('finishScan without a prepared toast just clears the scan and the screen', () => {
+    s().openScan(); s().setScan({ phase: 'failed', score: 59 });
+    s().finishScan();
+    expect(s().toast).toBeNull();
+    expect(s().screen).toBeNull();
+    expect(s().scan.phase).toBe('idle');
   });
   it('closeScreen after openScan resets the screen and the scan state', () => {
     s().openScan(); s().setScan({ phase: 'added', score: 96 });
     s().closeScreen();
     expect(s().screen).toBeNull();
-    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null, toast: null });
   });
   it('switchTab after openScan clears the screen', () => {
     s().openScan(); s().setScan({ phase: 'checking' });
     s().switchTab('hub');
     expect(s().screen).toBeNull();
-    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null, toast: null });
   });
 });

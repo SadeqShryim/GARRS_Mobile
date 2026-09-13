@@ -32,7 +32,7 @@ export function OverlayHost() {
   const closeScreen = useAppStore((s) => s.closeScreen);
   const closeArticle = useAppStore((s) => s.closeArticle);
   const closeLight = useAppStore((s) => s.closeLight);
-  const resetScan = useAppStore((s) => s.resetScan);
+  const finishScan = useAppStore((s) => s.finishScan);
   const router = useRouter();
   const scanOpen = screen === 'scan' || scanPhase === 'added';
 
@@ -42,13 +42,13 @@ export function OverlayHost() {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       if (screen === 'article') { closeArticle(); return true; }
       if (screen) { closeScreen(); return true; }
-      if (scanPhase === 'added') { resetScan(); return true; }   // the success card, still up after the vehicle was added
+      if (scanPhase === 'added') { finishScan(); return true; }   // the success card, still up after the vehicle was added
       if (hubLight) { closeLight(); return true; }
       if (sheet) { closeSheet(); return true; }
       return false;
     });
     return () => sub.remove();
-  }, [sheet, screen, hubLight, scanPhase, closeSheet, closeScreen, closeArticle, closeLight, resetScan]);
+  }, [sheet, screen, hubLight, scanPhase, closeSheet, closeScreen, closeArticle, closeLight, finishScan]);
 
   return (
     <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>

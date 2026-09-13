@@ -13,8 +13,9 @@ export type PrefKey = 'pfPush' | 'pfEmail' | 'pfBio';
 // Slice 4 (spec §10) — VIN scanner: driven entirely through the store so tests
 // can walk the screen without a camera.
 export type ScanPhase = 'idle' | 'reading' | 'checking' | 'added' | 'failed';
-export type ScanState = { phase: ScanPhase; score: number | null; vin: string | null; vehicleName: string | null; reason: string | null };
-export const initialScan = (): ScanState => ({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+// `toast` is the message `addScannedVehicle` prepares; `finishScan` shows it when the scanner closes, so it never covers the card.
+export type ScanState = { phase: ScanPhase; score: number | null; vin: string | null; vehicleName: string | null; reason: string | null; toast: string | null };
+export const initialScan = (): ScanState => ({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null, toast: null });
 
 type State = {
   tab: TabId; idx: number; sheet: SheetId | null; screen: ScreenId | null; scheduled: boolean;
@@ -44,7 +45,7 @@ type Actions = {
   confirmService: () => void; returnToGarage: () => void;
   togglePref: (k: PrefKey) => void;
   // Slice 4 (spec §10)
-  openScan: () => void; setScan: (patch: Partial<ScanState>) => void; resetScan: () => void;
+  openScan: () => void; setScan: (patch: Partial<ScanState>) => void; resetScan: () => void; finishScan: () => void;
   addScannedVehicle: (v: Vehicle) => void;
 };
 
@@ -122,8 +123,14 @@ export const useAppStore = create<State & Actions>((set, get) => ({
   resetScan: () => set({ scan: initialScan() }),
   addScannedVehicle: (v) => {
     const vehicles = [...get().vehicles, v];
-    set({ vehicles, idx: vehicles.length - 1, screen: null, sheet: null, vin: '' });
-    get().flash(`${v.name} added · ${v.recall ? '1 recall found' : 'monitoring for recalls'}`);
+    const toast = `${v.name} added · ${v.recall ? '1 recall found' : 'monitoring for recalls'}`;
+    set({ vehicles, idx: vehicles.length - 1, screen: null, sheet: null, vin: '', scan: { ...get().scan, toast } });
+  },
+  // The scanner's every exit (dwell, Done, Close, hardware back): show the prepared toast, then clear the scan.
+  finishScan: () => {
+    const { toast } = get().scan;
+    if (toast) get().flash(toast);
+    set({ screen: null, scan: initialScan() });
   },
 }));
 
