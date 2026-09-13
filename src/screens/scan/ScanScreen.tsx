@@ -56,7 +56,12 @@ export default ScanScreen;
 function ScanFrame() {
   const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
-  const preview = { w: width, h: height };
+  // §8 — the crop maps the guide through the *camera view's* laid-out size. On Android the window size can exclude the
+  // system bars while this overlay (and the CameraView) covers the whole screen, so the measured layout wins; the window
+  // size is only the pre-layout fallback (found on the emulator 2026-09-13: 840 dp window vs a 914 dp view put the crop
+  // a quarter of the guide too low).
+  const [layout, setLayout] = useState<{ w: number; h: number } | null>(null);
+  const preview = layout ?? { w: width, h: height };
   const guide = guideRect(preview);
   const [permission, requestPermission] = useCameraPermissions();
   const engine = useOcrEngine();
@@ -116,9 +121,9 @@ function ScanFrame() {
       setScan: (p) => { if (alive.current) setScan(p); },
       addScannedVehicle: (v) => { if (alive.current) addScannedVehicle(v); },
     });
-    // guide/preview are derived from the window size and are stable for a given device orientation.
+    // guide/preview are derived from the measured layout (window size before layout) and are stable for a given orientation.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [engine.status, engine.recognize, camReady, failReader, setScan, addScannedVehicle, guide.x, guide.y, guide.w, guide.h, width, height]);
+  }, [engine.status, engine.recognize, camReady, failReader, setScan, addScannedVehicle, guide.x, guide.y, guide.w, guide.h, preview.w, preview.h]);
 
   // §7 — Capture tapped before the reader was ready: show the preparing copy, then continue by itself.
   useEffect(() => {
@@ -143,7 +148,8 @@ function ScanFrame() {
   const caption = phase === 'checking' ? SCAN_COPY.checking : SCAN_COPY.reading;
 
   return (
-    <View testID="screen-scan" style={[StyleSheet.absoluteFill, { backgroundColor: color.splash }]}>
+    <View testID="screen-scan" style={[StyleSheet.absoluteFill, { backgroundColor: color.splash }]}
+      onLayout={(e) => { const { width: w, height: h } = e.nativeEvent.layout; if (w > 0 && h > 0) setLayout({ w, h }); }}>
       <StatusBar style="light" />
       {granted && live ? (
         <CameraView
