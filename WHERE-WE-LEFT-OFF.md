@@ -1,9 +1,10 @@
 # Where we left off
 
-**Last updated: 2026-09-11, session 8** — a short follow-up to session 7, which built and
-emulator-verified **Slice 3, the rest of the app** (Recalls, Service, Hub, Profile and every overlay
-between them). Session 8 added the remote demo link, Geist 700 for the initials, and iOS rendering
-paths for the two Android-only effects (see "Session 8" below).
+**Last updated: 2026-09-13, session 9** — the session that designed, built and emulator-verified
+**Slice 4, the camera VIN scanner**: point the camera at a VIN, capture, on-device OCR, a confidence
+score, and at 90 % or more the vehicle is decoded against NHTSA, its open recalls are pulled, and it
+lands in the garage; below 90 % an error asks to try again. Sessions 7–8 built Slice 3 and the
+follow-ups (see their sections below).
 
 Read this, then `.superpowers/sdd/2026-09-10-slice3-app-tabs/progress.md` (the Slice 3
 execution ledger). If the two disagree, the ledger is newer and wins. The Slice 1 and Slice 2 ledgers
@@ -33,12 +34,43 @@ design. Only the on-device pass on the phone remains, for all three slices.
 | Slice 2 (Splash/Auth) | ✅ complete + emulator-verified; ⏳ Task 12 (phone) |
 | Slice 3 code tasks (1–12) | ✅ complete, each controller-verified, committed one per task |
 | Slice 3 Task 13 (emulator pass) | ✅ done 2026-09-10 — `docs/reference/verification.md` (Slice 3 section) + 46 `emu-app-*.png` |
-| Slice 3 Task 14 (on-device pass, S24 Ultra) | ⏳ the only remaining task — do it together with Slice 1's Task 23 and Slice 2's Task 12 |
-| Test suite | 42 suites / 250 tests passing |
+| Slice 3 Task 14 (on-device pass, S24 Ultra) | ⏳ with Slice 1's Task 23 and Slice 2's Task 12 |
+| Slice 4 (VIN scanner) Tasks 1–8 | ✅ done 2026-09-13 — spec, plan, 5 parallel implementers + 1 integrator, emulator pass; `docs/reference/verification.md` (Slice 4 section) + 8 `emu-app-scan-*.png` |
+| Slice 4 Task 9 (real camera read on the S24 Ultra) | ⏳ the emulator cannot take a real still — the phone is the only place the camera read itself can be judged |
+| Test suite | 49 suites / 381 tests passing |
 | `tsc --noEmit` | clean |
 | Git | everything committed and pushed to `origin/main` |
 
 ## What happened this session
+
+### Session 9 (2026-09-13) — Slice 4, the VIN scanner
+
+- **You asked** to turn the demo link off and build the OCR VIN scanner with a confidence system
+  (≥ 90 % → add the vehicle and pull its data; else an error asking to try again). The link was
+  switched off first (its page now says so).
+- **Research before design:** a scratch lab read 16 Chrome-rendered VIN plates with tesseract.js to
+  get real numbers (14/16 correct; the two misses were a "1" read as "T" at 93–99 % symbol
+  confidence, so the engine's confidence alone cannot be the gate — the VIN check digit is). NHTSA's
+  free decode and recalls APIs were verified live and recorded as test fixtures. Expo SDK 57 API
+  facts were pinned from the docs (no `ratio` prop, the WebView needs a real https origin, …).
+- **Design (spec §5–§11):** tesseract.js 5 runs inside a hidden WebView (Expo Go has no native OCR
+  and Hermes no WebAssembly); the score is 0.6·OCR + 0.4·structure − 3 per corrected character −
+  6 per dropped character, rounded, gate 90; structure = the check digit for North-American VINs
+  and NHTSA's verdict for the rest; a bounded search corrects the common 1/T, 5/S, 7/T… confusions
+  when the check digit proves the fix. The screen (dark chrome, corner-marked guide, metal Capture,
+  reader status, success/failure cards) is in the app's own idiom.
+- **Build:** Tasks 2–6 ran in parallel (VIN library, NHTSA client, OCR engine, crop/capture, store),
+  Task 7 integrated the screen and the two "Scan" entry points. Downloads: `expo-camera`,
+  `expo-image-manipulator`, `react-native-webview` (SDK-pinned).
+- **Emulator pass** found two things, both fixed: the crop used the window size (840 dp) while the
+  camera view is 914 dp — now measured with `onLayout`; and the "added" toast covered the success
+  card — it now shows as the card leaves. The emulator's still capture is a fake black frame, so
+  the success path was exercised by substituting a rendered plate for the camera shot (reverted
+  before committing): the in-app WebView OCR read it, NHTSA decoded a 2003 Honda Accord EX-V6 with a
+  real campaign (19E-068), and the garage/recalls tabs showed it.
+- Gate: 49 suites / 381 tests, typecheck clean. Everything committed per task and pushed.
+- **Tesseract on the phone:** the first scan downloads ≈ 7 MB (core + model) from jsDelivr into the
+  WebView's cache; later scans are instant. The phone needs internet for NHTSA anyway.
 
 ### Session 8 (2026-09-11) — follow-up
 
@@ -79,7 +111,7 @@ design. Only the on-device pass on the phone remains, for all three slices.
 
 ## Decisions parked (questions put aside, per your instruction)
 
-All in the spec's §15 and in `verification.md` under "Known, accepted differences":
+Slice 3's are in its spec §15 and in `verification.md` under "Known, accepted differences"; **Slice 4's twelve are in its spec §16** (OCR engine choice, score weights, the 3 MB model, trusting the demo VINs, auto-add at ≥ 90, the newest recall only, no manual correction on the card, the toast timing, the odd `99% — TOO LOW` label when NHTSA rejects a locally valid VIN, …). Slice 3's:
 
 1. Chat state lives in the chat screen, not the store (the source resets it on every open anyway).
 2. The reason sheet closes on a tab switch (the source would re-show it on return).
@@ -94,6 +126,13 @@ All in the spec's §15 and in `verification.md` under "Known, accepted differenc
 
 ## Resume here — the exact next steps
 
+0. **Slice 4 Task 9 — the real camera read on the S24 Ultra.** Garage → Add Vehicle → Scan → point at
+   the dashboard VIN plate (daylight, then glare, then the door-jamb sticker) → Capture. Expect the
+   guide crop to contain the whole VIN (if not, the cover-fit maths in `src/ocr/crop.ts` is the
+   suspect), the read within ~3 s, a score ≥ 90 for a clean plate, the decoded car and its recalls.
+   If real plates score low, retune the weights in spec §16.2 (`computeScore` in `src/lib/vin.ts`).
+   Also try the torch, "Type it instead" (prefills the VIN field), and the VIN-help page's sample VIN
+   (it is a design placeholder with a bad check digit — the scanner trusts it on purpose, §16.4).
 1. **Task 14 (Slice 3) + Task 12 (Slice 2) + Task 23 (Slice 1) — on-device pass on the S24 Ultra**,
    appended to `docs/reference/verification.md`. Easiest path: Expo Go from the Play Store,
    `npx expo start`, scan the QR. Judge by eye at 120 Hz: the two shine borders, the strip growth,

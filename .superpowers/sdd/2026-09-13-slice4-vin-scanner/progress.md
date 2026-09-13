@@ -16,17 +16,18 @@ Spec: `docs/superpowers/specs/2026-09-13-slice4-vin-scanner-design.md`. Plan: `d
 |---|---|---|
 | 1 deps/config/mocks | done | controller |
 | 2 vin.ts | done — 90842b2 | opus; 35 tests; two load-bearing refinements folded into spec §5.2 (check-ok for untouched non-NA reads; "possibly NA" gate on the step-4 search); two score edges parked in §16.2 |
-| 3 nhtsa.ts | dispatched | implementer, parallel wave |
+| 3 nhtsa.ts | done — 02b9596 | sonnet; 21 tests; fatal-code rule, DD/MM recall dates, `Recall.remedy/summary/date` on vehicles |
 | 4 OCR engine | done — d8b2cd3 | opus; 14 tests; id-less error breaks the engine; unmount rejects in-flight; `useOcrEngine` outside a provider returns a broken engine |
 | 5 crop/capture | done — 66100ca | sonnet; 18 tests; EXIF 3/6/8 mapping analytically derived, unverified on iOS |
 | 6 store | done — 0bc128d | sonnet; 7 tests; `closeScreen` resets scan only when closing the scanner |
+| 7 ScanScreen + entry points | done — e64d283 (+ bb71db2 layout fix, beeaffa toast timing) | opus; 26 tests; keeps the scanner mounted through the added phase; late results discarded after unmount |
+| 8 emulator verification + docs | done — 2026-09-13 | eight captures, verification.md Slice 4 section, CLAUDE.md, WHERE-WE-LEFT-OFF.md, spec §15.1/§16.10–12 |
+| 9 phone pass (the real camera read) | pending | with Slices 1–3's phone passes — the emulator cannot take a real still |
 
 Controller fix during the wave: the two `type` aliases inside the `expo-image-manipulator` jest.mock factory tripped babel-plugin-jest-hoist ("Invalid variable access: Rec") and broke every suite; renamed `MockRec`/`MockCtx` (identifiers inside a mock factory must be `mock`-prefixed) — 1467376.
-| 7 ScanScreen + entry points | dispatched (opus) | wave gate before dispatch: 47 suites / 351 tests, typecheck clean |
 
 Controller check between waves: the compiled `OCR_PAGE` was served over http with a `ReactNativeWebView` shim and driven in the installed Chrome over CDP (`$CLAUDE_JOB_DIR/tmp/ocr-page/check.mjs`): `ready` after 1.3 s (CDN core + best-int model), three plates recognised in 28–65 ms with 17 symbols each — `1HGCM…` dash plate read as `THGCM…` exactly as in the lab (the library's substitution recovers it), `JH4KA7561PC008269` and `5YJ3E1EA7KF317654` clean. The page, the protocol and the CDN URLs are sound; what remains unverified is only the RN WebView host itself.
-| 8 emulator verification + docs | pending | controller |
-| 9 phone pass | pending | with Slices 1–3's phone passes |
 
-### RESUME HERE
-CURRENT STATE: Task 1 done; Tasks 2–6 in flight (parallel). NEXT: gate each report, commit per task, dispatch Task 7, then Task 8 (spec §15).
+### RESUME HERE (supersedes the block above)
+CURRENT STATE: Slice 4 is code complete **and emulator-verified** (Tasks 1–8). Gate: 49 suites / 381 tests, typecheck clean. Everything committed per task and pushed to origin/main on 2026-09-13. Twelve decisions parked in the spec §16.
+NEXT: Task 9 — the real camera read on the S24 Ultra (WHERE-WE-LEFT-OFF.md "Resume here" item 0 has the checklist), together with the earlier slices' phone passes. If plates score low, retune `computeScore` (spec §16.2). Candidates after that: a `NOT RECOGNISED` label (§16.11), an `EXPO_PUBLIC_SCAN_FIXTURE` emulator harness (§16.12), tesseract.js 7 (§16.3).
