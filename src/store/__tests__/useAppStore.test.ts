@@ -97,3 +97,55 @@ describe('store — Slice 3', () => {
     s().openSheet('reason'); expect(s().sheet).toBe('reason');
   });
 });
+
+describe('Slice 4 — scan', () => {
+  it('openScan sets the screen and the idle scan state', () => {
+    s().setScan({ phase: 'reading', score: 42 });
+    s().openScan();
+    expect(s().screen).toBe('scan');
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+  });
+  it('setScan merges a patch without dropping other fields', () => {
+    s().openScan();
+    s().setScan({ phase: 'reading' });
+    expect(s().scan).toMatchObject({ phase: 'reading', score: null, vin: null, vehicleName: null, reason: null });
+    s().setScan({ score: 96, vin: '1HGCM82633A004352' });
+    expect(s().scan).toMatchObject({ phase: 'reading', score: 96, vin: '1HGCM82633A004352' });
+  });
+  it('resetScan restores the idle state', () => {
+    s().setScan({ phase: 'failed', reason: 'Confidence below 90 %' });
+    s().resetScan();
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+  });
+  it('addScannedVehicle with a recall: appends, selects it, closes overlays, toasts "1 recall found"', () => {
+    s().openSheet('add'); s().openScan(); s().setVin('1HGCM82633A004352');
+    const v = { id: 99, name: 'Accord EX-V6', meta: '2003 Honda · Coupe', health: 90, range: '—', vin: '···· 04352', sync: 'SYNCED JUST NOW', recall: { code: '19V-182', title: 'Airbag' }, odo: 8410, oilIn: 4800, tireIn: 2600, brakeIn: 21000, regDays: 240, psi: '40 / 40', battery: 99 };
+    s().addScannedVehicle(v);
+    expect(s().vehicles).toHaveLength(4);
+    expect(s().vehicles[3]).toEqual(v);
+    expect(s().idx).toBe(3);
+    expect(s().sheet).toBeNull();
+    expect(s().screen).toBeNull();
+    expect(s().vin).toBe('');
+    expect(s().toast).toBe('Accord EX-V6 added · 1 recall found');
+    jest.advanceTimersByTime(2200);
+    expect(s().toast).toBeNull();
+  });
+  it('addScannedVehicle without a recall toasts "monitoring for recalls"', () => {
+    const v = { id: 100, name: 'New Vehicle', meta: 'Decoded from VIN', health: 90, range: '—', vin: '···· FGHIJK', sync: 'SYNCED JUST NOW', recall: null, odo: 8410, oilIn: 4800, tireIn: 2600, brakeIn: 21000, regDays: 240, psi: '40 / 40', battery: 99 };
+    s().addScannedVehicle(v);
+    expect(s().toast).toBe('New Vehicle added · monitoring for recalls');
+  });
+  it('closeScreen after openScan resets the screen and the scan state', () => {
+    s().openScan(); s().setScan({ phase: 'added', score: 96 });
+    s().closeScreen();
+    expect(s().screen).toBeNull();
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+  });
+  it('switchTab after openScan clears the screen', () => {
+    s().openScan(); s().setScan({ phase: 'checking' });
+    s().switchTab('hub');
+    expect(s().screen).toBeNull();
+    expect(s().scan).toEqual({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
+  });
+});

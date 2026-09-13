@@ -7,8 +7,14 @@ import { planToast } from '../lib/membership';
 import { bookedToast } from '../lib/service';
 
 export type SheetId = 'add' | 'recall' | 'reason';
-export type ScreenId = 'vinhelp' | 'membership' | 'chat' | 'article';
+export type ScreenId = 'vinhelp' | 'membership' | 'chat' | 'article' | 'scan';
 export type PrefKey = 'pfPush' | 'pfEmail' | 'pfBio';
+
+// Slice 4 (spec §10) — VIN scanner: driven entirely through the store so tests
+// can walk the screen without a camera.
+export type ScanPhase = 'idle' | 'reading' | 'checking' | 'added' | 'failed';
+export type ScanState = { phase: ScanPhase; score: number | null; vin: string | null; vehicleName: string | null; reason: string | null };
+export const initialScan = (): ScanState => ({ phase: 'idle', score: null, vin: null, vehicleName: null, reason: null });
 
 type State = {
   tab: TabId; idx: number; sheet: SheetId | null; screen: ScreenId | null; scheduled: boolean;
@@ -19,6 +25,8 @@ type State = {
   hubIdx: number; hubGroup: LightFilter; hubLight: string | null; article: string | null;
   svcMethod: SvcMethod; svcDate: string; svcTime: string; svcDone: boolean;
   pfPush: boolean; pfEmail: boolean; pfBio: boolean;
+  // Slice 4 (spec §10)
+  scan: ScanState;
 };
 type Actions = {
   switchTab: (tab: TabId) => void; setIdx: (i: number) => void;
@@ -35,6 +43,9 @@ type Actions = {
   setSvcMethod: (m: SvcMethod) => void; setSvcDate: (d: string) => void; setSvcTime: (t: string) => void;
   confirmService: () => void; returnToGarage: () => void;
   togglePref: (k: PrefKey) => void;
+  // Slice 4 (spec §10)
+  openScan: () => void; setScan: (patch: Partial<ScanState>) => void; resetScan: () => void;
+  addScannedVehicle: (v: Vehicle) => void;
 };
 
 const initial = (): State => ({
@@ -45,6 +56,7 @@ const initial = (): State => ({
   hubIdx: 0, hubGroup: 'all', hubLight: null, article: null,
   svcMethod: 'dropoff', svcDate: '13', svcTime: '09:30 AM', svcDone: false,
   pfPush: true, pfEmail: true, pfBio: false,
+  scan: initialScan(),
 });
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
@@ -52,12 +64,13 @@ let toastTimer: ReturnType<typeof setTimeout> | undefined;
 export const useAppStore = create<State & Actions>((set, get) => ({
   ...initial(),
   // tab onTap (line 2366): every overlay closes; rDetail is a route and is popped by the tab bar.
-  switchTab: (tab) => set({ tab, sheet: null, screen: null, hubLight: null, article: null }),
+  switchTab: (tab) => set({ tab, sheet: null, screen: null, hubLight: null, article: null, scan: initialScan() }),
   setIdx: (idx) => set({ idx }),
   openSheet: (sheet) => set({ sheet }),
   closeSheet: () => set({ sheet: null }),
   openScreen: (screen) => set({ screen }),
-  closeScreen: () => set({ screen: null }),
+  // Slice 4 (spec §10): closing the scanner also resets its state so reopening starts idle.
+  closeScreen: () => set((state) => ({ screen: null, scan: state.screen === 'scan' ? initialScan() : state.scan })),
   openVinHelp: () => set({ screen: 'vinhelp' }),
   closeVinHelp: () => set({ screen: null }),
   setVin: (vin) => set({ vin }),
@@ -103,6 +116,15 @@ export const useAppStore = create<State & Actions>((set, get) => ({
   returnToGarage: () => set({ tab: 'garage', svcDone: false }),
   // Profile (line 1683)
   togglePref: (k) => set({ [k]: !get()[k] } as Partial<State>),
+  // Slice 4 (spec §10) — VIN scanner
+  openScan: () => set({ screen: 'scan', scan: initialScan() }),
+  setScan: (patch) => set({ scan: { ...get().scan, ...patch } }),
+  resetScan: () => set({ scan: initialScan() }),
+  addScannedVehicle: (v) => {
+    const vehicles = [...get().vehicles, v];
+    set({ vehicles, idx: vehicles.length - 1, screen: null, sheet: null, vin: '' });
+    get().flash(`${v.name} added · ${v.recall ? '1 recall found' : 'monitoring for recalls'}`);
+  },
 }));
 
 export function resetAppStore() {
