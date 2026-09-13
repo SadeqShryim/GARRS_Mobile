@@ -1,0 +1,54 @@
+{
+ "Count": 22,
+ "Message": "Results returned successfully",
+ "results": [
+  {
+   "Manufacturer": "Tesla, Inc.",
+   "NHTSACampaignNumber": "22V037000",
+   "parkIt": false,
+   "parkOutSide": false,
+   "overTheAirUpdate": true,
+   "ReportReceivedDate": "27/01/2022",
+   "Component": "ELECTRICAL SYSTEM:ADAS:AUTONOMOUS/SELF DRIVING:SOFTWARE",
+   "Summary": "Tesla, Inc. (Tesla) is recalling certain 2016-2022 Model S and Model X, 2017-2022 Model 3, and 2020-2022 Model Y vehicles.  The \"rolling stop\" functionality available as part of the Full Self-Driving (Beta) software may allow the vehicle to travel through an all-way stop intersection without first coming to a stop.",
+   "Consequence": "Failing to stop at a stop sign can increase the risk of a crash.",
+   "Remedy": "Tesla will perform an over-the-air (OTA) software update that disables the \"rolling stop\" functionality, free of charge.  Owner notification letters were mailed March 28, 2022.  Owners may contact Tesla customer service at 1-877-798-3752.  Tesla's number for this recall is SB-22-00-001.",
+   "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.nhtsa.gov.",
+   "ModelYear": "2019",
+   "Make": "TESLA",
+   "Model": "MODEL 3"
+  },
+  {
+   "Manufacturer": "Tesla, Inc.",
+   "NHTSACampaignNumber": "21V835000",
+   "parkIt": false,
+   "parkOutSide": false,
+   "overTheAirUpdate": false,
+   "ReportReceivedDate": "25/10/2021",
+   "Component": "SUSPENSION:CRITICAL FASTENERS",
+   "Summary": "Tesla, Inc. (Tesla) is recalling certain 2020-2021 Model Y and 2019-2021 Model 3 vehicles.  The front suspension lateral link fasteners may loosen, allowing the lateral link to separate from the sub-frame.",
+   "Consequence": "A lateral link separation could shift the wheel alignment, causing instability and increasing the risk of a crash.",
+   "Remedy": "Tesla Service will tighten or replace the lateral link fasteners as necessary, free of charge.  Owner notification letters were mailed December 20, 2021.  Owners may contact Tesla customer service at 1-877-798-3752.  Tesla's number for this recall is SB-21-31-003.",
+   "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.nhtsa.gov.",
+   "ModelYear": "2019",
+   "Make": "TESLA",
+   "Model": "MODEL 3"
+  },
+  {
+   "Manufacturer": "Tesla, Inc.",
+   "NHTSACampaignNumber": "22V045000",
+   "parkIt": false,
+   "parkOutSide": false,
+   "overTheAirUpdate": true,
+   "ReportReceivedDate": "01/02/2022",
+   "Component": "ELECTRICAL SYSTEM:SOFTWARE",
+   "Summary": "Tesla, Inc. (Tesla) is recalling certain 2021-2022 Model S and Model X, 2017-2022 Model 3, and 2020-2022 Model Y vehicles.  The audible chime may not activate when the vehicle starts and the driver has not buckled their seat belt.  As such, these vehicles fail to comply with the requirements of Federal Motor Vehicle Safety Standard number 208, \"Occupant Crash Protection.\"",
+   "Consequence": "The driver may be unaware that their seat belt is not fastened, increasing the risk of injury during a crash.",
+   "Remedy": "Tesla will perform an over-the-air (OTA) software update, free of charge.  Owner notification letters were mailed April 1, 2022.  Owners may contact Tesla customer service at 1-877-798-3752.  Tesla's number for this recall is SB-22-00-002.",
+   "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.nhtsa.gov.",
+   "ModelYear": "2019",
+   "Make": "TESLA",
+   "Model": "MODEL 3"
+  }
+ ]
+}

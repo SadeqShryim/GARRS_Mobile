@@ -1,0 +1,24 @@
+{
+ "Count": 1,
+ "Message": "Results returned successfully. NOTE: Any missing decoded values should be interpreted as NHTSA does not have data on the specific variable. Missing value should NOT be interpreted as an indication that a feature or technology is unavailable for a vehicle.",
+ "SearchCriteria": "VIN(s): 1HGCM82633A00435",
+ "Results": [
+  {
+   "Make": "HONDA",
+   "Model": "Accord",
+   "ModelYear": "2003",
+   "Trim": "EX-V6",
+   "Series": "",
+   "BodyClass": "Coupe",
+   "DriveType": "",
+   "FuelTypePrimary": "Gasoline",
+   "PlantCountry": "UNITED STATES (USA)",
+   "VehicleType": "PASSENGER CAR",
+   "ErrorCode": "6",
+   "ErrorText": "6 - Incomplete VIN",
+   "AdditionalErrorText": "",
+   "SuggestedVIN": "",
+   "VIN": "1HGCM82633A00435"
+  }
+ ]
+}

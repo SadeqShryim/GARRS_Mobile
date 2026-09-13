@@ -1,0 +1,24 @@
+{
+ "Count": 1,
+ "Message": "Results returned successfully. NOTE: Any missing decoded values should be interpreted as NHTSA does not have data on the specific variable. Missing value should NOT be interpreted as an indication that a feature or technology is unavailable for a vehicle.",
+ "SearchCriteria": "VIN(s): WBA3A5C57DF123456",
+ "Results": [
+  {
+   "Make": "BMW",
+   "Model": "328i",
+   "ModelYear": "2013",
+   "Trim": "",
+   "Series": "3-Series",
+   "BodyClass": "Sedan/Saloon",
+   "DriveType": "",
+   "FuelTypePrimary": "Gasoline",
+   "PlantCountry": "GERMANY",
+   "VehicleType": "PASSENGER CAR",
+   "ErrorCode": "1",
+   "ErrorText": "1 - Check Digit (9th position) does not calculate properly",
+   "AdditionalErrorText": "",
+   "SuggestedVIN": "",
+   "VIN": "WBA3A5C57DF123456"
+  }
+ ]
+}

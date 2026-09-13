@@ -102,6 +102,60 @@ jest.mock('expo-sensors', () => ({
   },
 }));
 
+// Slice 4 (VIN scanner): expo-camera, expo-image-manipulator and react-native-webview render as inert Views; the mocks expose
+// hooks so a test can flip the camera permission, read the last injected script, or post a message into the OCR page.
+jest.mock('expo-camera', () => {
+  const React = require('react') as typeof import('react');
+  const { View } = require('react-native') as typeof import('react-native');
+  const state = { permission: { granted: true, status: 'granted', canAskAgain: true, expires: 'never' } };
+  const request = jest.fn(async () => state.permission);
+  const takePictureAsync = jest.fn(async () => ({ uri: 'file:///photo.jpg', width: 4000, height: 3000 }));
+  const CameraView = React.forwardRef<Record<string, unknown>, { children?: React.ReactNode; testID?: string; onCameraReady?: () => void }>((p, ref) => {
+    React.useImperativeHandle(ref, () => ({ takePictureAsync }));
+    React.useEffect(() => { p.onCameraReady?.(); }, [p]);
+    return React.createElement(View, { testID: p.testID ?? 'camera-view' }, p.children);
+  });
+  CameraView.displayName = 'CameraView';
+  return {
+    __esModule: true,
+    CameraView,
+    useCameraPermissions: () => [state.permission, request, request],
+    __cameraMock: { state, request, takePictureAsync },
+  };
+});
+
+jest.mock('expo-image-manipulator', () => {
+  const saved = { uri: 'file:///crop.jpg', width: 1400, height: 266, base64: 'QUJD' };
+  type Rec = { crop?: unknown; resize?: unknown; save?: unknown };
+  type Ctx = { crop: (r: unknown) => Ctx; resize: (r: unknown) => Ctx; renderAsync: () => Promise<{ saveAsync: (o: unknown) => Promise<typeof saved> }> };
+  const calls: Rec[] = [];
+  const manipulate = jest.fn((_uri: string): Ctx => {
+    const rec: Rec = {};
+    calls.push(rec);
+    const ctx: Ctx = {
+      crop: jest.fn((r: unknown) => { rec.crop = r; return ctx; }),
+      resize: jest.fn((r: unknown) => { rec.resize = r; return ctx; }),
+      renderAsync: jest.fn(async () => ({ saveAsync: jest.fn(async (o: unknown) => { rec.save = o; return saved; }) })),
+    };
+    return ctx;
+  });
+  return { __esModule: true, ImageManipulator: { manipulate }, SaveFormat: { JPEG: 'jpeg', PNG: 'png' }, __manipulatorMock: { calls, saved } };
+});
+
+jest.mock('react-native-webview', () => {
+  const React = require('react') as typeof import('react');
+  const { View } = require('react-native') as typeof import('react-native');
+  const hooks: { onMessage: ((e: { nativeEvent: { data: string } }) => void) | null; injected: string[] } = { onMessage: null, injected: [] };
+  const WebView = React.forwardRef<Record<string, unknown>, { onMessage?: (e: { nativeEvent: { data: string } }) => void; testID?: string; onLoadEnd?: () => void }>((p, ref) => {
+    hooks.onMessage = p.onMessage ?? null;
+    React.useImperativeHandle(ref, () => ({ injectJavaScript: (js: string) => { hooks.injected.push(js); } }));
+    React.useEffect(() => { p.onLoadEnd?.(); }, [p]);
+    return React.createElement(View, { testID: p.testID ?? 'ocr-webview' });
+  });
+  WebView.displayName = 'WebView';
+  return { __esModule: true, WebView, default: WebView, __webviewMock: { hooks, post: (m: unknown) => hooks.onMessage?.({ nativeEvent: { data: JSON.stringify(m) } }) } };
+});
+
 jest.mock('expo-router', () => {
   const React = require('react') as typeof import('react');
   const router = { navigate: jest.fn(), push: jest.fn(), back: jest.fn(), replace: jest.fn() };

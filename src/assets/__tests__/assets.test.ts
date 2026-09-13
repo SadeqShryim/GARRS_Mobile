@@ -10,6 +10,8 @@ const USED_ICONS = [
   'window-line', 'car-line', 'file-text-line', 'settings-3-line', 'keyboard-line', 'checkbox-circle-line',
   'inbox-fill', 'inbox-line', 'error-warning-fill', 'tools-fill', 'tools-line', 'book-2-fill', 'book-2-line',
   'user-fill', 'user-line', 'restart-line',
+  // Slice 4 — VIN scanner
+  'camera-fill', 'flashlight-line', 'flashlight-fill', 'check-line', 'scan-line', 'camera-off-line',
 ];
 
 function png(file: string) {

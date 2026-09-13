@@ -1,0 +1,55 @@
+{
+ "Count": 5,
+ "Message": "Results returned successfully",
+ "results": [
+  {
+   "Manufacturer": "BMW of North America, LLC",
+   "NHTSACampaignNumber": "20V017000",
+   "parkIt": false,
+   "parkOutSide": false,
+   "overTheAirUpdate": false,
+   "NHTSAActionNumber": "EA15001",
+   "ReportReceivedDate": "15/01/2020",
+   "Component": "AIR BAGS:FRONTAL:DRIVER SIDE:INFLATOR MODULE",
+   "Summary": "BMW of North America, LLC (BMW) is recalling certain 2008-2013 128i and 135i Convertibles, 128i, 135i, and M Coupes, 2007-2010 X3 30si and X3 xDrive30i, 2013-2015 X1 sDrive28i, X1 xDrive28i and X1 xDrive35i, 2007-2013 328i, 328i xDrive, 335i, 335is, 335i xDrive and M3 Coupes, 2006-2011 328i, 328xi, 328i xDrive, 325i, 325xi, 330i, 330xi, 335i, 335xi, 335i\r\nxDrive and M3, 2009-2011 335D, 2006-2012 325xi, 328i, 328xi and 328i xDrive, 2010-2011 X6 ActiveHybrid, 2007-2013 328i, 335i, 335is, M3 Coupes, X5 30si, X5 xDrive30i, X5 xDrive35i, X5 48i, X5 xDrive48i, X5 xDrive50i and X5 M, 2009-2013 X5 xDrive35d and 2008-2014 X6 xDrive35i, X6 xDrive50i and X6M vehicles equipped with non-desiccated driver frontal air bag inflators containing phase stabilized ammonium nitrate (PSAN) that were used as interim remedy parts for previous Takata recalls.  These inflators may explode due to propellant degradation occurring after long-term exposure to high absolute humidity, high temperatures, and high temperature cycling.",
+   "Consequence": "An inflator explosion may result in sharp metal fragments striking the driver or other occupants resulting in serious injury or death.",
+   "Remedy": "BMW will notify owners, and dealers will replace the driver air bag.  On X5 and X6 vehicles, only the inflator will be replaced.  All repairs will be performed free of charge.  The recall began March 11, 2020.  Owners may contact BMW customer service at 1-800-525-7417.",
+   "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.safercar.gov.",
+   "ModelYear": "2013",
+   "Make": "BMW",
+   "Model": "328I"
+  },
+  {
+   "Manufacturer": "BMW of North America, LLC",
+   "NHTSACampaignNumber": "14V627000",
+   "parkIt": false,
+   "parkOutSide": false,
+   "overTheAirUpdate": false,
+   "ReportReceivedDate": "07/10/2014",
+   "Component": "SERVICE BRAKES, HYDRAULIC:POWER ASSIST:VACUUM:HOSES, LINES/PIPING, AND FITTINGS",
+   "Summary": "BMW of North America LLC (BMW) is recalling certain model year 2014 BMW 328i xDrive Sports Wagon, 2012-2014 BMW 320i Sedan, 328i Sedan, 320i xDrive Sedan, 328i xDrive Sedan, 2012-2013 BMW 528i Sedan, 528i xDrive Sedan, 2013-2014 BMW X1 sDrive28i, X1 xDrive28i Sports Activity Vehicle, 2013-2014 BMW X3 xDrive28i Sports Activity Vehicle, 2012-2014 BMW Z4 sDrive28i Roadster, and 2014 BMW 428i Coupe, and 428i xDrive Coupe.  Due to insufficient lubrication, the vacuum pump that supplies brake power assistance may fail.  Note: This recall is an expansion of recall 13V-454.",
+   "Consequence": "A failure of the brake vacuum pump results in a reduction in braking power that could increase the risk of a crash.",
+   "Remedy": "BMW will notify owners, and dealers will install a locking ring in the camshaft to retain the camshaft seal disk in the proper location, free of charge.  The recall began on December 2, 2014.  Owners may contact BMW customer service at 1-800-525-7417.",
+   "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.safercar.gov.",
+   "ModelYear": "2013",
+   "Make": "BMW",
+   "Model": "328I"
+  },
+  {
+   "Manufacturer": "BMW of North America, LLC",
+   "NHTSACampaignNumber": "15V520000",
+   "parkIt": false,
+   "parkOutSide": false,
+   "overTheAirUpdate": false,
+   "ReportReceivedDate": "17/08/2015",
+   "Component": "EXTERIOR LIGHTING",
+   "Summary": "BMW North America, LLC (BMW) is recalling certain model year 2012-2015 320i, 320xi, 328i, 328xi, 335i, 335xi, and ActiveHybrid3 vehicles manufactured October 20, 2011, to June 22, 2015, 2014-2015 328xi Sports Wagon vehicles manufactured March 21, 2013, to March 17, 2015, 2014-2015 328d, 328xd vehicles manufactured June 28, 2013, to April 21, 2015, and 2014-2015 328xd Sports Wagon vehicles manufactured July 5, 2013, to April 21, 2015.  The affected vehicles may have been programmed with new software that inadvertently makes the front side marker lights inoperative in conjunction with the parking lights or the headlights.  As such, these vehicles fail to comply with the requirements of Federal Motor Vehicle Safety Standard (FMVSS) number 108, \"Lamps, Reflective Devices, and Associated Equipment.\"",
+   "Consequence": "If the side marker lights do not illuminate, the vehicle may be less visible at night, increasing the risk of a crash.",
+   "Remedy": "BMW will notify owners, and dealers will upload revised software to correct the issue, free of charge.  The recall began on October 7, 2015.  Owners may contact BMW customer service at 1-800-525-7417 or by email at CustomerRelations@bmwusa.com.",
+   "Notes": "Owners may also contact the National Highway Traffic Safety Administration Vehicle Safety Hotline at 1-888-327-4236 (TTY 1-800-424-9153), or go to www.safercar.gov.",
+   "ModelYear": "2013",
+   "Make": "BMW",
+   "Model": "328I"
+  }
+ ]
+}

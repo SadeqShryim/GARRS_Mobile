@@ -1,0 +1,24 @@
+{
+ "Count": 1,
+ "Message": "Results returned successfully. NOTE: Any missing decoded values should be interpreted as NHTSA does not have data on the specific variable. Missing value should NOT be interpreted as an indication that a feature or technology is unavailable for a vehicle.",
+ "SearchCriteria": "VIN(s): THGCM82633A004352",
+ "Results": [
+  {
+   "Make": "",
+   "Model": "",
+   "ModelYear": "",
+   "Trim": "",
+   "Series": "",
+   "BodyClass": "",
+   "DriveType": "",
+   "FuelTypePrimary": "",
+   "PlantCountry": "",
+   "VehicleType": "",
+   "ErrorCode": "1,7",
+   "ErrorText": "1 - Check Digit (9th position) does not calculate properly; 7 - Manufacturer is not registered with NHTSA for sale or importation in the U.S. for use on U.S roads; Please contact the manufacturer directly for more information",
+   "AdditionalErrorText": "",
+   "SuggestedVIN": "",
+   "VIN": "THGCM82633A004352"
+  }
+ ]
+}

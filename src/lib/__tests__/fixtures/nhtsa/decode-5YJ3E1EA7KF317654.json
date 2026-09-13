@@ -1,0 +1,24 @@
+{
+ "Count": 1,
+ "Message": "Results returned successfully. NOTE: Any missing decoded values should be interpreted as NHTSA does not have data on the specific variable. Missing value should NOT be interpreted as an indication that a feature or technology is unavailable for a vehicle.",
+ "SearchCriteria": "VIN(s): 5YJ3E1EA7KF317654",
+ "Results": [
+  {
+   "Make": "TESLA",
+   "Model": "Model 3",
+   "ModelYear": "2019",
+   "Trim": "",
+   "Series": "",
+   "BodyClass": "Sedan/Saloon",
+   "DriveType": "",
+   "FuelTypePrimary": "Electric",
+   "PlantCountry": "UNITED STATES (USA)",
+   "VehicleType": "PASSENGER CAR",
+   "ErrorCode": "1",
+   "ErrorText": "1 - Check Digit (9th position) does not calculate properly",
+   "AdditionalErrorText": "",
+   "SuggestedVIN": "",
+   "VIN": "5YJ3E1EA7KF317654"
+  }
+ ]
+}

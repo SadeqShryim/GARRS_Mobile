@@ -10,15 +10,23 @@
     "android": {
       "package": "com.garrs.recallhub",
       "softwareKeyboardLayoutMode": "resize",
-      "adaptiveIcon": { "foregroundImage": "./assets/images/adaptive-icon.png", "backgroundColor": "#08080A" }
+      "adaptiveIcon": { "foregroundImage": "./assets/images/adaptive-icon.png", "backgroundColor": "#08080A" },
+      "permissions": ["CAMERA"]
     },
-    "ios": { "supportsTablet": false },
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": { "NSCameraUsageDescription": "Recall Hub uses the camera to read your vehicle's VIN." }
+    },
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-camera",
+        { "cameraPermission": "Recall Hub uses the camera to read your vehicle's VIN." }
+      ],
       [
         "expo-splash-screen",
         {

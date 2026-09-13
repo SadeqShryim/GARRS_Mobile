@@ -1,0 +1,24 @@
+{
+ "Count": 1,
+ "Message": "Results returned successfully. NOTE: Any missing decoded values should be interpreted as NHTSA does not have data on the specific variable. Missing value should NOT be interpreted as an indication that a feature or technology is unavailable for a vehicle.",
+ "SearchCriteria": "VIN(s): JH4KA7561PC008269",
+ "Results": [
+  {
+   "Make": "ACURA",
+   "Model": "Legend",
+   "ModelYear": "1993",
+   "Trim": "L",
+   "Series": "",
+   "BodyClass": "Sedan/Saloon",
+   "DriveType": "",
+   "FuelTypePrimary": "Gasoline",
+   "PlantCountry": "JAPAN",
+   "VehicleType": "PASSENGER CAR",
+   "ErrorCode": "0",
+   "ErrorText": "0 - VIN decoded clean. Check Digit (9th position) is correct",
+   "AdditionalErrorText": "",
+   "SuggestedVIN": "",
+   "VIN": "JH4KA7561PC008269"
+  }
+ ]
+}
