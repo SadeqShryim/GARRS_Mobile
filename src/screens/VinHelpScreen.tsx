@@ -9,9 +9,10 @@ import { Mono, Sans } from '../ui/Txt';
 export function VinHelpScreen() {
   const closeVinHelp = useAppStore((s) => s.closeVinHelp);
   const openSheet = useAppStore((s) => s.openSheet);
-  const flash = useAppStore((s) => s.flash);
+  const openScan = useAppStore((s) => s.openScan);
   const manual = () => { closeVinHelp(); openSheet('add'); };
-  const scan = () => { manual(); flash('Camera scan is not wired up in this prototype'); };
+  // Slice 4 (spec §12): the Add sheet opens beneath the scanner, so closing the scanner lands on manual entry.
+  const scan = () => { manual(); openScan(); };
 
   const footer = (
     <>

@@ -18,11 +18,13 @@ describe('VinHelpScreen', () => {
     fireEvent.press(getByLabelText('Enter manually'));
     expect(useAppStore.getState()).toMatchObject({ screen: null, sheet: 'add' });
   });
-  it('Scan returns to the sheet and flashes', () => {
+  // Slice 4 (spec §12): the add sheet opens beneath the scanner, so closing the scanner lands on manual entry.
+  it('Scan opens the scanner with the add sheet beneath it', () => {
     const { getByLabelText } = render(<VinHelpScreen />);
     fireEvent.press(getByLabelText('Scan'));
-    expect(useAppStore.getState().screen).toBeNull();
-    expect(useAppStore.getState().toast).toBe('Camera scan is not wired up in this prototype');
+    expect(useAppStore.getState()).toMatchObject({ screen: 'scan', sheet: 'add' });
+    expect(useAppStore.getState().scan.phase).toBe('idle');
+    expect(useAppStore.getState().toast).toBeNull();
   });
   it('Close only closes the help screen', () => {
     const { getByLabelText } = render(<VinHelpScreen />);

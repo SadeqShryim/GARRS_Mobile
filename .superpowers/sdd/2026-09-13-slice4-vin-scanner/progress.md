@@ -22,7 +22,9 @@ Spec: `docs/superpowers/specs/2026-09-13-slice4-vin-scanner-design.md`. Plan: `d
 | 6 store | done — 0bc128d | sonnet; 7 tests; `closeScreen` resets scan only when closing the scanner |
 
 Controller fix during the wave: the two `type` aliases inside the `expo-image-manipulator` jest.mock factory tripped babel-plugin-jest-hoist ("Invalid variable access: Rec") and broke every suite; renamed `MockRec`/`MockCtx` (identifiers inside a mock factory must be `mock`-prefixed) — 1467376.
-| 7 ScanScreen + entry points | pending | after 2–6 |
+| 7 ScanScreen + entry points | dispatched (opus) | wave gate before dispatch: 47 suites / 351 tests, typecheck clean |
+
+Controller check between waves: the compiled `OCR_PAGE` was served over http with a `ReactNativeWebView` shim and driven in the installed Chrome over CDP (`$CLAUDE_JOB_DIR/tmp/ocr-page/check.mjs`): `ready` after 1.3 s (CDN core + best-int model), three plates recognised in 28–65 ms with 17 symbols each — `1HGCM…` dash plate read as `THGCM…` exactly as in the lab (the library's substitution recovers it), `JH4KA7561PC008269` and `5YJ3E1EA7KF317654` clean. The page, the protocol and the CDN URLs are sound; what remains unverified is only the RN WebView host itself.
 | 8 emulator verification + docs | pending | controller |
 | 9 phone pass | pending | with Slices 1–3's phone passes |
 

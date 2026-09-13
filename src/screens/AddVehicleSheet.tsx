@@ -15,6 +15,7 @@ export function AddVehicleSheet() {
   const addVehicle = useAppStore((s) => s.addVehicle);
   const closeSheet = useAppStore((s) => s.closeSheet);
   const openVinHelp = useAppStore((s) => s.openVinHelp);
+  const openScan = useAppStore((s) => s.openScan);
   const flash = useAppStore((s) => s.flash);
   const raw = vin.trim().toUpperCase();
   const decoded = DECODE[raw];
@@ -44,7 +45,8 @@ export function AddVehicleSheet() {
         />
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <Chip icon="file-list-3-line" label="Use sample VIN" onPress={() => setVin(DEMO_VIN)} />
-          <Chip icon="camera-line" label="Scan" onPress={() => flash('Camera scan is not wired up in this prototype')} />
+          {/* Slice 4 (spec §12): the scanner opens over this sheet, so closing it comes back here. */}
+          <Chip icon="camera-line" label="Scan" onPress={openScan} />
         </View>
         {decoded ? <Preview name={decoded.name} meta={decoded.meta} /> : null}
         <Pressable accessibilityRole="button" accessibilityLabel="Add to garage" onPress={() => (ok ? addVehicle() : flash('Enter a VIN first'))}

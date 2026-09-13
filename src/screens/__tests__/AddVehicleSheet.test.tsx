@@ -28,10 +28,16 @@ describe('AddVehicleSheet', () => {
     expect(useAppStore.getState().vehicles).toHaveLength(4);
     expect(useAppStore.getState().sheet).toBeNull();
   });
-  it('scan chip flashes the not-wired message; info opens VIN help', () => {
-    const { getByText, getByLabelText } = render(<AddVehicleSheet />);
+  // Slice 4 (spec §12): the chip opens the scanner over this sheet, which stays open beneath it.
+  it('scan chip opens the VIN scanner', () => {
+    const { getByText } = render(<AddVehicleSheet />);
     fireEvent.press(getByText('Scan'));
-    expect(useAppStore.getState().toast).toBe('Camera scan is not wired up in this prototype');
+    expect(useAppStore.getState()).toMatchObject({ screen: 'scan', sheet: 'add' });
+    expect(useAppStore.getState().scan.phase).toBe('idle');
+    expect(useAppStore.getState().toast).toBeNull();
+  });
+  it('info opens VIN help', () => {
+    const { getByLabelText } = render(<AddVehicleSheet />);
     fireEvent.press(getByLabelText('Where do I find my VIN?'));
     expect(useAppStore.getState().screen).toBe('vinhelp');
     expect(useAppStore.getState().sheet).toBe('add');
