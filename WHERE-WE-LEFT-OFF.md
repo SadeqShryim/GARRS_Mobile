@@ -203,6 +203,26 @@ Set up 2026-09-07 with the SDK command-line tools, no Android Studio:
   `scripts/splash-refs.mjs` and `scripts/app-refs.mjs` drive over CDP for the design references.
 - More driving notes (tap points, sequences) at the bottom of each section of `docs/reference/verification.md`.
 
+## Running on a Mac (added 2026-09-18, for the wired-iPhone attempt)
+
+- `git clone https://github.com/SadeqShryim/GARRS_Mobile.git`, `cd GARRS_Mobile`, `npm install`. Node 20 or
+  newer (the PC runs 24). Every generated asset is committed (the Remixicon glyph map, the baked bezels,
+  blobs and shine ramps, the emulator captures) — no bake step, no Android SDK needed for iOS work.
+- `npx expo login` first (interactive in Terminal, or `npx expo login -b` for the browser flow — the
+  Windows `BROWSER=none` workaround is not needed on macOS), signed in as the same Expo account as
+  Expo Go on the iPhone. Then `npx expo start`. Run it once before `npm run typecheck` — it generates
+  `.expo/types/router.d.ts`.
+- **iPhone with Expo Go:** same Wi-Fi as the Mac, scan the terminal QR with the Camera app. A USB
+  cable carries nothing for Expo Go on iOS; the tunnel is only for a phone on another network.
+- **iPhone by cable (a development build):** install Xcode, plug the phone in, trust the Mac, then
+  `npx expo run:ios --device`. It generates a native `ios/` folder (`expo prebuild`) and signs with the
+  Apple ID in Xcode — a free personal team works for a personal device. The build replaces Expo Go for
+  that phone; `npx expo start` afterwards serves it just the same. `/ios` and `/android` are already in
+  `.gitignore`, so the generated folder stays local.
+- **iOS Simulator:** `npx expo start`, then press `i`; the CLI installs Expo Go into the simulator.
+  Captures with `xcrun simctl io booted screenshot <file>` (see CLAUDE.md, Verification). Skia, blur
+  and Liquid Glass need a real device or iOS 26 to judge.
+
 ## Commands
 
 | | |
