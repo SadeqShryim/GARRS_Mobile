@@ -28,6 +28,10 @@ Controller fix during the wave: the two `type` aliases inside the `expo-image-ma
 
 Controller check between waves: the compiled `OCR_PAGE` was served over http with a `ReactNativeWebView` shim and driven in the installed Chrome over CDP (`$CLAUDE_JOB_DIR/tmp/ocr-page/check.mjs`): `ready` after 1.3 s (CDN core + best-int model), three plates recognised in 28–65 ms with 17 symbols each — `1HGCM…` dash plate read as `THGCM…` exactly as in the lab (the library's substitution recovers it), `JH4KA7561PC008269` and `5YJ3E1EA7KF317654` clean. The page, the protocol and the CDN URLs are sound; what remains unverified is only the RN WebView host itself.
 
+## Session 10 — 2026-09-18 (outside Slice 4)
+
+- First run on an iPhone through the tunnel: the Expo Go 57 login gate (both ends signed in to the same account; recipe in `WHERE-WE-LEFT-OFF.md`) and a launch-route fix — `app/index.tsx` + `app/+not-found.tsx` redirect to the garage tab, because iOS launches with an explicit root URL and the app had no root index (evidence in the iOS section of `verification.md`). Gate unchanged: 49 suites / 381 tests, typecheck clean. Task 9 still pending.
+
 ### RESUME HERE (supersedes the block above)
 CURRENT STATE: Slice 4 is code complete **and emulator-verified** (Tasks 1–8). Gate: 49 suites / 381 tests, typecheck clean. Everything committed per task and pushed to origin/main on 2026-09-13. Twelve decisions parked in the spec §16.
 NEXT: Task 9 — the real camera read on the S24 Ultra (WHERE-WE-LEFT-OFF.md "Resume here" item 0 has the checklist), together with the earlier slices' phone passes. If plates score low, retune `computeScore` (spec §16.2). Candidates after that: a `NOT RECOGNISED` label (§16.11), an `EXPO_PUBLIC_SCAN_FIXTURE` emulator harness (§16.12), tesseract.js 7 (§16.3).

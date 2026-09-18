@@ -1,10 +1,11 @@
 # Where we left off
 
-**Last updated: 2026-09-13, session 9** — the session that designed, built and emulator-verified
-**Slice 4, the camera VIN scanner**: point the camera at a VIN, capture, on-device OCR, a confidence
-score, and at 90 % or more the vehicle is decoded against NHTSA, its open recalls are pulled, and it
-lands in the garage; below 90 % an error asks to try again. Sessions 7–8 built Slice 3 and the
-follow-ups (see their sections below).
+**Last updated: 2026-09-18, session 10** — the first run on a real iPhone: the Expo Go login gate
+solved, and a launch-route fix (`app/index.tsx`, `app/+not-found.tsx`). Session 9 designed, built and
+emulator-verified **Slice 4, the camera VIN scanner**: point the camera at a VIN, capture, on-device
+OCR, a confidence score, and at 90 % or more the vehicle is decoded against NHTSA, its open recalls
+are pulled, and it lands in the garage; below 90 % an error asks to try again. Sessions 7–8 built
+Slice 3 and the follow-ups (see their sections below).
 
 Read this, then `.superpowers/sdd/2026-09-10-slice3-app-tabs/progress.md` (the Slice 3
 execution ledger). If the two disagree, the ledger is newer and wins. The Slice 1 and Slice 2 ledgers
@@ -37,11 +38,37 @@ design. Only the on-device pass on the phone remains, for all three slices.
 | Slice 3 Task 14 (on-device pass, S24 Ultra) | ⏳ with Slice 1's Task 23 and Slice 2's Task 12 |
 | Slice 4 (VIN scanner) Tasks 1–8 | ✅ done 2026-09-13 — spec, plan, 5 parallel implementers + 1 integrator, emulator pass; `docs/reference/verification.md` (Slice 4 section) + 8 `emu-app-scan-*.png` |
 | Slice 4 Task 9 (real camera read on the S24 Ultra) | ⏳ the emulator cannot take a real still — the phone is the only place the camera read itself can be judged |
+| iOS (an iPhone on Expo Go 57) | ✅ first launch 2026-09-18 after the login recipe + the route fix; ⏳ the by-eye pass of the session-8 iOS rendering paths and of the scanner on iOS |
 | Test suite | 49 suites / 381 tests passing |
 | `tsc --noEmit` | clean |
 | Git | everything committed and pushed to `origin/main` |
 
 ## What happened this session
+
+### Session 10 (2026-09-17/18) — the iPhone, and a Figma showcase
+
+- **Figma showcase, no repo changes** (by your instruction): the emulator captures were laid out in
+  the Figma file `GARRS_Mobile_Mockup` (`uLZ2YXXBMr7zaff6Bcya46`) — Page 1 is a grouped board of every
+  screen state, Page 2 the same as individual phone panels wired into a clickable prototype (flow
+  start "Recall Hub"; timers for the splash and the hub rail, drags, press-and-hold).
+- **Expo Go 57 on iOS needs a login on both ends.** The earlier advice ("sign out of Expo Go") was
+  wrong: Expo's changelog says Expo Go *and* the CLI must be signed in to the same account, iOS only
+  for now. What finally worked: `BROWSER=none npx expo login -b` (the CLI's own browser launch
+  crashes on Windows because of the `&` in its login URL; with `BROWSER=none` it just prints the URL),
+  open that URL in the PC's browser, sign in, `npx expo whoami` confirms, restart Metro. An access
+  token in `EXPO_TOKEN` is the alternative, but one typed over from a phone screen was rejected —
+  it has to be copied. Nothing credential-like is in the repo; `npx expo logout` when the demo ends.
+- **"A server with the specified hostname could not be found" on the iPhone** was the phone's
+  network, not the tunnel (it resolved and answered from the PC the whole time); on the home Wi-Fi it
+  loaded. The QR link page (private artifact) avoids typing the long trycloudflare hostname.
+- **First iOS launch opened on expo-router's black "Unmatched Route" page.** Root cause, proved with
+  a router probe in jest (mirroring `app/`'s tree): the app had no root index route, so any launch
+  that reaches the router as the root path `/` matched the built-in not-found catch-all. Android
+  never hit it because Expo Go there hands the router no path and the tab navigator's default
+  (garage) applies; Expo Go on iOS hands over an explicit root URL. Fix: `app/index.tsx` and
+  `app/+not-found.tsx`, both a `<Redirect href="/(tabs)/garage" />`. With them, every launch-URL
+  variant in the probe (root, trailing slashes, `/--/`, a query string, a bogus path) lands on the
+  garage. Gate unchanged: 49 suites / 381 tests, typecheck clean.
 
 ### Session 9 (2026-09-13) — Slice 4, the VIN scanner
 
@@ -75,9 +102,9 @@ design. Only the on-device pass on the phone remains, for all three slices.
 ### Session 8 (2026-09-11) — follow-up
 
 - **Remote demo link** for a phone off the Wi-Fi: a `cloudflared` quick tunnel in front of Metro
-  (`EXPO_PACKAGER_PROXY_URL`), recipe in the environment notes below. Works on Android. On iOS,
-  a signed-in Expo Go refuses it because this PC's Expo CLI is not logged in — the phone user
-  signs out of Expo Go, or the CLI logs in as the same account (your credentials; not done here).
+  (`EXPO_PACKAGER_PROXY_URL`), recipe in the environment notes below. Works on Android. On iOS it
+  needs this PC's CLI signed in to the same Expo account as Expo Go — session 10 has the working
+  recipe; the "sign out of Expo Go" advice first given here was wrong.
 - **Parked decision 6 resolved:** `Geist_700Bold` was already inside the installed font package,
   so it is loaded now and the profile initials render at 700 as designed
   (`emu-app-profile.png` recaptured, matches the design).
@@ -139,9 +166,14 @@ Slice 3's are in its spec §15 and in `verification.md` under "Known, accepted d
    toggles, the tilt map reacting to the phone (it should read LIVE TILT and follow the hand), the hub
    auto-advance and swipe, the article swipe both ways, chat bubbles and dots; plus the earlier slices'
    items (marquee, bubble line count, keyboard on the email field; VIN placeholder colour; rail fling).
-2. **After that there is no next slice** — the design is fully ported. Remaining candidates are
-   polish only: a shipping variant of the splash copy, and iOS verification when an iPhone or a Mac
-   is available (the iOS rendering paths from session 8 have never been seen on iOS).
+2. **iOS by-eye pass — now reachable** (an iPhone opened the app on 2026-09-18 through the tunnel;
+   recipe in Session 10 and the environment notes). Nothing beyond the launch has been judged on
+   iOS yet: the session-8 iOS rendering paths (the tilt-map pin shadow, the bubble highlight's SVG
+   blur), the Skia splash, the glass on Splash/Auth, the sheets, and the scanner (camera permission
+   copy, the EXIF-orientation crop, the WebView OCR engine). Append findings to the iOS section at
+   the end of `docs/reference/verification.md`.
+3. **After that there is no next slice** — the design is fully ported. Remaining candidates are
+   polish only: a shipping variant of the splash copy.
 
 ## Environment (this PC — x64 Windows 11)
 
@@ -164,7 +196,7 @@ Set up 2026-09-07 with the SDK command-line tools, no Android Studio:
   mode and typed-route generation), `adb reverse tcp:8081 tcp:8081`, and open `exp://127.0.0.1:8081`
   on the device. **Never** `expo start --localhost`. If Expo Go shows "Something went wrong", tap its
   reload. Re-sending the `exp://` intent to a running app triggers a full reload.
-- **Phone off the Wi-Fi (remote demo):** Expo's own `npx expo start --tunnel` failed on 2026-09-10 with ngrok `ERR_NGROK_108` (Expo's shared anonymous ngrok account at its session limit — nothing on this PC). Working alternative with the already-installed `cloudflared`: `cloudflared tunnel --url http://localhost:8081 --no-autoupdate` prints an `https://<random>.trycloudflare.com` URL; then `EXPO_PACKAGER_PROXY_URL=https://<random>.trycloudflare.com npx expo start` makes the manifest and bundle URLs point at the tunnel; on the phone open Expo Go → "Enter URL manually" → `exp://<random>.trycloudflare.com`. Verified from this PC: the manifest and the 12 MB Android bundle come through the tunnel. The hostname changes every time cloudflared restarts. **iPhone:** Expo Go on iOS has no URL field — paste the `exp://` link into Safari and choose Open (or scan a QR of it with the Camera). A **signed-in** Expo Go on iOS refuses a project whose dev server is not logged in to the same Expo account ("You're signed in to Expo Go as X, but not signed in to Expo CLI"; `npx expo whoami` on this PC says "Not logged in"): either the phone user signs out of Expo Go (Profile → Log out) and reopens the link, or the CLI runs `npx expo login` as that account before Metro starts — the credentials are the user's, so this was not done here (2026-09-11). **Keep them alive (2026-09-12):** when launched as Claude Code background tasks, both cloudflared and Metro were killed by the session's low-memory guard (twice, with 9 GB free); launch them detached instead — PowerShell `Start-Process` on `cloudflared.exe` (stderr redirected to a log) and on `cmd.exe /c "set EXPO_PACKAGER_PROXY_URL=…  npx expo start > log 2>1"` from the repo directory. They then outlive the session; stop them with `Stop-Process` on `cloudflared.exe` and the `node.exe` that holds port 8081.
+- **Phone off the Wi-Fi (remote demo):** Expo's own `npx expo start --tunnel` failed on 2026-09-10 with ngrok `ERR_NGROK_108` (Expo's shared anonymous ngrok account at its session limit — nothing on this PC). Working alternative with the already-installed `cloudflared`: `cloudflared tunnel --url http://localhost:8081 --no-autoupdate` prints an `https://<random>.trycloudflare.com` URL; then `EXPO_PACKAGER_PROXY_URL=https://<random>.trycloudflare.com npx expo start` makes the manifest and bundle URLs point at the tunnel; on the phone open Expo Go → "Enter URL manually" → `exp://<random>.trycloudflare.com`. Verified from this PC: the manifest and the 12 MB Android bundle come through the tunnel. The hostname changes every time cloudflared restarts. **iPhone:** Expo Go on iOS has no URL field — paste the `exp://` link into Safari and choose Open (or scan a QR of it with the Camera). **Expo Go 57 on iOS requires the CLI to be signed in to the same Expo account as Expo Go** ("You're signed in to Expo Go as X, but not signed in to Expo CLI"); signing out of Expo Go does not help, and Android is not gated yet. Recipe (2026-09-18): `BROWSER=none npx expo login -b` prints a login URL (the CLI's own Windows browser launch crashes on the `&` in it), open that URL in the PC's browser and sign in, `npx expo whoami` confirms, then (re)start Metro; the session lives in `~/.expo/state.json`, never in the repo — `npx expo logout` when done. A personal access token in `EXPO_TOKEN` works too, but only pasted from a copy button: one typed over from a phone screen was rejected as invalid. The iPhone on mobile data could not resolve the trycloudflare hostname; on the home Wi-Fi it could. **Keep them alive (2026-09-12):** when launched as Claude Code background tasks, both cloudflared and Metro were killed by the session's low-memory guard (twice, with 9 GB free); launch them detached instead — PowerShell `Start-Process` on `cloudflared.exe` (stderr redirected to a log) and on `cmd.exe /c "set EXPO_PACKAGER_PROXY_URL=…  npx expo start > log 2>1"` from the repo directory. They then outlive the session; stop them with `Stop-Process` on `cloudflared.exe` and the `node.exe` that holds port 8081.
 - Soft keyboard: for scripted typing disable Gboard first (`adb shell ime disable …LatinIME`); it
   re-enables itself after every reboot.
 - Chrome is installed (`C:\Program Files\Google\Chrome\Application\chrome.exe`) and is what
