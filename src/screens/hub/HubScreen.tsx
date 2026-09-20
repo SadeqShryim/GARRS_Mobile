@@ -48,25 +48,7 @@ export function HubScreen() {
         <Mono size={11} ls={1.4} color={color.ink4}>{hubHeadline()}</Mono>
       </View>
 
-      <View style={{ gap: 12 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 20 }}>
-          <Mono size={10} ls={1.8} color={color.ink4}>{HUB_COPY.featured}</Mono>
-          <Mono size={10} ls={1.8} color={color.ink4}>{hubCounter(hubIdx)}</Mono>
-        </View>
-        <InfiniteRail
-          ref={rail}
-          testID="hub-rail"
-          count={ARTICLES.length}
-          index={hubIdx}
-          onIndexChange={setHubIdx}
-          keyFor={(i) => ARTICLES[i].id}
-          renderItem={(i) => <ArticleCard article={ARTICLES[i]} onPress={() => openArticle(ARTICLES[i].id)} />}
-        />
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 20 }} testID="hub-dots">
-          {ARTICLES.map((a, i) => <Dot key={a.id} active={i === hubIdx} onPress={() => rail.current?.scrollTo(i, true)} />)}
-        </View>
-      </View>
-
+      {/* Dashboard lights first, featured reading below (user direction, 2026-09-20; the design had them the other way round). */}
       <View style={{ gap: 12, paddingHorizontal: 20 }}>
         <View style={{ gap: 5 }}>
           <Mono size={10} ls={1.8} color={color.ink4}>{HUB_COPY.lights}</Mono>
@@ -102,6 +84,25 @@ export function HubScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: 14, backgroundColor: color.sunken, paddingVertical: 13, paddingHorizontal: 15 }}>
           <Icon name="information-line" size={16} color={color.blueDeep} />
           <Sans size={12} lh={18} color={color.ink2} style={{ flex: 1 }}>{HUB_COPY.note}</Sans>
+        </View>
+      </View>
+
+      <View style={{ gap: 12 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 20 }}>
+          <Mono size={10} ls={1.8} color={color.ink4}>{HUB_COPY.featured}</Mono>
+          <Mono size={10} ls={1.8} color={color.ink4}>{hubCounter(hubIdx)}</Mono>
+        </View>
+        <InfiniteRail
+          ref={rail}
+          testID="hub-rail"
+          count={ARTICLES.length}
+          index={hubIdx}
+          onIndexChange={setHubIdx}
+          keyFor={(i) => ARTICLES[i].id}
+          renderItem={(i) => <ArticleCard article={ARTICLES[i]} onPress={() => openArticle(ARTICLES[i].id)} />}
+        />
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 20 }} testID="hub-dots">
+          {ARTICLES.map((a, i) => <Dot key={a.id} active={i === hubIdx} onPress={() => rail.current?.scrollTo(i, true)} />)}
         </View>
       </View>
     </ScrollView>

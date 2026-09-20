@@ -10,9 +10,11 @@ describe('MetalButton', () => {
     fireEvent.press(getByLabelText('Add Vehicle'));
     expect(onPress).toHaveBeenCalledTimes(1);
   });
-  it('uses the blue ink on the blue tint and grey ink otherwise', () => {
+  it('uses the blue ink on the blue tint, the pale red ink on the red tint, and grey ink otherwise', () => {
     const blue = render(<MetalButton tint="blue" label="A" icon="calendar-2-line" />);
     expect(blue.getByText('A').props.style).toEqual(expect.arrayContaining([expect.objectContaining({ color: '#EAF7FF' })]));
+    const red = render(<MetalButton tint="red" label="R" icon="calendar-2-line" />);
+    expect(red.getByText('R').props.style).toEqual(expect.arrayContaining([expect.objectContaining({ color: '#FFF3F4' })]));
     const mix = render(<MetalButton tint="mix" label="B" icon="calendar-2-line" />);
     expect(mix.getByText('B').props.style).toEqual(expect.arrayContaining([expect.objectContaining({ color: '#8A8F94' })]));
   });

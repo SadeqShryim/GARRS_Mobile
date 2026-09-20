@@ -8,13 +8,15 @@ import { bez, dur, ease } from '../theme/tokens';
 import { Icon } from './Icon';
 import { Sans } from './Txt';
 
-export type MetalTint = 'blue' | 'mix' | 'default';
+export type MetalTint = 'blue' | 'red' | 'mix' | 'default';
 const BEZEL = {
   blue: require('../assets/images/metal-blue.png'),
+  red: require('../assets/images/metal-red.png'),     // the urgent Schedule Repair (user request, 2026-09-20)
   mix: require('../assets/images/metal-mix.png'),
   default: require('../assets/images/metal-default.png'),
 } as const;
 const FACE_BLUE = { colors: ['#2E93C4', '#0F638F', '#0B4E73'], locations: [0, 0.55, 1], angle: 160 };
+const FACE_RED = { colors: ['#E8384E', '#C40218', '#8E0112'], locations: [0, 0.55, 1], angle: 160 };   // around the app's recall red
 const FACE_DARK = { colors: ['#202020', '#000000'], locations: [0, 1], angle: 180 };
 const SHADOW_IDLE = '0 0 0 1px rgba(0,0,0,0.3), 0 14px 10px rgba(0,0,0,0.08), 0 3px 6px rgba(0,0,0,0.16)';
 const SHADOW_PRESSED = '0 0 0 1px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.3)';
@@ -45,8 +47,8 @@ export function MetalButton({ tint = 'blue', label, icon, iconSize = 15, fontSiz
   const wrapStyle = useAnimatedStyle(() => ({ transform: [{ translateY: press.value }, { scale: 1 - 0.02 * press.value }] }));
 
   const spin = (typeof width === 'number' ? width : 320) * 2.4;
-  const face = tint === 'blue' ? FACE_BLUE : FACE_DARK;
-  const ink = tint === 'blue' ? '#EAF7FF' : '#8A8F94';
+  const face = tint === 'blue' ? FACE_BLUE : tint === 'red' ? FACE_RED : FACE_DARK;
+  const ink = tint === 'blue' ? '#EAF7FF' : tint === 'red' ? '#FFF3F4' : '#8A8F94';
   const pts = cssAngleToPoints(face.angle, box.w, box.h);
 
   const onLayout = useCallback((e: LayoutChangeEvent) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height }), []);

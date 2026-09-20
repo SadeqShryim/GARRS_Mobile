@@ -16,6 +16,7 @@ describe('TiltMap', () => {
     expect(getByText('4.2 mi')).toBeTruthy();
     expect(getByText('LIVE')).toBeTruthy();
     expect(getByTestId('icon-map-pin-line')).toBeTruthy();
+    expect(getByTestId('map-shadow')).toBeTruthy();   // the shadow plate that makes the tilt visible
     await waitFor(() => expect(mocked.isAvailableAsync).toHaveBeenCalled());
     expect(mocked.addListener).not.toHaveBeenCalled();
   });

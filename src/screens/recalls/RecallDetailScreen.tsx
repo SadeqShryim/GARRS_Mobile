@@ -74,7 +74,7 @@ export function RecallDetailScreen({ id, onBack }: { id: string; onBack: () => v
 
       <View style={{ flexDirection: 'row', gap: 10, alignItems: 'stretch', paddingTop: 12, paddingHorizontal: 20, paddingBottom: bottom, backgroundColor: 'rgba(255,255,255,0.94)', borderTopWidth: 1, borderTopColor: color.hair07 }}>
         {d.state === 'open' ? (
-          <MetalButton tint="blue" label={RECALLS_COPY.scheduleRepair} icon="calendar-2-line" flex={1} width="auto" height={54} radius={999} gap={9} iconSize={17} fontSize={15} onPress={scheduleFromRecalls} />
+          <MetalButton tint="red" label={RECALLS_COPY.scheduleRepair} icon="calendar-2-line" flex={1} width="auto" height={54} radius={999} gap={9} iconSize={17} fontSize={15} onPress={scheduleFromRecalls} />
         ) : (
           <View style={{ flex: 1, height: 54, borderRadius: 999, backgroundColor: color.sunken, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <Icon name="checkbox-circle-line" size={17} color={color.ink5} />

@@ -26,7 +26,7 @@ export function RecallSheet({ onDetails }: { onDetails: () => void }) {
           </View>
         ))}
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 20 }}>
-          <MetalButton tint="blue" label={scheduled ? 'Scheduled' : 'Schedule Repair'} icon="calendar-2-line" flex={1.5} width="auto" height={54} radius={16} gap={9} iconSize={17} fontSize={15}
+          <MetalButton tint="red" label={scheduled ? 'Scheduled' : 'Schedule Repair'} icon="calendar-2-line" flex={1.5} width="auto" height={54} radius={16} gap={9} iconSize={17} fontSize={15}
             onPress={() => { schedule(); closeSheet(); flash('Service booked · Thu 10:30 AM'); }} />
           <OutlinePill label="Details" icon="arrow-right-up-line" height={54}
             onPress={() => { closeSheet(); switchTab('recalls'); flash(r.code + ' · opening recall detail'); onDetails(); }} />

@@ -11,6 +11,8 @@ const BLEED = 48;             // logical px of room for the blur to spill
 const RAMPS = {
   default: ['#6F8EA3', '#D6EAF6', '#243642', '#A8C6D8', '#101B24', '#E8F6FF', '#3E5B6B', '#8FB2C6'],
   blue: ['#1B6E96', '#8ACEFF', '#E8F6FF', '#B8E2FF', '#0E5378', '#F4FBFF', '#4E9DC4', '#A7DAFF'],
+  // red (user request, 2026-09-20): the blue sweep's structure — dark, light, lightest, light, darker, near-white, mid, light — in the recall red.
+  red: ['#9E1020', '#FF9AA6', '#FFEDEF', '#FFC2CA', '#6E0714', '#FFF5F6', '#D4485A', '#FFB3BC'],
   mix: ['#8A8A8A', '#EDEDED', '#2B2B2B', '#8ACEFF', '#141414', '#E8F6FF', '#3E5B6B', '#A6A6A6'],
 };
 
