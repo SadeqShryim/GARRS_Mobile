@@ -1,6 +1,9 @@
 # Where we left off
 
-**Last updated: 2026-09-18, session 10** — the first run on a real iPhone: the Expo Go login gate
+**Last updated: 2026-09-20, session 11** — the Mac session (its section is below): the iPhone's first fidelity
+pass with four iOS fixes, the user's redesigns (Liquid Glass tab bar on the base, live articles with photos, a red
+Schedule Repair, dashboard lights above the articles, the Service map's shell) and a Pixel 8 emulator on the Mac.
+Session 10 (2026-09-18) was the first run on a real iPhone: the Expo Go login gate
 solved, and a launch-route fix (`app/index.tsx`, `app/+not-found.tsx`). Session 9 designed, built and
 emulator-verified **Slice 4, the camera VIN scanner**: point the camera at a VIN, capture, on-device
 OCR, a confidence score, and at 90 % or more the vehicle is decoded against NHTSA, its open recalls
@@ -43,7 +46,49 @@ design. Only the on-device pass on the phone remains, for all three slices.
 | `tsc --noEmit` | clean |
 | Git | everything committed and pushed to `origin/main` |
 
-## What happened this session
+## What happened in session 11 (the Mac, 2026-09-18 → 20)
+
+The repo was cloned onto the user's M1 MacBook and run from there for the first time: both phones on Expo Go 57 over
+Wi-Fi, the iPhone 17 Pro Max screenshots AirDropped to `~/Downloads`. No iOS Simulator yet — the Mac is on macOS 14.7
+and Xcode 26.4 (what SDK 57 needs) does not install below macOS 15.6; the user will upgrade to macOS 27. A Pixel 8 API 35
+emulator was set up on the Mac instead (see "Running on a Mac"), and every change below was verified on it before the
+phones. Commits 5237a50, df9d8c0, 09e5a99, c21e52f.
+
+**The iPhone's first fidelity pass — four iOS-only differences, all fixed (5237a50):**
+
+1. **Tight line heights clip on iOS.** Geist and Instrument Serif are 1.3 em tall; the 52/52 splash title lost the top of
+   its caps because iOS lays the excess above the first line, where the Text view clips it (Android draws the overflow).
+   `Txt.tsx` gives such text the room as padding cancelled by margin, iOS only.
+2. **`zIndex` escapes on iOS (Fabric).** A view with `zIndex` joins the nearest *stacking context*, and plain Views with
+   only a background are not one — the tab items' `zIndex: 1` sorted them above the splash overlay. Never use `zIndex`;
+   order siblings.
+3. **The navigation theme painted over the dot pattern.** expo-router's native stack hands the theme's `background`
+   (#F2F2F2) to the UINavigationController's own view; `contentStyle: transparent` cannot clear it. The root layout now
+   runs the router under a theme whose background is transparent.
+4. **The tab bar floated.** The port painted the home-indicator inset white under a bar with 28 px bottom radii — those
+   radii are the artboard's phone frame, not the bar. Superseded by the redesign below.
+
+**Redesigns on the user's direction (outside the handoff design):**
+
+- **Liquid Glass tab bar** (`src/ui/GlassTabBar.tsx`, replaces HumpTabBar): a floating capsule on the phone's base,
+  expo-glass-effect `regular` on iOS 26 (`clear` showed content raw), expo-blur elsewhere; the selected tab is a
+  liquid-metal disc (the Add Vehicle chrome ramp). It is mounted by the root layout beside the overlays, driven by the
+  router: **a BlurView inside the target it blurs crashes Android** (libhwui prepareTree recursion, RenderThread SIGSEGV —
+  reproduced on the emulator). Tab screens clear it with `useTabBarClearance()`.
+- **Hub:** dashboard lights above Featured Reading. **Live articles** (`src/lib/liveArticles.ts`): Motor1's recalls
+  feed — a photo, a summary and a direct link per story — with Google News' recall search as the text-only fallback and
+  the fixtures offline; the reader shows a live story in a WebView with an Open-in-browser link.
+- **Schedule Repair** (the recall sheet and the recall detail) is a red liquid-metal button (`metal-red.png` baked).
+- **The Service map** sits 2 px inside a still shell one step darker than it (the Garage cards' look) so the ±8° tilt reads.
+  The shell is the card's **parent**: as a sibling, iOS composited the flat shell and the 3D-tilted card in depth and cut
+  diagonally through the half that leaned behind it (three attempts before that was understood).
+- "tyre" → "tire" everywhere.
+
+**Findings about the tools:** the `!`-prefixed `npx expo login -b` exits before the browser callback — run it detached and
+open the printed URL; when the Mac changes network, Metro must restart (it advertises the LAN IP at start) and the phones
+rescan; Expo Go's dev-menu onboarding sheet dims the app behind it on first launch.
+
+## What happened this session (session 10, 2026-09-18)
 
 ### Session 10 (2026-09-17/18) — the iPhone, and a Figma showcase
 
@@ -153,6 +198,11 @@ Slice 3's are in its spec §15 and in `verification.md` under "Known, accepted d
 
 ## Resume here — the exact next steps
 
+**As of session 11 (2026-09-20):** (1) the user is checking the Service map's shell on the iPhone after c21e52f; (2) the
+macOS 27 upgrade, then Xcode from the App Store — after that: `sudo xcode-select -s /Applications/Xcode.app`, CocoaPods,
+an iPhone 17 Pro Max simulator, and the iOS by-eye pass can run on the Mac; (3) the design divergences above are the
+user's decisions, not drift — do not restore the hump bar, the article order or the blue Schedule Repair.
+
 0. **Slice 4 Task 9 — the real camera read on the S24 Ultra.** Garage → Add Vehicle → Scan → point at
    the dashboard VIN plate (daylight, then glare, then the door-jamb sticker) → Capture. Expect the
    guide crop to contain the whole VIN (if not, the cover-fit maths in `src/ocr/crop.ts` is the
@@ -222,6 +272,16 @@ Set up 2026-09-07 with the SDK command-line tools, no Android Studio:
 - **iOS Simulator:** `npx expo start`, then press `i`; the CLI installs Expo Go into the simulator.
   Captures with `xcrun simctl io booted screenshot <file>` (see CLAUDE.md, Verification). Skia, blur
   and Liquid Glass need a real device or iOS 26 to judge.
+
+- **Android emulator on the Mac (2026-09-18, no Android Studio):** SDK at `~/Library/Android/sdk` (platform-tools,
+  emulator, android-35, `system-images;android-35;google_apis;arm64-v8a`, cmdline-tools copied into
+  `sdk/cmdline-tools/latest` — the Homebrew cask's `avdmanager` cannot see the SDK's images), Temurin JDK 17 at
+  `~/Library/Android/jdk17` (`JAVA_HOME=~/Library/Android/jdk17/Contents/Home`), AVD `pixel8`. Boot with `-gpu host`
+  (`swiftshader_indirect` crashes Expo Go's RenderThread). Expo Go 57.0.9 APK from expo.dev's versions API,
+  `adb install`ed; open the project with `adb shell am start -a android.intent.action.VIEW -d exp://<mac-lan-ip>:8081`.
+  Screenshots: `adb shell screencap -p /sdcard/shot.png && adb pull /sdcard/shot.png` (`adb exec-out` came back empty).
+  uiautomator's dump does not list RN pressables, so drive by coordinates (1080×2400: Google pill 388,1244; tabs at
+  y 2319, x 166/352/538/724/910). The emulator's `orientation` sensor did not move the tilt map.
 
 ## Commands
 
