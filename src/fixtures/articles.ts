@@ -27,16 +27,16 @@ export const ARTICLES: Article[] = [
     ],
   },
   {
-    id: 'a3', kicker: 'TYRES', icon: 'loader-2-line', read: '3 MIN READ', date: 'DEC 2025',
+    id: 'a3', kicker: 'TIRES', icon: 'loader-2-line', read: '3 MIN READ', date: 'DEC 2025',
     wash: ['#3F3F46', '#18181B'],
-    title: 'Reading a tyre sidewall in thirty seconds',
+    title: 'Reading a tire sidewall in thirty seconds',
     dek: 'Size, load, speed rating and the four digits that tell you its age.',
     body: [
-      { text: 'Every legal tyre carries its full specification moulded into the sidewall. Four things matter for day-to-day ownership.' },
+      { text: 'Every legal tire carries its full specification moulded into the sidewall. Four things matter for day-to-day ownership.' },
       { heading: 'The size code', text: 'In 225/45R18 95Y, 225 is the section width in millimetres, 45 is the sidewall height as a percentage of that width, R is radial construction, and 18 is the wheel diameter in inches.' },
-      { heading: 'Load and speed', text: '95 is the load index, roughly 690 kg per tyre. Y is the speed rating. Fitting a lower rating than the placard on your door jamb specifies is a failure point at inspection.' },
-      { heading: 'The DOT date', text: 'Find the DOT code and read the last four digits: week, then year. 2224 means the 22nd week of 2024. Most manufacturers consider a tyre finished at six years regardless of tread depth.' },
-      { heading: 'Pressure', text: 'The correct cold pressure is on the door jamb placard, never the tyre sidewall — the sidewall figure is a maximum, not a recommendation.' },
+      { heading: 'Load and speed', text: '95 is the load index, roughly 690 kg per tire. Y is the speed rating. Fitting a lower rating than the placard on your door jamb specifies is a failure point at inspection.' },
+      { heading: 'The DOT date', text: 'Find the DOT code and read the last four digits: week, then year. 2224 means the 22nd week of 2024. Most manufacturers consider a tire finished at six years regardless of tread depth.' },
+      { heading: 'Pressure', text: 'The correct cold pressure is on the door jamb placard, never the tire sidewall — the sidewall figure is a maximum, not a recommendation.' },
     ],
   },
   {

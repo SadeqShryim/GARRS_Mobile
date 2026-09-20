@@ -104,7 +104,7 @@ describe('hub', () => {
     expect(lightById(null)).toBeNull();
     expect(neighbour('a4', 1).id).toBe('a1');
     expect(neighbour('a1', -1).id).toBe('a4');
-    expect(nextTitle('a2')).toBe('Reading a tyre sidewall in thirty seconds');
+    expect(nextTitle('a2')).toBe('Reading a tire sidewall in thirty seconds');
   });
 });
 

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { Easing, runOnJS, type SharedValue, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,26 +22,27 @@ export function ArticleReader() {
   const setArticle = useAppStore((s) => s.setArticle);
   const setHubIdx = useAppStore((s) => s.setHubIdx);
   const closeArticle = useAppStore((s) => s.closeArticle);
+  const articles = useAppStore((s) => s.articles);
   const [leaving, setLeaving] = useState<Article | null>(null);
   const [dir, setDir] = useState<Dir>(0);
   const drag = useSharedValue(0);
   const busy = useSharedValue(false);            // a leaver is animating → drags are ignored (line 2003)
   const leaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-  const a = articleById(article);
+  const a = articleById(article, articles);
 
   // goArticle (line 1950): the current article becomes the leaver, the neighbour enters from `dir`, the hub rail follows.
   const go = useCallback((d: 1 | -1) => {
     if (!a || busy.value) return;
-    const next = neighbour(a.id, d);
+    const next = neighbour(a.id, d, articles);
     busy.value = true;
     drag.value = 0;
     setLeaving(a);
     setDir(d);
     setArticle(next.id);
-    setHubIdx(articleIndex(next.id));
+    setHubIdx(articleIndex(next.id, articles));
     clearTimeout(leaveTimer.current);
     leaveTimer.current = setTimeout(() => { busy.value = false; setLeaving(null); }, dur.leave);
-  }, [a, busy, drag, setArticle, setHubIdx]);
+  }, [a, articles, busy, drag, setArticle, setHubIdx]);
   useEffect(() => () => clearTimeout(leaveTimer.current), []);
 
   const goNext = useCallback(() => go(1), [go]);
@@ -63,15 +65,15 @@ export function ArticleReader() {
   const prevStyle = useAnimatedStyle(() => ({ transform: [{ translateX: -W + drag.value }] }));
 
   if (!a) return null;
-  const nextA = neighbour(a.id, 1);
-  const prevA = neighbour(a.id, -1);
+  const nextA = neighbour(a.id, 1, articles);
+  const prevA = neighbour(a.id, -1, articles);
   return (
     <View style={StyleSheet.absoluteFill} testID="article-reader">
       <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, prevStyle]}><ArticlePeek article={prevA} testID="article-peek-prev" /></Animated.View>
       <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, nextStyle]}><ArticlePeek article={nextA} testID="article-peek-next" /></Animated.View>
       {leaving && <Leaver key={'leave-' + leaving.id} article={leaving} dir={dir} W={W} />}
       <GestureDetector gesture={pan}>
-        <LivePanel key={a.id} article={a} dir={dir} W={W} H={H} drag={drag} onClose={closeArticle} onNext={goNext} onPrev={goPrev} />
+        <LivePanel key={a.id} article={a} articles={articles} dir={dir} W={W} H={H} drag={drag} onClose={closeArticle} onNext={goNext} onPrev={goPrev} />
       </GestureDetector>
     </View>
   );
@@ -90,9 +92,10 @@ function Leaver({ article, dir, W }: { article: Article; dir: Dir; W: number }) 
 }
 
 // The live panel (lines 926–970) — keyed by article id so every article change replays the entrance (playArticleSwipe).
-function LivePanel({ article: a, dir, W, H, drag, onClose, onNext, onPrev }:
-  { article: Article; dir: Dir; W: number; H: number; drag: SharedValue<number>; onClose: () => void; onNext: () => void; onPrev: () => void }) {
+function LivePanel({ article: a, articles, dir, W, H, drag, onClose, onNext, onPrev }:
+  { article: Article; articles: Article[]; dir: Dir; W: number; H: number; drag: SharedValue<number>; onClose: () => void; onNext: () => void; onPrev: () => void }) {
   const insets = useSafeAreaInsets();
+  const [webFailed, setWebFailed] = useState(false);   // the story could not load in the WebView → offer the browser
   const enter = useSharedValue(1);
   useEffect(() => { enter.value = withTiming(0, { duration: dur.swipe, easing: EASE }); }, [enter]);
   const style = useAnimatedStyle(() => ({
@@ -115,6 +118,38 @@ function LivePanel({ article: a, dir, W, H, drag, onClose, onNext, onPrev }:
           <Pressable accessibilityLabel="Next article" onPress={onNext} style={styles.nav}><Icon name="arrow-right-s-line" size={19} color={color.ink2} /></Pressable>
         </View>
       </View>
+      {a.url ? (
+        // A live story (lib/liveArticles): the headline, its source and day, then the story itself in a WebView.
+        <View style={{ flex: 1 }} testID="article-live-story">
+          <View style={{ gap: 8, paddingTop: 8, paddingHorizontal: 20, paddingBottom: 14 }}>
+            <Sans size={22} lh={27} weight={600} ls={-0.6} color={color.ink}>{a.title}</Sans>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Mono size={9} ls={1.2} color={color.ink3}>{a.read}</Mono>
+                <View style={{ width: 3, height: 3, borderRadius: 2, backgroundColor: color.ink8 }} />
+                <Mono size={9} ls={1.2} color={color.ink3}>{a.date}</Mono>
+              </View>
+              <Pressable accessibilityRole="link" accessibilityLabel={HUB_COPY.openInBrowser} onPress={() => { Linking.openURL(a.url!).catch(() => undefined); }} style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                <Mono size={9} ls={1.2} color={color.blueDeep}>{HUB_COPY.openInBrowser}</Mono>
+                <Icon name="arrow-right-up-line" size={13} color={color.blueDeep} />
+              </Pressable>
+            </View>
+          </View>
+          {webFailed ? (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 32 }} testID="article-webview-failed">
+              <Sans size={14} lh={21} color={color.ink5} center>{HUB_COPY.storyUnavailable}</Sans>
+              <Pressable accessibilityRole="link" accessibilityLabel={HUB_COPY.openInBrowser} onPress={() => { Linking.openURL(a.url!).catch(() => undefined); }}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 8, borderRadius: 999, backgroundColor: color.sunken, paddingVertical: 12, paddingHorizontal: 18 }}>
+                <Sans size={14} weight={500} color={color.ink}>{HUB_COPY.openInBrowser}</Sans>
+                <Icon name="arrow-right-up-line" size={15} color={color.ink4} />
+              </Pressable>
+            </View>
+          ) : (
+            <WebView source={{ uri: a.url }} style={{ flex: 1, backgroundColor: color.surface }} testID="article-webview"
+              onError={() => setWebFailed(true)} onRenderProcessGone={() => setWebFailed(true)} onHttpError={(e) => { if (e.nativeEvent.statusCode >= 500) setWebFailed(true); }} />
+          )}
+        </View>
+      ) : (
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 18, paddingTop: 8, paddingHorizontal: 20, paddingBottom: 32 }} showsVerticalScrollIndicator={false}>
         <Wash article={a} />
         <View style={{ gap: 8 }}>
@@ -139,11 +174,12 @@ function LivePanel({ article: a, dir, W, H, drag, onClose, onNext, onPrev }:
           style={{ flexDirection: 'row', alignItems: 'center', gap: 12, borderRadius: 16, backgroundColor: color.sunken, paddingVertical: 15, paddingHorizontal: 16 }}>
           <View style={{ flex: 1, gap: 3 }}>
             <Mono size={9} ls={1.3} color={color.ink3}>{HUB_COPY.nextArticle}</Mono>
-            <Sans size={14} weight={500} color={color.ink}>{nextTitle(a.id)}</Sans>
+            <Sans size={14} weight={500} color={color.ink}>{nextTitle(a.id, articles)}</Sans>
           </View>
           <Icon name="arrow-right-line" size={19} color={color.ink4} />
         </Pressable>
       </ScrollView>
+      )}
     </Animated.View>
   );
 }

@@ -36,7 +36,10 @@ export function TiltMap() {
   const tilt = useAnimatedStyle(() => ({ transform: [{ perspective: 1000 }, { rotateX: `${tiltX.value}deg` }, { rotateY: `${tiltY.value}deg` }] }));
   return (
     <View>
-      <MapShadow />
+      {/* The border and the card each get their own layer: as direct siblings, iOS composited the flat ring and the
+          3D-tilted card in depth, tinting the half of the card that leaned "behind" the ring. */}
+      <View pointerEvents="none" style={StyleSheet.absoluteFill}><MapShadow /></View>
+      <View>
       <Animated.View testID="tilt-map" style={[styles.card, tilt]}>
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
           <View style={[StyleSheet.absoluteFill, { backgroundColor: color.sunken }]} />
@@ -75,6 +78,7 @@ export function TiltMap() {
           </View>
         </View>
       </Animated.View>
+      </View>
     </View>
   );
 }

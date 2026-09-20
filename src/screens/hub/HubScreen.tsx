@@ -4,14 +4,16 @@ import { useEffect, useRef } from 'react';
 import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ARTICLES } from '../../fixtures/articles';
 import { GROUPS, groupChip, HUB_COPY, hubCounter, hubHeadline, visibleLights } from '../../lib/hub';
+import { fetchLiveArticles } from '../../lib/liveArticles';
 import { useAppStore } from '../../store/useAppStore';
 import { bez, color, dur, ease } from '../../theme/tokens';
 import { Icon } from '../../ui/Icon';
 import { InfiniteRail, type InfiniteRailHandle } from '../../ui/InfiniteRail';
 import { Mono, Sans } from '../../ui/Txt';
 import { ArticleCard } from './ArticleCard';
+
+let liveLoaded = false;
 
 export function HubScreen() {
   const insets = useSafeAreaInsets();
@@ -27,6 +29,8 @@ export function HubScreen() {
   const setHubGroup = useAppStore((s) => s.setHubGroup);
   const openLight = useAppStore((s) => s.openLight);
   const openArticle = useAppStore((s) => s.openArticle);
+  const articles = useAppStore((s) => s.articles);
+  const setArticles = useAppStore((s) => s.setArticles);
   const rail = useRef<InfiniteRailHandle>(null);
 
   // startHubAuto (line 1890): a 5 s interval that glides one card forward unless the tab is hidden or an overlay is open.
@@ -39,13 +43,20 @@ export function HubScreen() {
     return () => clearInterval(id);
   }, []);
 
+  // The live feed replaces the fixture articles once per app session; offline, the fixtures stay.
+  useEffect(() => {
+    if (liveLoaded) return;
+    liveLoaded = true;
+    fetchLiveArticles().then(setArticles).catch(() => { liveLoaded = false; });
+  }, [setArticles]);
+
   const tile = (width - 40 - 3 * 8) / 4;
   const lights = visibleLights(hubGroup);
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 24, paddingTop: insets.top + 24, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
       <View style={{ gap: 6, paddingHorizontal: 20 }}>
         <Sans size={38} lh={42} weight={600} ls={-1.2} color={color.ink}>{HUB_COPY.title}</Sans>
-        <Mono size={11} ls={1.4} color={color.ink4}>{hubHeadline()}</Mono>
+        <Mono size={11} ls={1.4} color={color.ink4}>{hubHeadline(articles)}</Mono>
       </View>
 
       {/* Dashboard lights first, featured reading below (user direction, 2026-09-20; the design had them the other way round). */}
@@ -90,19 +101,19 @@ export function HubScreen() {
       <View style={{ gap: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingHorizontal: 20 }}>
           <Mono size={10} ls={1.8} color={color.ink4}>{HUB_COPY.featured}</Mono>
-          <Mono size={10} ls={1.8} color={color.ink4}>{hubCounter(hubIdx)}</Mono>
+          <Mono size={10} ls={1.8} color={color.ink4}>{hubCounter(hubIdx, articles)}</Mono>
         </View>
         <InfiniteRail
           ref={rail}
           testID="hub-rail"
-          count={ARTICLES.length}
+          count={articles.length}
           index={hubIdx}
           onIndexChange={setHubIdx}
-          keyFor={(i) => ARTICLES[i].id}
-          renderItem={(i) => <ArticleCard article={ARTICLES[i]} onPress={() => openArticle(ARTICLES[i].id)} />}
+          keyFor={(i) => articles[i].id}
+          renderItem={(i) => <ArticleCard article={articles[i]} onPress={() => openArticle(articles[i].id)} />}
         />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 20 }} testID="hub-dots">
-          {ARTICLES.map((a, i) => <Dot key={a.id} active={i === hubIdx} onPress={() => rail.current?.scrollTo(i, true)} />)}
+          {articles.map((a, i) => <Dot key={a.id} active={i === hubIdx} onPress={() => rail.current?.scrollTo(i, true)} />)}
         </View>
       </View>
     </ScrollView>

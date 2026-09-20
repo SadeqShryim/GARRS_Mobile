@@ -19,7 +19,7 @@ describe('ArticleReader', () => {
     expect(getByText('Read the manual, not the sticker')).toBeTruthy();
     expect(getByText('SWIPE FOR THE NEXT ARTICLE')).toBeTruthy();
     expect(getByText('NEXT ARTICLE')).toBeTruthy();
-    expect(getAllByText('Reading a tyre sidewall in thirty seconds').length).toBeGreaterThan(0);   // next card + peek
+    expect(getAllByText('Reading a tire sidewall in thirty seconds').length).toBeGreaterThan(0);   // next card + peek
     expect(getByLabelText('Next article')).toBeTruthy();
     expect(getByLabelText('Previous article')).toBeTruthy();
   });

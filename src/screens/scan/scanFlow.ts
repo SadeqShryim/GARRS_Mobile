@@ -48,7 +48,7 @@ export const failLabel = (score: number | null, reason: string | null): string =
 export const recallNote = (code: string) => `1 open recall — ${code}`;
 
 // Telemetry constants addVehicle()/vehicleFromDecode() already use; the demo has no other source for a scanned
-// vehicle's odometer, service intervals, tyre pressure or battery (§16.6).
+// vehicle's odometer, service intervals, tire pressure or battery (§16.6).
 const TELEMETRY = { odo: 8410, oilIn: 4800, tireIn: 2600, brakeIn: 21000, regDays: 240, psi: '40 / 40', battery: 99 } as const;
 
 /**

@@ -24,10 +24,13 @@ export const HUB_COPY = {
   gotIt: 'Got it',
   swipeHint: 'SWIPE FOR THE NEXT ARTICLE',
   nextArticle: 'NEXT ARTICLE',
+  openInBrowser: 'OPEN IN BROWSER',
+  storyUnavailable: 'This story could not be shown here.',
 } as const;
 
-export const hubHeadline = () => ARTICLES.length + ' ARTICLES · ' + LIGHTS.length + ' DASHBOARD LIGHTS';
-export const hubCounter = (i: number) => String(i + 1).padStart(2, '0') + ' / ' + String(ARTICLES.length).padStart(2, '0');
+// The article helpers take the list in play — the store's, which starts as the fixtures and becomes the live feed (lib/liveArticles).
+export const hubHeadline = (articles: Article[] = ARTICLES) => articles.length + ' ARTICLES · ' + LIGHTS.length + ' DASHBOARD LIGHTS';
+export const hubCounter = (i: number, articles: Article[] = ARTICLES) => String(i + 1).padStart(2, '0') + ' / ' + String(articles.length).padStart(2, '0');
 export const visibleLights = (g: LightFilter) => LIGHTS.filter((l) => g === 'all' || l.group === g);
 export const lightById = (id: string | null) => (id ? LIGHTS.find((l) => l.id === id) ?? null : null);
 
@@ -42,11 +45,11 @@ export function groupChip(k: LightFilter, hubGroup: LightFilter): GroupChip {
   };
 }
 
-export const articleIndex = (id: string) => ARTICLES.findIndex((a) => a.id === id);
-export const articleById = (id: string | null): Article | null => (id ? ARTICLES.find((a) => a.id === id) ?? null : null);
-export function neighbour(id: string, dir: 1 | -1): Article {
-  const i = Math.max(0, articleIndex(id));
-  const n = ARTICLES.length;
-  return ARTICLES[(i + dir + n) % n];
+export const articleIndex = (id: string, articles: Article[] = ARTICLES) => articles.findIndex((a) => a.id === id);
+export const articleById = (id: string | null, articles: Article[] = ARTICLES): Article | null => (id ? articles.find((a) => a.id === id) ?? null : null);
+export function neighbour(id: string, dir: 1 | -1, articles: Article[] = ARTICLES): Article {
+  const i = Math.max(0, articleIndex(id, articles));
+  const n = articles.length;
+  return articles[(i + dir + n) % n];
 }
-export const nextTitle = (id: string) => neighbour(id, 1).title;
+export const nextTitle = (id: string, articles: Article[] = ARTICLES) => neighbour(id, 1, articles).title;

@@ -139,7 +139,7 @@ export async function recallsFor(
 const titleCase = (s: string) => s.toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 
 // Telemetry constants addVehicle() already uses (useAppStore.ts) — the demo has no other source for
-// a scanned vehicle's odometer/service/tyre/battery figures (§16.6).
+// a scanned vehicle's odometer/service/tire/battery figures (§16.6).
 const TELEMETRY = { odo: 8410, oilIn: 4800, tireIn: 2600, brakeIn: 21000, regDays: 240, psi: '40 / 40', battery: 99 } as const;
 
 export function vehicleFromDecode(d: DecodedVehicle, recalls: NhtsaRecall[], rawVin: string): Vehicle {

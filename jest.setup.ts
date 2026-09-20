@@ -188,3 +188,6 @@ jest.mock('expo-router', () => {
     Slot: () => null,
   };
 });
+
+// Tests run offline: the live-article feed (lib/liveArticles) rejects unless a test provides its own fetch.
+(global as unknown as { fetch: unknown }).fetch = jest.fn(() => Promise.reject(new Error('offline in tests')));

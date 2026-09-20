@@ -1,7 +1,8 @@
 import { create } from 'zustand';
+import { ARTICLES } from '../fixtures/articles';
 import { RECALLS_COPY } from '../fixtures/recalls';
 import { SEED_VEHICLES } from '../fixtures/vehicles';
-import type { LightFilter, PlanId, RecallFilter, SvcMethod, TabId, Vehicle } from '../fixtures/types';
+import type { Article, LightFilter, PlanId, RecallFilter, SvcMethod, TabId, Vehicle } from '../fixtures/types';
 import { decodeVin, maskVin } from '../lib/derive';
 import { planToast } from '../lib/membership';
 import { bookedToast } from '../lib/service';
@@ -23,7 +24,7 @@ type State = {
   // Slice 3 (design state, line 1227)
   rFilter: RecallFilter; rOpen: string | null;
   plan: PlanId;
-  hubIdx: number; hubGroup: LightFilter; hubLight: string | null; article: string | null;
+  hubIdx: number; hubGroup: LightFilter; hubLight: string | null; article: string | null; articles: Article[];
   svcMethod: SvcMethod; svcDate: string; svcTime: string; svcDone: boolean;
   pfPush: boolean; pfEmail: boolean; pfBio: boolean;
   // Slice 4 (spec §10)
@@ -40,7 +41,7 @@ type Actions = {
   setRecallFilter: (f: RecallFilter) => void; toggleRecall: (id: string) => void; showRecall: (id: string) => void; scheduleFromRecalls: () => void;
   setPlan: (p: PlanId) => void;
   setHubIdx: (i: number) => void; setHubGroup: (g: LightFilter) => void; openLight: (id: string) => void; closeLight: () => void;
-  openArticle: (id: string) => void; setArticle: (id: string) => void; closeArticle: () => void;
+  openArticle: (id: string) => void; setArticle: (id: string) => void; closeArticle: () => void; setArticles: (articles: Article[]) => void;
   setSvcMethod: (m: SvcMethod) => void; setSvcDate: (d: string) => void; setSvcTime: (t: string) => void;
   confirmService: () => void; returnToGarage: () => void;
   togglePref: (k: PrefKey) => void;
@@ -54,7 +55,7 @@ const initial = (): State => ({
   vehicles: SEED_VEHICLES.map((v) => ({ ...v })),
   rFilter: 'open', rOpen: null,
   plan: 'pro',
-  hubIdx: 0, hubGroup: 'all', hubLight: null, article: null,
+  hubIdx: 0, hubGroup: 'all', hubLight: null, article: null, articles: ARTICLES,
   svcMethod: 'dropoff', svcDate: '13', svcTime: '09:30 AM', svcDone: false,
   pfPush: true, pfEmail: true, pfBio: false,
   scan: initialScan(),
@@ -109,6 +110,7 @@ export const useAppStore = create<State & Actions>((set, get) => ({
   openArticle: (article) => set({ screen: 'article', article }),
   setArticle: (article) => set({ article }),
   closeArticle: () => set({ screen: null, article: null }),
+  setArticles: (articles) => set({ articles, hubIdx: 0 }),   // the live feed replacing the fixtures (lib/liveArticles)
   // Service (lines 1614, 1624, 1630, 1637, 1675)
   setSvcMethod: (svcMethod) => set({ svcMethod }),
   setSvcDate: (svcDate) => set({ svcDate }),
