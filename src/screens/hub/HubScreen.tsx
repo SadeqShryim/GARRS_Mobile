@@ -1,3 +1,4 @@
+import { useTabBarClearance } from '../../ui/GlassTabBar';
 import { useIsFocused } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
@@ -14,6 +15,7 @@ import { ArticleCard } from './ArticleCard';
 
 export function HubScreen() {
   const insets = useSafeAreaInsets();
+  const bottom = useTabBarClearance();
   const { width } = useWindowDimensions();
   const focused = useIsFocused();
   const hubIdx = useAppStore((s) => s.hubIdx);
@@ -40,7 +42,7 @@ export function HubScreen() {
   const tile = (width - 40 - 3 * 8) / 4;
   const lights = visibleLights(hubGroup);
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 24, paddingTop: insets.top + 24, paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 24, paddingTop: insets.top + 24, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
       <View style={{ gap: 6, paddingHorizontal: 20 }}>
         <Sans size={38} lh={42} weight={600} ls={-1.2} color={color.ink}>{HUB_COPY.title}</Sans>
         <Mono size={11} ls={1.4} color={color.ink4}>{hubHeadline()}</Mono>

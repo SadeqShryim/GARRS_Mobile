@@ -70,11 +70,11 @@ Researched because these effects were the main perceived port risk. **They are n
 
 ## Verification
 
-**The demo device is a Samsung S24 Ultra** (Android 14+, ~412dp logical width, 120Hz). Android is the primary verification target until an iPhone is available; treat iOS as secondary for now. Derive layout from device width — the design's 430pt frame is wider than the phone — and paint the Android gesture-nav inset white beneath the tab bar.
+**The demo device is a Samsung S24 Ultra** (Android 14+, ~412dp logical width, 120Hz). Android is the primary verification target until an iPhone is available; treat iOS as secondary for now. Derive layout from device width — the design's 430pt frame is wider than the phone. The tab bar is no longer the artboard's dark hump bar: on the user's direction (2026-09-18) it is a floating Liquid Glass capsule sitting on the phone's base (`src/ui/GlassTabBar.tsx`, mounted by the root layout beside the overlays — never inside the blur target it blurs, which crashes Android), and every tab screen clears it with `useTabBarClearance()`.
 
 Appearance and frame rate need different tools, and simulators lie about the second one.
 
-- **Android emulator + ADB works on Windows** — `adb shell input tap x y`, `adb exec-out screencap -p`. This is the closest analogue to the browser loop and can verify layout, the tab bar hump, sheets, and most glass.
+- **Android emulator + ADB works on Windows** — `adb shell input tap x y`, `adb exec-out screencap -p`. This is the closest analogue to the browser loop and can verify layout, the tab bar, sheets, and most glass.
 - **iOS needs macOS** (an M1 is fine): `xcrun simctl io booted screenshot`, plus Maestro or `idb ui tap` for interaction. Liquid Glass is unverifiable off iOS 26.
 - **Expo web is a trap for this design.** It renders through `react-native-web`, so blur, shadows, and Skia will not match the native build. Useful for navigation and layout logic only.
 - **Frame rate cannot be verified from screenshots or on a simulator.** The splash risk needs a profiler on real, ideally budget, Android hardware.

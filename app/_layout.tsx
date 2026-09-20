@@ -3,7 +3,7 @@ import { GeistMono_400Regular, GeistMono_500Medium } from '@expo-google-fonts/ge
 import { InstrumentSerif_400Regular } from '@expo-google-fonts/instrument-serif';
 import { BlurTargetView } from 'expo-blur';
 import { useFonts } from 'expo-font';
-import { Slot } from 'expo-router';
+import { DefaultTheme, Slot, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from 'react';
@@ -14,8 +14,14 @@ import { AppBlurTarget } from '../src/overlays/blurTarget';
 import { OverlayHost } from '../src/overlays/OverlayHost';
 import { color } from '../src/theme/tokens';
 import { DotPattern } from '../src/ui/DotPattern';
+import { GlassTabBar } from '../src/ui/GlassTabBar';
 
 SplashScreen.preventAutoHideAsync();
+
+// The navigators paint the theme's `background`. On iOS the native stack hands it to the UINavigationController's own view as an
+// opaque layer that `contentStyle: transparent` cannot clear — it hid the dot pattern on the iPhone (#F2F2F2 where Android
+// showed the dots). The app paints its own surface, so the theme paints nothing.
+const THEME = { ...DefaultTheme, colors: { ...DefaultTheme.colors, background: 'transparent' } };
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -33,8 +39,9 @@ export default function RootLayout() {
           <View style={styles.app}>
             <BlurTargetView ref={target} style={styles.app}>
               <DotPattern />
-              <Slot />
+              <ThemeProvider value={THEME}><Slot /></ThemeProvider>
             </BlurTargetView>
+            <GlassTabBar />
             <OverlayHost />
           </View>
           <StatusBar style="dark" />

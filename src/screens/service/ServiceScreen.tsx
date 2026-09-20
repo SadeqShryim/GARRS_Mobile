@@ -1,3 +1,4 @@
+import { useTabBarClearance } from '../../ui/GlassTabBar';
 import { type ReactNode } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +22,7 @@ function ReasonShell({ caution, shell, children }: { caution: boolean; shell: st
 
 export function ServiceScreen() {
   const insets = useSafeAreaInsets();
+  const bottom = useTabBarClearance();
   const vehicles = useAppStore((s) => s.vehicles);
   const svcMethod = useAppStore((s) => s.svcMethod);
   const svcDate = useAppStore((s) => s.svcDate);
@@ -35,7 +37,7 @@ export function ServiceScreen() {
   const open = openRecallVehicle(vehicles);
   const r = reasonVals(open);
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 24, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 24, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
       {svcDone ? <ServiceDone /> : (
         <View style={{ gap: 24 }}>
           <View style={{ gap: 5 }}>

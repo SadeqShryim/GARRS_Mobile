@@ -1,3 +1,4 @@
+import { useTabBarClearance } from '../ui/GlassTabBar';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { statsFor } from '../lib/derive';
@@ -12,6 +13,7 @@ import { Mono, Sans } from '../ui/Txt';
 
 export function VehicleStatsScreen({ id, onBack, onRecallDetails }: { id: number; onBack: () => void; onRecallDetails: () => void }) {
   const insets = useSafeAreaInsets();
+  const bottom = useTabBarClearance();
   const v = useAppStore((s) => s.vehicles.find((x) => x.id === id));
   const scheduled = useAppStore((s) => s.scheduled);
   const schedule = useAppStore((s) => s.schedule);
@@ -19,7 +21,7 @@ export function VehicleStatsScreen({ id, onBack, onRecallDetails }: { id: number
   if (!v) return null;
   const s = statsFor(v, scheduled);
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 22, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 22, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <Pressable accessibilityLabel="Back" onPress={onBack} style={{ width: 36, height: 36, marginLeft: -8, borderRadius: 18, alignItems: 'center', justifyContent: 'center' }}>
           <Icon name="arrow-left-line" size={20} color={color.ink} />

@@ -1,3 +1,4 @@
+import { useTabBarClearance } from '../../ui/GlassTabBar';
 import { useRouter } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +14,7 @@ import { Mono, Sans } from '../../ui/Txt';
 
 export function ProfileScreen() {
   const insets = useSafeAreaInsets();
+  const bottom = useTabBarClearance();
   const router = useRouter();
   const vehicles = useAppStore((s) => s.vehicles);
   const scheduled = useAppStore((s) => s.scheduled);
@@ -26,7 +28,7 @@ export function ProfileScreen() {
   const switchTab = useAppStore((s) => s.switchTab);
   const flash = useAppStore((s) => s.flash);
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 16, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 16, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
       <View style={{ alignItems: 'center', gap: 8, paddingTop: 20, paddingBottom: 22 }}>
         <View style={{ width: 118, height: 118, borderRadius: 59, alignItems: 'center', justifyContent: 'center', backgroundColor: color.surface, borderWidth: 2, borderColor: color.hair12 }}>
           <Sans size={42} lh={49} weight={700} ls={-1.5} color={color.ink7}>{USER.initials}</Sans>

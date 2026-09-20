@@ -1,3 +1,4 @@
+import { useTabBarClearance } from '../ui/GlassTabBar';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { counter, fleetLine, isOpenRecall, recallCount } from '../lib/derive';
@@ -11,13 +12,14 @@ import { Rail } from './garage/Rail';
 
 export function GarageScreen({ onOpenStats }: { onOpenStats: (id: number) => void }) {
   const insets = useSafeAreaInsets();
+  const bottom = useTabBarClearance();
   const vehicles = useAppStore((s) => s.vehicles);
   const idx = useAppStore((s) => s.idx);
   const scheduled = useAppStore((s) => s.scheduled);
   const openSheet = useAppStore((s) => s.openSheet);
   const alerts = vehicles.filter((v) => isOpenRecall(v, scheduled));
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 26, paddingTop: insets.top, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 26, paddingTop: insets.top, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
       <View style={{ minHeight: 56, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20 }}>
         <View style={{ width: 36, height: 36, marginLeft: -8, alignItems: 'center', justifyContent: 'center' }}><Icon name="menu-2-line" size={20} color={color.ink5} /></View>
         <Mono size={11} ls={2.6} color={color.ink5} center style={{ flex: 1 }}>RECALL HUB</Mono>

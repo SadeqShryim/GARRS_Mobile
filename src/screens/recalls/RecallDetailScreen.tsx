@@ -1,3 +1,4 @@
+import { useTabBarClearance } from '../../ui/GlassTabBar';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { RECALLS_COPY } from '../../fixtures/recalls';
@@ -11,6 +12,7 @@ import { Mono, Sans } from '../../ui/Txt';
 
 export function RecallDetailScreen({ id, onBack }: { id: string; onBack: () => void }) {
   const insets = useSafeAreaInsets();
+  const bottom = useTabBarClearance();
   const vehicles = useAppStore((s) => s.vehicles);
   const scheduled = useAppStore((s) => s.scheduled);
   const scheduleFromRecalls = useAppStore((s) => s.scheduleFromRecalls);
@@ -19,7 +21,7 @@ export function RecallDetailScreen({ id, onBack }: { id: string; onBack: () => v
   if (!d) return null;
   return (
     <View style={{ flex: 1 }} testID="recall-detail">
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20, paddingTop: insets.top + 18, paddingHorizontal: 20, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
           <Pressable accessibilityLabel="Back" onPress={onBack} style={{ width: 36, height: 36, marginLeft: -8, alignItems: 'center', justifyContent: 'center' }}>
             <Icon name="arrow-left-line" size={20} color={color.ink} />
@@ -70,7 +72,7 @@ export function RecallDetailScreen({ id, onBack }: { id: string; onBack: () => v
         </View>
       </ScrollView>
 
-      <View style={{ flexDirection: 'row', gap: 10, alignItems: 'stretch', paddingTop: 12, paddingHorizontal: 20, paddingBottom: 16, backgroundColor: 'rgba(255,255,255,0.94)', borderTopWidth: 1, borderTopColor: color.hair07 }}>
+      <View style={{ flexDirection: 'row', gap: 10, alignItems: 'stretch', paddingTop: 12, paddingHorizontal: 20, paddingBottom: bottom, backgroundColor: 'rgba(255,255,255,0.94)', borderTopWidth: 1, borderTopColor: color.hair07 }}>
         {d.state === 'open' ? (
           <MetalButton tint="blue" label={RECALLS_COPY.scheduleRepair} icon="calendar-2-line" flex={1} width="auto" height={54} radius={999} gap={9} iconSize={17} fontSize={15} onPress={scheduleFromRecalls} />
         ) : (

@@ -1,3 +1,4 @@
+import { useTabBarClearance } from '../../ui/GlassTabBar';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
@@ -15,6 +16,7 @@ import { RecallCard } from './RecallCard';
 
 export function RecallsScreen() {
   const insets = useSafeAreaInsets();
+  const bottom = useTabBarClearance();
   const router = useRouter();
   const vehicles = useAppStore((s) => s.vehicles);
   const scheduled = useAppStore((s) => s.scheduled);
@@ -29,7 +31,7 @@ export function RecallsScreen() {
   const hero = heroVals(counts, vehicles.length);
   const shown = items.filter((x) => x.state === rFilter);
   return (
-    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20, paddingTop: insets.top + 24, paddingHorizontal: 20, paddingBottom: 28 }} showsVerticalScrollIndicator={false}>
+    <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 20, paddingTop: insets.top + 24, paddingHorizontal: 20, paddingBottom: bottom }} showsVerticalScrollIndicator={false}>
       <View style={{ flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16 }}>
         <View style={{ flexShrink: 1, gap: 6 }}>
           <Sans size={38} lh={42} weight={600} ls={-1.2} color={color.ink}>{RECALLS_COPY.title}</Sans>

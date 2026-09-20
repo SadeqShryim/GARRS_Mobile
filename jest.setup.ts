@@ -28,6 +28,17 @@ jest.mock('expo-blur', () => {
   };
 });
 
+jest.mock('expo-glass-effect', () => {
+  const React = require('react') as typeof import('react');
+  const { View } = require('react-native') as typeof import('react-native');
+  return {
+    GlassView: (p: Record<string, unknown>) => React.createElement(View, p),
+    GlassContainer: (p: Record<string, unknown>) => React.createElement(View, p),
+    isLiquidGlassAvailable: jest.fn(() => false),
+    isGlassEffectAPIAvailable: jest.fn(() => false),
+  };
+});
+
 jest.mock('@react-native-masked-view/masked-view', () => {
   const React = require('react') as typeof import('react');
   const { View } = require('react-native') as typeof import('react-native');
@@ -159,10 +170,16 @@ jest.mock('react-native-webview', () => {
 jest.mock('expo-router', () => {
   const React = require('react') as typeof import('react');
   const router = { navigate: jest.fn(), push: jest.fn(), back: jest.fn(), replace: jest.fn() };
+  let segments: string[] = ['(tabs)', 'garage'];
+  const { View } = require('react-native') as typeof import('react-native');
   return {
     __esModule: true,
     router,
     useRouter: () => router,
+    useSegments: () => segments,
+    __setSegments: (s: string[]) => { segments = s; },
+    ThemeProvider: ({ children }: { children: React.ReactNode }) => React.createElement(View, null, children),
+    DefaultTheme: { dark: false, colors: { primary: '#000', background: '#fff', card: '#fff', text: '#000', border: '#000', notification: '#000' }, fonts: {} },
     useIsFocused: () => true,
     useFocusEffect: (cb: () => void | (() => void)) => { React.useEffect(cb, []); },
     useLocalSearchParams: () => ({}),
