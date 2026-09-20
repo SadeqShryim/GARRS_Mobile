@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,8 +12,10 @@ export function Wash({ article: a }: { article: Article }) {
   const { width } = useWindowDimensions();
   const pts = cssAngleToPoints(135, width - 40, 150);
   return (
-    <LinearGradient colors={a.wash} start={pts.start} end={pts.end} style={{ height: 150, borderRadius: 18, alignItems: 'flex-end', justifyContent: 'flex-end', padding: 16 }}>
-      <Icon name={a.icon} size={56} color="rgba(255,255,255,0.85)" />
+    <LinearGradient colors={a.wash} start={pts.start} end={pts.end} style={{ height: 150, borderRadius: 18, overflow: 'hidden', alignItems: 'flex-end', justifyContent: 'flex-end', padding: 16 }}>
+      {a.image
+        ? <Image source={{ uri: a.image }} contentFit="cover" transition={200} style={StyleSheet.absoluteFill} testID="article-image" />
+        : <Icon name={a.icon} size={56} color="rgba(255,255,255,0.85)" />}
     </LinearGradient>
   );
 }

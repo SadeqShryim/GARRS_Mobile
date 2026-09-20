@@ -1,5 +1,6 @@
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Pressable, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import type { Article } from '../../fixtures/types';
 import { cssAngleToPoints } from '../../lib/gradient';
 import { color } from '../../theme/tokens';
@@ -13,11 +14,13 @@ export function ArticleCard({ article: a, onPress }: { article: Article; onPress
     <Pressable accessibilityRole="button" accessibilityLabel={a.title} onPress={onPress} testID={`article-${a.id}`}
       style={{ width: 318, borderRadius: 18, overflow: 'hidden', backgroundColor: color.sunken }}>
       <LinearGradient colors={a.wash} start={WASH.start} end={WASH.end} style={{ height: 132, justifyContent: 'space-between', padding: 16 }}>
+        {/* A live story's photo (lib/liveArticles) covers the wash, which stays beneath as the placeholder while it loads. */}
+        {a.image ? <Image source={{ uri: a.image }} contentFit="cover" transition={200} style={StyleSheet.absoluteFill} testID="article-image" /> : null}
         <View style={{ alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: 999, backgroundColor: 'rgba(255,255,255,0.9)', paddingVertical: 5, paddingHorizontal: 10 }}>
           <Icon name={a.icon} size={12} color={color.ink} />
           <Mono size={9} ls={1.3} color={color.ink}>{a.kicker}</Mono>
         </View>
-        <Icon name={a.icon} size={44} color="rgba(255,255,255,0.85)" style={{ alignSelf: 'flex-end' }} />
+        {a.image ? <View /> : <Icon name={a.icon} size={44} color="rgba(255,255,255,0.85)" style={{ alignSelf: 'flex-end' }} />}
       </LinearGradient>
       <View style={{ paddingTop: 15, paddingHorizontal: 16, paddingBottom: 17, gap: 6 }}>
         <Sans size={18} lh={23} weight={600} ls={-0.4} color={color.ink}>{a.title}</Sans>

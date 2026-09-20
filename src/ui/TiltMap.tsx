@@ -5,7 +5,6 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { SERVICE_COPY, SVC_CENTER } from '../fixtures/service';
 import { color } from '../theme/tokens';
 import { Icon } from './Icon';
-import { MapShadow } from './MapShadow';
 import { Mono, Sans } from './Txt';
 import { useTilt } from './useTilt';
 
@@ -35,11 +34,11 @@ export function TiltMap() {
   // perspective:1000px on the wrapper + rotateX(tiltX) rotateY(tiltY) on the card (line 388–389)
   const tilt = useAnimatedStyle(() => ({ transform: [{ perspective: 1000 }, { rotateX: `${tiltX.value}deg` }, { rotateY: `${tiltY.value}deg` }] }));
   return (
-    <View>
-      {/* The border and the card each get their own layer: as direct siblings, iOS composited the flat ring and the
-          3D-tilted card in depth, tinting the half of the card that leaned "behind" the ring. */}
-      <View pointerEvents="none" style={StyleSheet.absoluteFill}><MapShadow /></View>
-      <View>
+    // The still shell the card tilts inside (user request, 2026-09-20): the Garage cards' look — a solid shell one step darker
+    // than the face, the face 2 px inside it. It is the card's *parent*, never a sibling: iOS composites siblings that share a
+    // layer in 3D, and a flat shell beside the tilted card cut diagonally through the half that leaned behind it. A parent's
+    // own background always draws beneath its children. The negative margin keeps the card's footprint where it was.
+    <View testID="map-shadow" style={styles.shell}>
       <Animated.View testID="tilt-map" style={[styles.card, tilt]}>
         <View style={StyleSheet.absoluteFill} pointerEvents="none">
           <View style={[StyleSheet.absoluteFill, { backgroundColor: color.sunken }]} />
@@ -78,12 +77,12 @@ export function TiltMap() {
           </View>
         </View>
       </Animated.View>
-      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  shell: { margin: -2, padding: 2, borderRadius: 18, backgroundColor: '#E4E3DF' },   // one step below color.sunken, as the Garage shell sits below its face
   card: { height: 250, borderRadius: 16, backgroundColor: color.surface, borderWidth: 1, borderColor: color.hair10, overflow: 'hidden' },
   // drop-shadow(0 0 10px rgba(15,99,143,.45)). RN `filter: dropShadow` is Android-only; elsewhere the layer shadow does the same job —
   // with no background colour it follows the pin's alpha, and a CSS blur radius of 10 is a Gaussian σ of 5 = `shadowRadius`.
